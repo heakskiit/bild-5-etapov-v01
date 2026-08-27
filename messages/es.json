@@ -1,0 +1,397 @@
+{
+  "common": {
+    "disclaimer": "Este sitio web es una plataforma comunitaria e independiente de servicios digitales. No estamos afiliados, asociados, autorizados, respaldados ni relacionados oficialmente de ningún modo con Rockstar Games o Take-Two Interactive. Todas las marcas pertenecen a sus respectivos propietarios.",
+    "support": "Soporte",
+    "joinDiscord": "Únete a Discord",
+    "buyNow": "Comprar",
+    "total": "Total",
+    "outOfStock": "Agotado",
+    "payFor": "Pagar {price}",
+    "buyFor": "Comprar por {price}",
+    "creatingInvoice": "Creando la factura…",
+    "encrypting": "Cifrando…",
+    "sendSecurely": "Enviar de forma segura",
+    "saveError": "No se pudo guardar — contacta con soporte en Discord.",
+    "showCode": "Mostrar código",
+    "provideAccess": "Dar acceso",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "legalDisclaimer": "Aviso legal",
+    "inStock": "En stock",
+    "checkoutError": "No se pudo crear la factura.",
+    "retry": "Reintentar",
+    "ordersEmptyTitle": "Aún no hay pedidos",
+    "ordersEmptyBody": "En cuanto compres algo, aparecerá aquí.",
+    "ordersEmptyCta": "Ir a la tienda",
+    "awaitingPaymentNote": "Estamos comprobando tu pago — normalmente tarda hasta 2 minutos.",
+    "revealError": "No se pudo cargar el código — inténtalo de nuevo.",
+    "saving": "Guardando…",
+    "checkoutSignInRequired": "Inicia sesión para completar tu pedido.",
+    "close": "Cerrar",
+    "cancel": "Cancelar"
+  },
+  "nav": {
+    "home": "Inicio",
+    "store": "Tienda",
+    "coop": "Co-op y boost",
+    "about": "Nosotros",
+    "support": "Soporte",
+    "dashboard": "Mi cuenta",
+    "login": "Iniciar sesión",
+    "queue": "Cola",
+    "admin": "Admin"
+  },
+  "home": {
+    "cta": {
+      "primary": "Abrir la tienda",
+      "subtitle": "Elige un producto o servicio — pago en cripto, entrega desde 5 minutos.",
+      "title": "¿Listo para empezar?"
+    },
+    "faq": {
+      "a1": "La mayoría de los pedidos comienzan a los pocos minutos del pago; el tiempo exacto depende de la velocidad de entrega elegida.",
+      "a2": "Solo trabajamos con juego manual de ejecutores verificados — nunca se instala software de terceros ni modificaciones en tu cuenta.",
+      "a3": "No, nunca se solicita en el pago. Si un servicio en concreto lo necesita, lo envías por separado después del pago mediante un formulario seguro.",
+      "a4": "El pago se procesa a través de CryptoBot — admite las principales criptomonedas; la lista completa se muestra en el paso de pago.",
+      "a5": "Eso es poco frecuente y suele deberse a un retraso en la confirmación del pago. Escribe a soporte o a Discord y comprobaremos el estado manualmente.",
+      "a6": "Los reembolsos siguen la política de reembolsos si un pedido no se completó. Escribe a soporte con tu número de pedido.",
+      "allQuestions": "Todas las preguntas",
+      "q1": "¿Cuánto tarda un pedido?",
+      "q2": "¿Es seguro para mi cuenta?",
+      "q3": "¿Necesitáis mi contraseña?",
+      "q4": "¿Qué criptomonedas aceptáis?",
+      "q5": "¿Y si el código no llega?",
+      "q6": "¿Cómo funcionan los reembolsos?",
+      "title": "Preguntas frecuentes"
+    },
+    "hero": {
+      "subtitle": "Códigos digitales en stock y boost manual de jugadores verificados. Pago en cripto, entrega desde 5 minutos.",
+      "titleAccent": "en una noche",
+      "titleLead": "Sube de nivel tu cuenta",
+      "trustOrders": "{count}+ pedidos completados",
+      "trustDelivery": "~{minutes} min de entrega promedio",
+      "trustCrypto": "Aceptamos BTC · ETH · USDT · TON"
+    },
+    "howItWorks": {
+      "step1Body": "No se necesita contraseña en este paso.",
+      "step1Title": "Arma tu pedido",
+      "step2Body": "A través de CryptoBot. Los reembolsos siguen la política de reembolsos.",
+      "step2Title": "Paga con cripto",
+      "step3Body": "El código llega al instante, el estado del boost se ve en tu panel las 24 horas.",
+      "step3Title": "Obtén acceso",
+      "title": "Cómo funciona"
+    },
+    "popular": {
+      "configureCta": "Configurar",
+      "priceFrom": "desde",
+      "title": "Popular"
+    },
+    "safety": {
+      "checkBodyNoDate": "El estado de seguridad se revisa periódicamente.",
+      "checkBodyWithDate": "Última comprobación: {date}.",
+      "checkTitle": "Estado comprobado cada 72 horas",
+      "discordBody": "Personas reales al otro lado, no un bot con respuestas prefabricadas.",
+      "discordTitle": "Soporte en Discord",
+      "noModsBody": "Solo juego manual. Nunca se instala software de terceros en la cuenta del cliente.",
+      "noModsTitle": "Métodos sin riesgo de baneo",
+      "sharingBody": "No se pide tu contraseña al pagar — se envía solo después del pago, mediante un formulario seguro independiente, cifrada con AES-256 y eliminada en cuanto se cierra el pedido.",
+      "sharingTitle": "Safe Account Sharing",
+      "title": "Seguridad"
+    },
+    "trustpilotRating": "{rating}/5 según nuestros clientes"
+  },
+  "safety": {
+    "badge": "Sin baneos reportados",
+    "body": "No se han recibido informes de suspensión para este servicio. El estado de seguridad se revisa periódicamente y se actualiza cada 72 horas.",
+    "currentVersion": "Versión actual del juego",
+    "updatedEvery": "Actualizado cada 72 h"
+  },
+  "faq": {
+    "howBoostWorks": "CÓMO FUNCIONA ESTE BOOST",
+    "howBoostWorksBody": "Un jugador verificado se une a tu sesión (o pilota tu cuenta tras el pago) y completa el progreso de forma manual: no se inyecta ningún software externo en tu cliente.",
+    "whySoCheap": "¿POR QUÉ TAN BARATO?",
+    "whySoCheapBody": "Agrupamos sesiones y pagamos a nuestros ejecutores por trabajo completado, así los costes fijos se mantienen bajos y el ahorro es para ti."
+  },
+  "configurator": {
+    "platform": "Plataforma",
+    "targetLevel": "Nivel objetivo",
+    "amount": "Cantidad",
+    "gameVersion": "Versión del juego",
+    "launcher": "Launcher",
+    "extras": "Opciones adicionales",
+    "delivery": "Velocidad de entrega",
+    "deliveryNormal": "Normal",
+    "deliveryExpress": "Express (+30 %)",
+    "deliverySuperExpress": "Súper Express (+60 %)"
+  },
+  "orders": {
+    "showCode": "Mostrar código",
+    "statusActionRequired": "Acción requerida",
+    "statusInProgress": "En curso",
+    "statusCompleted": "Completado",
+    "credentialsTitle": "Entrega segura de la cuenta",
+    "credentialsHint": "Envía tus credenciales solo aquí y solo después del pago. Se cifran y se borran automáticamente al completar el pedido."
+  },
+  "addons": {
+    "console": {
+      "casinoWork": "Trabajo del golpe al casino",
+      "cayoRuns": "Incursiones a Cayo Perico",
+      "crewInvite": "Invitación a la banda",
+      "nightSession": "Franja de sesión nocturna",
+      "pilotedOnly": "Método pilotado",
+      "priorityQueue": "Cola prioritaria",
+      "rpEvents": "Eventos RP de bonificación",
+      "sessionReport": "Informe de la sesión",
+      "slowSafeMode": "Modo lento y seguro",
+      "together": "Juntos — más barato (jugamos con usted)"
+    },
+    "pc": {
+      "heistPrep": "Preparación del golpe completada",
+      "kdReset": "Reinicio del ratio K/D",
+      "liveProgress": "Actualizaciones de progreso en vivo",
+      "priorityQueue": "Cola prioritaria",
+      "statsMax": "Estadísticas del personaje al máximo",
+      "stealthMode": "Ritmo sigiloso extra lento",
+      "together": "Juntos — más barato (jugamos con usted)",
+      "unlockAll": "Desbloquear todos los desbloqueables",
+      "vehiclePack": "Paquete de vehículos inicial",
+      "weaponPack": "Paquete de armas"
+    }
+  },
+  "footer": {
+    "ageNotice": "18+",
+    "companyColumn": "Empresa",
+    "copyright": "NEONDRIVE. Todos los derechos reservados.",
+    "paymentMethods": "Métodos de pago",
+    "privacy": "Política de privacidad",
+    "refund": "Política de reembolsos",
+    "servicesColumn": "Servicios",
+    "shopColumn": "Tienda",
+    "supportColumn": "Soporte",
+    "terms": "Condiciones de uso"
+  },
+  "about": {
+    "title": "Acerca de y Seguridad",
+    "safety": {
+      "heading": "Cómo mantenemos las cuentas seguras",
+      "body": "No se inyecta ningún software de terceros en tu cliente de juego. El progreso se consigue jugando de forma normal, a cargo de un jugador experimentado, por eso no tenemos ningún reporte de suspensión registrado. El estado de seguridad se revisa y se vuelve a publicar cada 72 horas."
+    },
+    "codes": {
+      "heading": "De dónde vienen los códigos",
+      "body": "Todos los códigos digitales proceden de distribuidores regionales autorizados y se revenden sin canjear. Cada código se entrega una sola vez: nuestro almacén lo marca como vendido en el momento de la entrega, por lo que no puede emitirse a dos clientes."
+    },
+    "payments": {
+      "heading": "Pagos",
+      "body": "Los pagos se procesan en criptomoneda a través de CryptoBot Pay. Nunca vemos ni almacenamos datos de tarjetas. Un pedido solo se completa tras una confirmación de pago firmada criptográficamente."
+    },
+    "credentials": {
+      "heading": "Tus credenciales",
+      "body": "Para los servicios pilotados, solo pedimos acceso a la cuenta después del pago, dentro de tu ficha de pedido. Las credenciales se cifran con AES-256 y se eliminan automáticamente en cuanto el pedido se marca como completado."
+    }
+  },
+  "dashboard": {
+    "ordersLabel": "Pedidos",
+    "activeLabel": "Activos",
+    "totalSpentLabel": "Total gastado",
+    "languageLabel": "Idioma",
+    "columnOrder": "Pedido",
+    "columnItem": "Artículo",
+    "columnTotal": "Total",
+    "columnStatus": "Estado",
+    "credentialsNotice": "Cifrado con AES-256 y se elimina automáticamente cuando tu pedido se completa.",
+    "loginPlaceholder": "Usuario de la cuenta / correo",
+    "passwordPlaceholder": "Contraseña de la cuenta",
+    "notePlaceholder": "Notas de 2FA / código de respaldo (opcional)",
+    "describeCashCard": "Código de tarjeta cash",
+    "describeLeveling": "Niveles → {level}",
+    "describeMoney": "Dinero → {amount}M",
+    "status": {
+      "awaiting_payment": "Esperando pago",
+      "action_required": "Requiere acción",
+      "in_progress": "En proceso",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "refunded": "Reembolsado"
+    }
+  },
+  "support": {
+    "faq": {
+      "title": "FAQ de soporte",
+      "q1": "¿Qué tan rápida es la entrega?",
+      "a1": "Los códigos son instantáneos. El boost comienza en cuanto un ejecutor toma tu pedido.",
+      "q2": "¿Tengo que compartir mi contraseña?",
+      "a2": "Solo para servicios pilotados, y solo después del pago, mediante el formulario cifrado de tu pedido.",
+      "q3": "¿Qué métodos de pago aceptan?",
+      "a3": "Solo cripto, procesado por CryptoBot Pay.",
+      "q4": "¿Puedo obtener un reembolso?",
+      "a4": "Los códigos no canjeados y los servicios no iniciados son reembolsables — consulta la política de reembolso."
+    }
+  },
+  "queue": {
+    "unclaimedTitle": "Pedidos disponibles",
+    "unclaimedEmpty": "No hay pedidos disponibles ahora mismo.",
+    "mineTitle": "Mis pedidos",
+    "mineEmpty": "Aún no has tomado ningún pedido.",
+    "claim": "Tomar",
+    "claimError": "Ya fue tomado — actualiza la lista.",
+    "openJob": "Abrir"
+  },
+  "jobs": {
+    "platform": "Plataforma",
+    "delivery": "Entrega",
+    "contact": "Contacto del cliente",
+    "noContact": "Sin contacto indicado",
+    "total": "Total",
+    "statusTitle": "Estado",
+    "historyTitle": "Historial",
+    "noHistory": "Aún no hay eventos.",
+    "statusError": "No se pudo actualizar el estado — inténtalo de nuevo.",
+    "moveTo": {
+      "in_progress": "Iniciar",
+      "action_required": "Requiere cliente",
+      "completed": "Marcar como completado"
+    }
+  },
+  "admin": {
+    "rolesTitle": "Roles de usuario",
+    "rolesEmpty": "Aún no hay usuarios.",
+    "roleFor": "Rol para {user}",
+    "roleError": "No se pudo actualizar el rol.",
+    "auditTitle": "Cambios de rol recientes",
+    "auditEmpty": "Aún no hay cambios de rol.",
+    "inventory": {
+      "title": "Inventario",
+      "stockTitle": "Niveles de stock",
+      "stockUnavailable": "El almacén de Sheets no está configurado — define SHEETS_WEBAPP_URL/SECRET para ver el stock.",
+      "sku": "SKU",
+      "denomination": "GTA$",
+      "price": "Precio",
+      "stock": "Stock",
+      "recentTitle": "Códigos entregados recientemente",
+      "recentEmpty": "Aún no se ha entregado ningún código.",
+      "revealed": "Revelado",
+      "notRevealed": "No revelado"
+    }
+  },
+  "auth": {
+    "title": "Iniciar sesión",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "sendLink": "Enviar enlace mágico",
+    "checkEmail": "Revisa tu correo para ver el enlace de acceso.",
+    "orDivider": "o",
+    "discordButton": "Continuar con Discord",
+    "error": "No se pudo enviar el enlace — inténtalo de nuevo."
+  },
+  "catalog": {
+    "cashCards": {
+      "title": "Shark Cards",
+      "summary": "Códigos digitales de GTA$, canjeables al instante en tu propia cuenta."
+    },
+    "levelingBoost": {
+      "title": "Boost de nivel",
+      "summary": "Un jugador experto sube el nivel de tu cuenta rápidamente."
+    },
+    "moneyBoost": {
+      "title": "Boost de dinero",
+      "summary": "Una gran cantidad de GTA$ añadida a tu cuenta por nuestro equipo."
+    }
+  },
+  "coop": {
+    "intro": "Sesiones piloted o en compañía — elige lo que se ajuste a tu forma de jugar."
+  },
+  "legal": {
+    "terms": {
+      "whoWeAre": {
+        "heading": "Quiénes somos",
+        "body": "Neondrive es una plataforma comunitaria independiente de códigos digitales y servicios de juego cooperativo para GTA V / GTA Online. No estamos afiliados, respaldados ni conectados con Rockstar Games ni Take-Two Interactive."
+      },
+      "eligibility": {
+        "heading": "Elegibilidad",
+        "body": "Debes tener al menos 18 años, o la mayoría de edad en tu país, para realizar un pedido. Al pedir, confirmas que cumples este requisito y que tu uso cumple con las leyes que te aplican."
+      },
+      "ordersPayment": {
+        "heading": "Pedidos y pago",
+        "body": "Los precios se muestran en USD. Aceptamos pago únicamente en BTC, ETH, USDT y TON — no hay opción de tarjeta ni transferencia bancaria. Un pedido se confirma cuando el pago se verifica en la cadena."
+      },
+      "coopRisk": {
+        "heading": "Servicios coop y boost",
+        "body": "Algunos servicios implican que un miembro de nuestro equipo juegue en tu cuenta, con tus credenciales o en una sesión conjunta. Compartir el acceso a tu cuenta va en contra de los términos de Rockstar/Take-Two y puede causar la suspensión de tu cuenta — ese riesgo lo asumes tú, independientemente de lo que hagamos nosotros. Nunca compartas credenciales que no estés dispuesto a arriesgar."
+      },
+      "prohibitedUse": {
+        "heading": "Uso prohibido",
+        "body": "No puedes usar el sitio para fraude, contracargos tras un pedido completado, o reventa comercial de nuestros códigos/servicios sin permiso por escrito. Nos reservamos el derecho de rechazar o cancelar cualquier pedido que razonablemente sospechemos vinculado a un uso prohibido."
+      },
+      "liability": {
+        "heading": "Responsabilidad",
+        "body": "Los servicios se ofrecen tal cual. Aplicamos las medidas de seguridad descritas en nuestra Política de privacidad, pero no podemos garantizar el estado de tu cuenta después de que un tercero haya jugado en ella. En la medida permitida por la ley, nuestra responsabilidad se limita al monto pagado por el pedido afectado."
+      }
+    },
+    "privacy": {
+      "whatWeCollect": {
+        "heading": "Qué recopilamos",
+        "body": "Tu correo o ID de Discord (para iniciar sesión), tu idioma, el contacto (Telegram/WhatsApp/Discord) que indicas al pagar, y tu historial de pedidos. No pedimos ni guardamos una contraseña para el sitio en sí — el inicio de sesión no usa contraseña."
+      },
+      "credentialsHandling": {
+        "heading": "Credenciales de la cuenta de juego",
+        "body": "Si decides compartir las credenciales de tu cuenta de juego para un pedido coop/boost, se cifran de inmediato y solo son visibles, descifradas, para el miembro del equipo asignado a ese pedido concreto. Se eliminan de forma permanente en cuanto el pedido se marca como completado, y nunca se incluyen en nuestras hojas de cálculo internas ni en los chats del equipo."
+      },
+      "howWeUseData": {
+        "heading": "Cómo usamos tus datos",
+        "body": "Para completar tu pedido, contactarte al respecto, y mejorar el servicio. No vendemos tus datos personales ni los usamos para publicidad."
+      },
+      "sheetsSync": {
+        "heading": "Registro interno",
+        "body": "Los metadatos del pedido — producto, plataforma, monto, estado y tu contacto — se sincronizan con una hoja de cálculo interna para operaciones y contabilidad. Las contraseñas de la cuenta de juego nunca se incluyen en esa sincronización."
+      },
+      "dataRetention": {
+        "heading": "Retención de datos",
+        "body": "Conservamos los registros de pedidos durante el tiempo necesario para contabilidad y soporte. Puedes solicitar la eliminación de tu cuenta y datos personales asociados en cualquier momento, sujeto a las obligaciones legales de conservación."
+      },
+      "yourRights": {
+        "heading": "Tus derechos",
+        "body": "Puedes solicitar ver, corregir o eliminar los datos personales que tenemos sobre ti contactando al soporte en Discord."
+      }
+    },
+    "refund": {
+      "digitalCodes": {
+        "heading": "Códigos digitales",
+        "body": "Un código aún no revelado se reembolsa íntegramente si no fue entregado como se describe. En cuanto haces clic en «Mostrar código», el pedido queda finalizado — en ese momento el código pasa a ser tuyo."
+      },
+      "coopServices": {
+        "heading": "Servicios coop y boost",
+        "body": "Reembolso completo si el pedido aún no ha sido tomado de la cola. Una vez que un miembro del equipo lo toma y empieza el trabajo, el reembolso se evalúa caso por caso según el trabajo realizado — contacta con soporte y lo resolveremos de forma justa."
+      },
+      "howToRequest": {
+        "heading": "Cómo solicitar un reembolso",
+        "body": "Abre un ticket en nuestro servidor de soporte de Discord con tu número de pedido. Solemos responder en 24 horas."
+      },
+      "paymentMethod": {
+        "heading": "Cómo se pagan los reembolsos",
+        "body": "Los reembolsos se envían en la misma criptomoneda con la que pagaste, a una dirección de wallet que nos proporciones."
+      },
+      "disputes": {
+        "heading": "Antes de abrir una disputa",
+        "body": "Por favor contacta primero con soporte — la mayoría de los problemas se resuelven más rápido así que mediante una disputa con el procesador de pago, y nos ayuda a solucionar el problema de verdad."
+      }
+    }
+  },
+  "checkout": {
+    "contactLabel": "¿Cómo te contactamos?",
+    "contactRequired": "Añade un contacto para continuar",
+    "contactMethodTelegram": "Telegram",
+    "contactMethodWhatsapp": "WhatsApp",
+    "contactMethodDiscord": "Discord",
+    "contactPlaceholderTelegram": "@tuusuario",
+    "contactPlaceholderWhatsapp": "+34 600 00 00 00",
+    "contactPlaceholderDiscord": "tuusuario",
+    "modalTitle": "Detalles del pedido",
+    "detailOneLabel": "Valor 1 (temporal — renombrar cuando se decida)",
+    "detailOnePlaceholder": "p. ej. nombre en el juego",
+    "detailTwoLabel": "Valor 2 (temporal — renombrar cuando se decida)",
+    "detailTwoPlaceholder": "p. ej. plataforma",
+    "commentLabel": "Comentario",
+    "commentPlaceholder": "Algo más que debamos saber",
+    "fillAllFields": "Completa todos los campos para continuar",
+    "payNow": "Pagar ahora"
+  }
+}

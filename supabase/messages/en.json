@@ -1,0 +1,255 @@
+{
+  "common": {
+    "disclaimer": "This website is an independent community and digital service platform. We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with Rockstar Games or Take-Two Interactive. All trademarks belong to their respective owners.",
+    "support": "Support",
+    "joinDiscord": "Join our Discord",
+    "buyNow": "Buy now",
+    "outOfStock": "Out of stock",
+    "total": "Total",
+    "payFor": "Pay {price}",
+    "buyFor": "Buy for {price}",
+    "creatingInvoice": "Creating invoice…",
+    "encrypting": "Encrypting…",
+    "sendSecurely": "Send securely",
+    "saveError": "Could not save — please contact support on Discord.",
+    "showCode": "Show Code",
+    "provideAccess": "Provide access",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "legalDisclaimer": "Legal disclaimer",
+    "inStock": "In stock",
+    "checkoutError": "Couldn't create the invoice.",
+    "retry": "Retry",
+    "ordersEmptyTitle": "No orders yet",
+    "ordersEmptyBody": "Once you buy something, it shows up here.",
+    "ordersEmptyCta": "Open the store",
+    "awaitingPaymentNote": "Checking your payment — this usually takes up to 2 minutes.",
+    "revealError": "Could not load the code — retry.",
+    "saving": "Saving…"
+  },
+  "nav": {
+    "home": "Home",
+    "store": "Store",
+    "coop": "Co-op & Boost",
+    "about": "About",
+    "support": "Support",
+    "dashboard": "Dashboard",
+    "login": "Log in",
+    "queue": "Queue",
+    "admin": "Admin"
+  },
+  "footer": {
+    "shopColumn": "Shop",
+    "servicesColumn": "Services",
+    "companyColumn": "Company",
+    "supportColumn": "Support",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "refund": "Refund policy",
+    "ageNotice": "18+",
+    "paymentMethods": "Payment methods",
+    "copyright": "NEONDRIVE. All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "titleLead": "Level up your account",
+      "titleAccent": "in one evening",
+      "subtitle": "Digital codes in stock and manual boosting from verified players. Crypto payments, delivery from 5 minutes."
+    },
+    "popular": {
+      "title": "Popular",
+      "configureCta": "Configure",
+      "priceFrom": "from"
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "step1Title": "Build your order",
+      "step1Body": "No password needed at this step.",
+      "step2Title": "Pay with crypto",
+      "step2Body": "Through CryptoBot. Refunds follow the Refund policy.",
+      "step3Title": "Get access",
+      "step3Body": "The code arrives instantly, boost status is visible in your dashboard 24/7."
+    },
+    "safety": {
+      "title": "Safety",
+      "noModsTitle": "Ban-risk-free methods",
+      "noModsBody": "Manual play only. No third-party software is ever installed on your account.",
+      "checkTitle": "Status checked every 72 hours",
+      "checkBodyWithDate": "Last checked: {date}.",
+      "checkBodyNoDate": "Safety status is reviewed regularly.",
+      "discordTitle": "Discord support",
+      "discordBody": "Real people on the other end, not a canned-response bot.",
+      "sharingTitle": "Safe Account Sharing",
+      "sharingBody": "Your password isn't asked for at checkout — it's submitted only after payment, through a separate secure form, encrypted with AES-256, and deleted as soon as the order closes."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "allQuestions": "All questions",
+      "q1": "How long does an order take?",
+      "a1": "Most orders start within minutes of payment; the exact time depends on the delivery speed you pick.",
+      "q2": "Is it safe for my account?",
+      "a2": "We only use manual play from verified executors — no third-party software or modifications are ever installed on your account.",
+      "q3": "Do you need my password?",
+      "a3": "No, checkout never asks for it. If a specific service needs it, you submit it separately after payment through a secure form.",
+      "q4": "Which cryptocurrencies do you accept?",
+      "a4": "Payment goes through CryptoBot — it supports all major cryptocurrencies; the full list is shown at the payment step.",
+      "q5": "What if the code doesn't arrive?",
+      "a5": "That's rare and usually a payment-confirmation delay. Message support or Discord and we'll check the status by hand.",
+      "q6": "How do refunds work?",
+      "a6": "Refunds follow the Refund policy if an order wasn't fulfilled. Message support with your order number."
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "subtitle": "Pick a product or service — crypto payment, delivery from 5 minutes.",
+      "primary": "Open the store"
+    }
+  },
+  "safety": {
+    "badge": "No bans reported",
+    "body": "No suspension reports have been received for this service. Safety status is reviewed regularly and updated every 72 hours.",
+    "currentVersion": "Current Game Version",
+    "updatedEvery": "Updated Every 72h"
+  },
+  "faq": {
+    "howBoostWorks": "HOW THIS BOOST WORKS",
+    "howBoostWorksBody": "A verified player joins your session (or pilots your account after payment) and completes the requested progress manually — no third-party software is injected into your client.",
+    "whySoCheap": "WHY SO CHEAP?",
+    "whySoCheapBody": "We batch sessions and pay our executors per completed job, so overhead stays minimal and savings go to you."
+  },
+  "configurator": {
+    "platform": "Platform",
+    "targetLevel": "Target level",
+    "amount": "Amount",
+    "gameVersion": "Game version",
+    "launcher": "Launcher",
+    "extras": "Extra options",
+    "delivery": "Delivery speed",
+    "deliveryNormal": "Normal",
+    "deliveryExpress": "Express (+30%)",
+    "deliverySuperExpress": "Super Express (+60%)"
+  },
+  "addons": {
+    "pc": {
+      "together": "Together — cheaper (play alongside us)",
+      "unlockAll": "Unlock all unlockables",
+      "statsMax": "Max out character stats",
+      "heistPrep": "Heist prep completed",
+      "kdReset": "K/D ratio cleanup",
+      "vehiclePack": "Starter vehicle pack",
+      "weaponPack": "Weapon pack",
+      "stealthMode": "Extra-slow stealth pacing",
+      "priorityQueue": "Priority queue",
+      "liveProgress": "Live progress updates"
+    },
+    "console": {
+      "together": "Together — cheaper (play alongside us)",
+      "pilotedOnly": "Piloted method",
+      "crewInvite": "Crew invite",
+      "nightSession": "Night session slot",
+      "casinoWork": "Casino heist work",
+      "cayoRuns": "Cayo Perico runs",
+      "rpEvents": "Bonus RP events",
+      "slowSafeMode": "Slow & safe mode",
+      "priorityQueue": "Priority queue",
+      "sessionReport": "Session report"
+    }
+  },
+  "orders": {
+    "showCode": "Show Code",
+    "statusActionRequired": "Action Required",
+    "statusInProgress": "In Progress",
+    "statusCompleted": "Completed",
+    "credentialsTitle": "Secure account handover",
+    "credentialsHint": "Submit your credentials only here, after payment. They are encrypted and erased automatically once the order is completed."
+  },
+  "about": {
+    "title": "About & Safety",
+    "safety": {
+      "heading": "How we keep accounts safe",
+      "body": "No third-party software is injected into your game client. Progress is earned through ordinary gameplay performed by an experienced player, which is why we have no suspension reports on file. Safety status is reviewed and republished every 72 hours."
+    },
+    "codes": {
+      "heading": "Where the codes come from",
+      "body": "All digital codes are sourced from authorised regional distributors and are resold in an unredeemed state. Each code is delivered exactly once: our warehouse marks it as sold at the moment of delivery, so it cannot be issued to two customers."
+    },
+    "payments": {
+      "heading": "Payments",
+      "body": "Payments are processed in cryptocurrency by CryptoBot Pay. We never see or store card data. An order is only fulfilled after a cryptographically signed payment confirmation."
+    },
+    "credentials": {
+      "heading": "Your credentials",
+      "body": "For piloted services we ask for account access only after payment, inside your order card. Secrets are encrypted with AES-256 and erased automatically the moment the order is marked complete."
+    }
+  },
+  "dashboard": {
+    "ordersLabel": "Orders",
+    "activeLabel": "Active",
+    "totalSpentLabel": "Total spent",
+    "languageLabel": "Language",
+    "columnOrder": "Order",
+    "columnItem": "Item",
+    "columnTotal": "Total",
+    "columnStatus": "Status",
+    "credentialsNotice": "Encrypted with AES-256 and erased automatically once your order is completed.",
+    "loginPlaceholder": "Account login / email",
+    "passwordPlaceholder": "Account password",
+    "notePlaceholder": "2FA / backup code notes (optional)",
+    "describeCashCard": "Cash card code",
+    "describeLeveling": "Leveling → {level}",
+    "describeMoney": "Money → {amount}M",
+    "status": {
+      "awaiting_payment": "Awaiting payment",
+      "action_required": "Action required",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    }
+  },
+  "support": {
+    "faq": {
+      "title": "Support FAQ",
+      "q1": "How fast is delivery?",
+      "a1": "Codes are instant. Boosts start as soon as an executor claims your order.",
+      "q2": "Do I have to share my password?",
+      "a2": "Only for piloted services, only after payment, through the encrypted form in your order card.",
+      "q3": "Which payments do you accept?",
+      "a3": "Crypto only, processed by CryptoBot Pay.",
+      "q4": "Can I get a refund?",
+      "a4": "Unredeemed codes and unstarted services are refundable — see the refund policy."
+    }
+  },
+  "queue": {
+    "unclaimedTitle": "Open jobs",
+    "unclaimedEmpty": "No open jobs right now.",
+    "mineTitle": "My jobs",
+    "mineEmpty": "You haven't claimed any jobs yet.",
+    "claim": "Claim",
+    "claimError": "Someone already claimed this — refresh the board.",
+    "openJob": "Open"
+  },
+  "jobs": {
+    "platform": "Platform",
+    "delivery": "Delivery",
+    "contact": "Customer contact",
+    "noContact": "No contact provided",
+    "total": "Total",
+    "statusTitle": "Status",
+    "historyTitle": "History",
+    "noHistory": "No events yet.",
+    "statusError": "Could not update the status — try again.",
+    "moveTo": {
+      "in_progress": "Start job",
+      "action_required": "Needs customer",
+      "completed": "Mark completed"
+    }
+  },
+  "admin": {
+    "rolesTitle": "User roles",
+    "rolesEmpty": "No users yet.",
+    "roleFor": "Role for {user}",
+    "roleError": "Could not update the role.",
+    "auditTitle": "Recent role changes",
+    "auditEmpty": "No role changes yet."
+  }
+}

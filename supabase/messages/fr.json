@@ -1,0 +1,255 @@
+{
+  "common": {
+    "disclaimer": "Ce site est une plateforme communautaire et de services numériques indépendante. Nous ne sommes ni affiliés, ni associés, ni autorisés, ni approuvés, ni officiellement liés à Rockstar Games ou Take-Two Interactive de quelque manière que ce soit. Toutes les marques appartiennent à leurs propriétaires respectifs.",
+    "support": "Assistance",
+    "joinDiscord": "Rejoindre Discord",
+    "buyNow": "Acheter",
+    "total": "Total",
+    "outOfStock": "Rupture de stock",
+    "payFor": "Payer {price}",
+    "buyFor": "Acheter pour {price}",
+    "creatingInvoice": "Création de la facture…",
+    "encrypting": "Chiffrement…",
+    "sendSecurely": "Envoyer en toute sécurité",
+    "saveError": "Échec de l'enregistrement — merci de contacter le support sur Discord.",
+    "showCode": "Afficher le code",
+    "provideAccess": "Fournir l'accès",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "legalDisclaimer": "Mention légale",
+    "inStock": "En stock",
+    "checkoutError": "Impossible de créer la facture.",
+    "retry": "Réessayer",
+    "ordersEmptyTitle": "Aucune commande pour le moment",
+    "ordersEmptyBody": "Dès votre premier achat, il apparaîtra ici.",
+    "ordersEmptyCta": "Aller à la boutique",
+    "awaitingPaymentNote": "Vérification du paiement en cours — cela prend généralement jusqu’à 2 minutes.",
+    "revealError": "Impossible de charger le code — réessayez.",
+    "saving": "Enregistrement…"
+  },
+  "nav": {
+    "home": "Accueil",
+    "store": "Boutique",
+    "coop": "Co-op & Boost",
+    "about": "À propos",
+    "support": "Assistance",
+    "dashboard": "Espace client",
+    "login": "Connexion",
+    "queue": "File d'attente",
+    "admin": "Admin"
+  },
+  "home": {
+    "cta": {
+      "primary": "Ouvrir la boutique",
+      "subtitle": "Choisissez un produit ou un service — paiement en crypto, livraison dès 5 minutes.",
+      "title": "Prêt à commencer ?"
+    },
+    "faq": {
+      "a1": "La plupart des commandes démarrent quelques minutes après le paiement ; le délai exact dépend de la vitesse de livraison choisie.",
+      "a2": "Nous utilisons uniquement du jeu manuel par des exécutants vérifiés — aucun logiciel tiers ni modification n'est jamais installé sur votre compte.",
+      "a3": "Non, il n'est jamais demandé au paiement. Si un service spécifique en a besoin, vous le fournissez séparément après le paiement via un formulaire sécurisé.",
+      "a4": "Le paiement passe par CryptoBot — il prend en charge toutes les principales cryptomonnaies ; la liste complète s'affiche à l'étape du paiement.",
+      "a5": "C'est rare et généralement dû à un retard de confirmation du paiement. Contactez le support ou Discord, nous vérifierons le statut manuellement.",
+      "a6": "Les remboursements suivent la politique de remboursement si une commande n'a pas été honorée. Contactez le support avec votre numéro de commande.",
+      "allQuestions": "Toutes les questions",
+      "q1": "Combien de temps prend une commande ?",
+      "q2": "Est-ce sûr pour mon compte ?",
+      "q3": "Avez-vous besoin de mon mot de passe ?",
+      "q4": "Quelles cryptomonnaies acceptez-vous ?",
+      "q5": "Et si le code n'arrive pas ?",
+      "q6": "Comment fonctionnent les remboursements ?",
+      "title": "Questions fréquentes"
+    },
+    "hero": {
+      "subtitle": "Codes numériques en stock et boost manuel par des joueurs vérifiés. Paiement en crypto, livraison dès 5 minutes.",
+      "titleAccent": "en une soirée",
+      "titleLead": "Boostez votre compte"
+    },
+    "howItWorks": {
+      "step1Body": "Aucun mot de passe requis à cette étape.",
+      "step1Title": "Composez votre commande",
+      "step2Body": "Via CryptoBot. Les remboursements suivent la politique de remboursement.",
+      "step2Title": "Payez en crypto",
+      "step3Body": "Le code arrive instantanément, le statut du boost est visible 24h/24 dans votre espace client.",
+      "step3Title": "Obtenez l'accès",
+      "title": "Comment ça marche"
+    },
+    "popular": {
+      "configureCta": "Configurer",
+      "priceFrom": "dès",
+      "title": "Populaire"
+    },
+    "safety": {
+      "checkBodyNoDate": "Le statut de sécurité est vérifié régulièrement.",
+      "checkBodyWithDate": "Dernière vérification : {date}.",
+      "checkTitle": "Statut vérifié toutes les 72 heures",
+      "discordBody": "De vraies personnes en face, pas un bot aux réponses toutes faites.",
+      "discordTitle": "Support sur Discord",
+      "noModsBody": "Jeu manuel uniquement. Aucun logiciel tiers n'est jamais installé sur le compte du client.",
+      "noModsTitle": "Méthodes sans risque de bannissement",
+      "sharingBody": "Votre mot de passe n'est jamais demandé au paiement — il n'est transmis qu'après paiement, via un formulaire sécurisé distinct, chiffré en AES-256, et supprimé dès la clôture de la commande.",
+      "sharingTitle": "Safe Account Sharing",
+      "title": "Sécurité"
+    }
+  },
+  "safety": {
+    "badge": "Aucun bannissement signalé",
+    "body": "Aucun signalement de suspension n'a été reçu pour ce service. Le statut de sécurité est vérifié régulièrement et mis à jour toutes les 72 heures.",
+    "currentVersion": "Version actuelle du jeu",
+    "updatedEvery": "Mis à jour toutes les 72 h"
+  },
+  "faq": {
+    "howBoostWorks": "COMMENT FONCTIONNE CE BOOST",
+    "howBoostWorksBody": "Un joueur vérifié rejoint votre session (ou pilote votre compte après paiement) et réalise la progression manuellement — aucun logiciel tiers n'est injecté dans votre client.",
+    "whySoCheap": "POURQUOI SI ABORDABLE ?",
+    "whySoCheapBody": "Nous regroupons les sessions et rémunérons nos exécutants à la mission, ce qui réduit les frais fixes et vous fait profiter des économies."
+  },
+  "configurator": {
+    "platform": "Plateforme",
+    "targetLevel": "Niveau visé",
+    "amount": "Montant",
+    "gameVersion": "Version du jeu",
+    "launcher": "Launcher",
+    "extras": "Options supplémentaires",
+    "delivery": "Vitesse de livraison",
+    "deliveryNormal": "Normale",
+    "deliveryExpress": "Express (+30 %)",
+    "deliverySuperExpress": "Super Express (+60 %)"
+  },
+  "orders": {
+    "showCode": "Afficher le code",
+    "statusActionRequired": "Action requise",
+    "statusInProgress": "En cours",
+    "statusCompleted": "Terminé",
+    "credentialsTitle": "Transmission sécurisée du compte",
+    "credentialsHint": "Transmettez vos identifiants uniquement ici, après le paiement. Ils sont chiffrés puis effacés automatiquement à la fin de la commande."
+  },
+  "addons": {
+    "console": {
+      "casinoWork": "Travail du braquage du casino",
+      "cayoRuns": "Runs Cayo Perico",
+      "crewInvite": "Invitation à l'équipe",
+      "nightSession": "Créneau de session nocturne",
+      "pilotedOnly": "Méthode pilotée",
+      "priorityQueue": "File d'attente prioritaire",
+      "rpEvents": "Événements RP bonus",
+      "sessionReport": "Rapport de session",
+      "slowSafeMode": "Mode lent et sûr",
+      "together": "Ensemble — moins cher (on joue avec vous)"
+    },
+    "pc": {
+      "heistPrep": "Préparation du braquage terminée",
+      "kdReset": "Réinitialisation du ratio K/D",
+      "liveProgress": "Mises à jour en direct de la progression",
+      "priorityQueue": "File d'attente prioritaire",
+      "statsMax": "Statistiques du personnage au maximum",
+      "stealthMode": "Rythme d'infiltration extra-lent",
+      "together": "Ensemble — moins cher (on joue avec vous)",
+      "unlockAll": "Débloquer tous les déblocables",
+      "vehiclePack": "Pack de véhicules de démarrage",
+      "weaponPack": "Pack d'armes"
+    }
+  },
+  "footer": {
+    "ageNotice": "18+",
+    "companyColumn": "Entreprise",
+    "copyright": "NEONDRIVE. Tous droits réservés.",
+    "paymentMethods": "Moyens de paiement",
+    "privacy": "Politique de confidentialité",
+    "refund": "Politique de remboursement",
+    "servicesColumn": "Services",
+    "shopColumn": "Boutique",
+    "supportColumn": "Support",
+    "terms": "Conditions d'utilisation"
+  },
+  "about": {
+    "title": "À propos & Sécurité",
+    "safety": {
+      "heading": "Comment nous protégeons les comptes",
+      "body": "Aucun logiciel tiers n'est injecté dans votre client de jeu. La progression est obtenue par un jeu normal effectué par un joueur expérimenté, ce qui explique l'absence de signalement de suspension à ce jour. Le statut de sécurité est vérifié et republié toutes les 72 heures."
+    },
+    "codes": {
+      "heading": "D'où viennent les codes",
+      "body": "Tous les codes numériques proviennent de distributeurs régionaux agréés et sont revendus non utilisés. Chaque code est livré une seule fois : notre entrepôt le marque comme vendu au moment de la livraison, il ne peut donc pas être attribué à deux clients."
+    },
+    "payments": {
+      "heading": "Paiements",
+      "body": "Les paiements sont traités en cryptomonnaie par CryptoBot Pay. Nous ne voyons ni ne stockons jamais les données de carte. Une commande n'est traitée qu'après confirmation de paiement signée cryptographiquement."
+    },
+    "credentials": {
+      "heading": "Vos identifiants",
+      "body": "Pour les services pilotés, nous ne demandons l'accès au compte qu'après le paiement, directement dans votre fiche de commande. Les identifiants sont chiffrés en AES-256 et supprimés automatiquement dès que la commande est marquée comme terminée."
+    }
+  },
+  "dashboard": {
+    "ordersLabel": "Commandes",
+    "activeLabel": "Actives",
+    "totalSpentLabel": "Total dépensé",
+    "languageLabel": "Langue",
+    "columnOrder": "Commande",
+    "columnItem": "Article",
+    "columnTotal": "Total",
+    "columnStatus": "Statut",
+    "credentialsNotice": "Chiffré en AES-256 et supprimé automatiquement une fois votre commande terminée.",
+    "loginPlaceholder": "Identifiant du compte / e-mail",
+    "passwordPlaceholder": "Mot de passe du compte",
+    "notePlaceholder": "Notes 2FA / code de secours (facultatif)",
+    "describeCashCard": "Code carte cash",
+    "describeLeveling": "Niveaux → {level}",
+    "describeMoney": "Argent → {amount}M",
+    "status": {
+      "awaiting_payment": "En attente de paiement",
+      "action_required": "Action requise",
+      "in_progress": "En cours",
+      "completed": "Terminée",
+      "cancelled": "Annulée",
+      "refunded": "Remboursée"
+    }
+  },
+  "support": {
+    "faq": {
+      "title": "FAQ support",
+      "q1": "Quelle est la rapidité de la livraison ?",
+      "a1": "Les codes sont instantanés. Le boost démarre dès qu'un exécutant prend votre commande en charge.",
+      "q2": "Dois-je partager mon mot de passe ?",
+      "a2": "Uniquement pour les services pilotés, et seulement après paiement, via le formulaire chiffré de votre fiche de commande.",
+      "q3": "Quels moyens de paiement acceptez-vous ?",
+      "a3": "Uniquement la crypto, traitée par CryptoBot Pay.",
+      "q4": "Puis-je obtenir un remboursement ?",
+      "a4": "Les codes non utilisés et les services non commencés sont remboursables — voir la politique de remboursement."
+    }
+  },
+  "queue": {
+    "unclaimedTitle": "Commandes disponibles",
+    "unclaimedEmpty": "Aucune commande disponible pour le moment.",
+    "mineTitle": "Mes commandes",
+    "mineEmpty": "Vous n'avez encore pris aucune commande.",
+    "claim": "Prendre en charge",
+    "claimError": "Déjà prise — actualisez la liste.",
+    "openJob": "Ouvrir"
+  },
+  "jobs": {
+    "platform": "Plateforme",
+    "delivery": "Livraison",
+    "contact": "Contact du client",
+    "noContact": "Aucun contact fourni",
+    "total": "Total",
+    "statusTitle": "Statut",
+    "historyTitle": "Historique",
+    "noHistory": "Aucun événement pour le moment.",
+    "statusError": "Impossible de mettre à jour le statut — réessayez.",
+    "moveTo": {
+      "in_progress": "Démarrer",
+      "action_required": "Client requis",
+      "completed": "Marquer comme terminé"
+    }
+  },
+  "admin": {
+    "rolesTitle": "Rôles des utilisateurs",
+    "rolesEmpty": "Aucun utilisateur pour le moment.",
+    "roleFor": "Rôle pour {user}",
+    "roleError": "Impossible de modifier le rôle.",
+    "auditTitle": "Derniers changements de rôle",
+    "auditEmpty": "Aucun changement de rôle pour le moment."
+  }
+}

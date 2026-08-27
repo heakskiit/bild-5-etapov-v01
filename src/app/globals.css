@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-pink: #ff2a85;
+  --neon-pink-rgb: 255, 42, 133;
+  --neon-blue: #00f0ff;
+  --neon-blue-rgb: 0, 240, 255;
+  --night: #0b0b16;
+  --night-rgb: 11, 11, 22;
+
+  /* Tunable: re-balance "how visible is the art" vs "how readable is the
+     text" in the fixed background overlay without touching any markup. */
+  --bg-overlay-alpha: 0.6;
+
+  /* ================================================================== */
+  /* NEONDRIVE design system §1.6 — copied as specified. Coexists with     */
+  /* the vars above for now (both `--night`/`--neon-pink` AND `--bg-base`/ */
+  /* `--pink-500` resolve to the same hex) — nothing currently reading the */
+  /* old names breaks. New work should read from this block.              */
+  /* ================================================================== */
+
+  /* Поверхности */
+  --bg-base: #0B0B16;
+  --bg-surface: #12121F;
+  --bg-surface-2: #1A1A2B;
+  --bg-elevated: #20203A;
+  --scrim: rgba(11, 11, 22, 0.72);
+
+  /* Границы */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.24);
+
+  /* Текст */
+  --text-primary: #F2F2F7;
+  --text-secondary: #A8A8C0;
+  --text-muted: #6E6E8A;
+  --text-on-accent: #0B0B16;
+
+  /* Акценты */
+  --pink-400: #FF5CA0;
+  --pink-500: #FF2A85;
+  --pink-600: #E01F72;
+  --cyan-400: #5CF6FF;
+  --cyan-500: #00F0FF;
+  --cyan-600: #00C4D1;
+
+  /* Статусы */
+  --success: #2BE58B;
+  --warning: #FFB020;
+  --danger: #FF4D4D;
+
+  /* Радиусы */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+  --r-xl: 24px; --r-pill: 999px;
+
+  /* Глубина — нейтральная */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.40);
+  --shadow-2: 0 8px 24px rgba(0,0,0,.45);
+
+  /* Свечение — только интерактив */
+  --glow-pink-sm: 0 0 0 1px rgba(255,42,133,.50), 0 0 16px rgba(255,42,133,.25);
+  --glow-pink-md: 0 0 0 1px rgba(255,42,133,.70), 0 0 32px rgba(255,42,133,.35);
+  --glow-cyan-sm: 0 0 0 1px rgba(0,240,255,.50), 0 0 16px rgba(0,240,255,.22);
+
+  /* Движение */
+  --t-fast: 120ms; --t-base: 180ms; --t-slow: 280ms;
+  --ease: cubic-bezier(.2,.8,.2,1);
+
+  /* Раскладка */
+  --container: 1200px;
+  --section-y: 96px;
+}
+
+@media (max-width: 768px) {
+  :root { --section-y: 56px; }
+}
+
+@layer base {
+  ::selection {
+    background: var(--neon-pink);
+    color: var(--night);
+  }
+  /* Neon focus ring — accessibility must survive the aesthetic. */
+  :focus-visible {
+    outline: 2px solid var(--neon-blue);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------------------------ */
+  /* Global background: image layer + darkening overlay.                */
+  /* Rendered as two fixed, full-viewport <div>s in layout.tsx rather    */
+  /* than `bg-fixed` on <body>, because background-attachment: fixed is  */
+  /* still unreliable on iOS Safari (the image scrolls with the page).  */
+  /* Stacking two real fixed elements behind normally-flowing content    */
+  /* gets the same "cards glide over a static backdrop" effect on every  */
+  /* browser. See layout.tsx for how these are mounted.                 */
+  /* ------------------------------------------------------------------ */
+  .bg-layer-image {
+    @apply pointer-events-none fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat;
+  }
+  .bg-layer-overlay {
+    @apply pointer-events-none fixed inset-0 -z-10;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--night-rgb), calc(var(--bg-overlay-alpha) + 0.1)) 0%,
+      rgba(var(--night-rgb), var(--bg-overlay-alpha)) 40%,
+      rgba(var(--night-rgb), calc(var(--bg-overlay-alpha) + 0.15)) 100%
+    );
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Glassmorphism surfaces — apply to every card: hero image tile,     */
+  /* info panels, the configurator column, the checkout bar.            */
+  /* Built on `surface` (#141428), the tone every existing card in this  */
+  /* codebase already uses (ProductFaq, Disclaimer, home/store/co-op/    */
+  /* dashboard) — this class exists to add the one thing those usages    */
+  /* were missing (backdrop-blur) and to stop the same four utilities    */
+  /* being retyped in ten files, not to introduce a competing palette.   */
+  /* `surface` is a plain hex in tailwind.config.ts, so `/60` opacity     */
+  /* resolves correctly with no arbitrary-value workaround needed.       */
+  /* ------------------------------------------------------------------ */
+  .glass-panel {
+    @apply relative rounded-2xl border border-white/10 bg-surface/60 backdrop-blur-xl backdrop-saturate-150;
+  }
+  .glass-panel-sm {
+    @apply relative rounded-lg border border-white/10 bg-surface/50 backdrop-blur-md backdrop-saturate-150;
+  }
+
+  /* Brand-tinted edges for panels that read as "pink" or "blue" at rest —
+     no glow, just a low-opacity colored border (matches the hero image
+     tile and the "No bans reported" panel in the references). Pair with
+     `glass-panel`/`glass-panel-sm`, e.g. `glass-panel-sm glass-edge-blue`. */
+  .glass-edge-pink {
+    @apply border-neon-pink/35;
+  }
+  .glass-edge-blue {
+    @apply border-neon-blue/35;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* NOTE on the active/selected glow (chosen platform, chosen delivery  */
+  /* speed, primary CTAs): there's no separate class for that here.      */
+  /* The codebase already has one — `border-neon-pink shadow-neon-pink`  */
+  /* (and the blue equivalent), used in Header, OrderRow, the homepage   */
+  /* hero, etc. Those two utilities together ARE "crisp edge + soft      */
+  /* bloom": the border supplies the crisp edge, and `shadow-neon-pink`  */
+  /* (fixed in tailwind.config.ts — see the comment there) supplies a    */
+  /* single tight 14px bloom instead of the old 42px haze. Use that      */
+  /* existing pair everywhere rather than inventing a second glow system.*/
+  /* ------------------------------------------------------------------ */
+}
+
+/* Graceful degradation: browsers without backdrop-filter support render
+   glass panels as too transparent to read text on. Fall back to a
+   near-opaque fill instead of relying on blur to do the contrast work. */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel,
+  .glass-panel-sm {
+    background-color: rgba(var(--night-rgb), 0.9);
+  }
+}
