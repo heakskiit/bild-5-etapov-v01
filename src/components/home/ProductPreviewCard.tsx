@@ -42,6 +42,7 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 	const [modalOpen, setModalOpen] = useState(false);
 	const [contact, setContact] = useState<Contact>({ method: 'telegram', handle: '' });
 	const [details, setDetails] = useState<OrderDetails>(emptyOrderDetails);
+	const [promoCode, setPromoCode] = useState('');
 	const { busy, error, checkout, clearError } = useCheckout();
 
 	const card = SHARK_CARDS.find((c) => c.id === variantId)!;
@@ -51,7 +52,7 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 		label: formatDenomination(c.denomination),
 	}));
 
-	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details);
+	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details, promoCode);
 
 	return (
 		<div className="glass-panel p-6">
@@ -68,7 +69,6 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 					</span>
 				)}
 			</div>
-			<p className="mt-1 font-display text-3xl tabular-nums text-ink">${card.price.toFixed(2)}</p>
 
 			<div className="mt-4">
 				<ChipGroup label={t('configurator.amount')} options={options} value={variantId} onChange={setVariantId} />
@@ -92,6 +92,8 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 				onContactChange={setContact}
 				details={details}
 				onDetailsChange={setDetails}
+				promoCode={promoCode}
+				onPromoCodeChange={setPromoCode}
 				busy={busy}
 				error={error}
 				onSubmit={buy}

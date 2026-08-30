@@ -21,7 +21,7 @@ export async function CtaStrip({ locale }: { locale: string }) {
 					<p className="mt-1 text-sm text-ink-soft">{t('home.cta.subtitle')}</p>
 				</div>
 				<div className="flex flex-col items-center gap-3 sm:flex-row">
-					<Link href={`/${locale}/store`} className={buttonClasses('primary', 'lg')}>
+					<Link href={`/${locale}/gta-5`} className={buttonClasses('primary', 'lg')}>
 						{t('home.cta.primary')}
 					</Link>
 					<a

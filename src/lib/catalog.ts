@@ -19,18 +19,14 @@ export interface CatalogEntry {
   illustration: string;
   gameVersion: string;
   section: 'store' | 'coop';
+  /** Which numbered title this product belongs to — the new GTA V / GTA VI
+   *  top-level split. Separate from `gameVersion` (a patch string like
+   *  '1.70') on purpose: one is "which game", the other is "which patch of
+   *  that game", and conflating them would make both harder to read. */
+  game: 'gta5' | 'gta6';
 }
 
 export const CATALOG: CatalogEntry[] = [
-  {
-    slug: 'cash-cards',
-    kind: 'shark_card',
-    titleKey: 'catalog.cashCards.title',
-    summaryKey: 'catalog.cashCards.summary',
-    illustration: '/illustrations/cash-card.svg',
-    gameVersion: '1.70',
-    section: 'store',
-  },
   {
     slug: 'leveling-boost',
     kind: 'leveling',
@@ -39,6 +35,7 @@ export const CATALOG: CatalogEntry[] = [
     illustration: '/illustrations/level-up.svg',
     gameVersion: '1.70',
     section: 'coop',
+    game: 'gta5',
   },
   {
     slug: 'money-boost',
@@ -48,9 +45,22 @@ export const CATALOG: CatalogEntry[] = [
     illustration: '/illustrations/money-drop.svg',
     gameVersion: '1.70',
     section: 'coop',
+    game: 'gta5',
+  },
+  {
+    slug: 'cash-cards',
+    kind: 'shark_card',
+    titleKey: 'catalog.cashCards.title',
+    summaryKey: 'catalog.cashCards.summary',
+    illustration: '/illustrations/cash-card.svg',
+    gameVersion: '1.70',
+    section: 'store',
+    game: 'gta5',
   },
 ];
 
 export const getProductBySlug = (slug: string) => CATALOG.find((p) => p.slug === slug);
 export const getProductsBySection = (section: CatalogEntry['section']) =>
   CATALOG.filter((p) => p.section === section);
+export const getProductsByGame = (game: CatalogEntry['game']) =>
+  CATALOG.filter((p) => p.game === game);

@@ -19,7 +19,8 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
 	const { data: orders } = await supabase
 		.from('orders')
 		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, created_at')
-		.order('created_at', { ascending: true });
+		.order('created_at', { ascending: true })
+		.limit(100);
 
 	const list = orders ?? [];
 	const unclaimed = list.filter((o) => !o.assigned_modder_id);

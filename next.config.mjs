@@ -19,7 +19,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "img-src 'self' data: blob:",
+              "img-src 'self' data: blob: https://cdn.discordapp.com",
               // 'unsafe-eval' is required for Next.js dev-mode Fast Refresh/HMR to
               // execute at all; it is intentionally omitted in production builds.
               `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,

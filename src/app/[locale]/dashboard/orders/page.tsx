@@ -25,7 +25,8 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   const { data: orders } = await supabase
     .from('orders')
     .select('public_id, status, selection, total_usd, created_at')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(50);
 
   return (
     <div>
@@ -57,7 +58,7 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
         <div className="glass-panel mt-6 flex flex-col items-center gap-3 p-10 text-center">
           <p className="font-display text-lg text-ink">{t('common.ordersEmptyTitle')}</p>
           <p className="max-w-sm text-sm text-ink-soft">{t('common.ordersEmptyBody')}</p>
-          <Link href={`/${locale}/store`} className={buttonClasses('primary', 'md')}>
+          <Link href={`/${locale}/gta-5`} className={buttonClasses('primary', 'md')}>
             {t('common.ordersEmptyCta')}
           </Link>
         </div>

@@ -39,7 +39,10 @@
     "dashboard": "Dashboard",
     "login": "Log in",
     "queue": "Queue",
-    "admin": "Admin"
+    "admin": "Admin",
+    "gta5": "GTA V",
+    "gta6": "GTA VI",
+    "logout": "Log out"
   },
   "footer": {
     "shopColumn": "Shop",
@@ -392,6 +395,13 @@
     "commentLabel": "Comment",
     "commentPlaceholder": "Anything else we should know",
     "fillAllFields": "Fill in all fields to continue",
-    "payNow": "Pay now"
+    "payNow": "Pay now",
+    "promoLabel": "Promo code (optional)",
+    "promoPlaceholder": "e.g. WELCOME10",
+    "invalidPromo": "That code isn't valid or has already been used."
+  },
+  "gta": {
+    "comingSoon": "Coming Soon",
+    "gta6Intro": "GTA VI isn't out yet — this section goes live at launch."
   }
 }

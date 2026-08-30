@@ -38,6 +38,7 @@ export function SharkCardConfigurator({
 	const [modalOpen, setModalOpen] = useState(false);
 	const [contact, setContact] = useState<Contact>({ method: 'telegram', handle: '' });
 	const [details, setDetails] = useState<OrderDetails>(emptyOrderDetails);
+	const [promoCode, setPromoCode] = useState('');
 	const { busy, error, checkout, clearError } = useCheckout();
 
 	const card = SHARK_CARDS.find((c) => c.id === variantId)!;
@@ -48,7 +49,7 @@ export function SharkCardConfigurator({
 		label: formatDenomination(c.denomination),
 	}));
 
-	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details);
+	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details, promoCode);
 
 	return (
 		<div className="glass-panel space-y-5 p-6">
@@ -59,13 +60,11 @@ export function SharkCardConfigurator({
 				onChange={setVariantId}
 			/>
 
-			<div className="glass-panel-sm border-neon-pink shadow-neon-pink flex flex-wrap items-center justify-between gap-4 p-4">
-				<div className="flex flex-col">
-					<span className="font-display text-2xl text-neon-blue">${card.price.toFixed(2)}</span>
-				</div>
+			<div className="glass-panel-sm border-neon-pink shadow-neon-pink p-4">
 				<Button
 					variant="primary"
 					size="lg"
+					className="w-full"
 					onClick={() => setModalOpen(true)}
 					disabled={soldOut}
 					disabledReason={soldOut ? t('common.outOfStock') : undefined}
@@ -84,6 +83,8 @@ export function SharkCardConfigurator({
 				onContactChange={setContact}
 				details={details}
 				onDetailsChange={setDetails}
+				promoCode={promoCode}
+				onPromoCodeChange={setPromoCode}
 				busy={busy}
 				error={error}
 				onSubmit={buy}

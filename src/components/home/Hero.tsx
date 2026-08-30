@@ -49,11 +49,11 @@ export async function Hero({ locale }: { locale: string }) {
 					<p className="mt-5 max-w-[52ch] text-lg text-ink-soft">{t('home.hero.subtitle')}</p>
 
 					<div className="mt-8 flex flex-col gap-3 sm:flex-row">
-						<Link href={`/${locale}/store`} className={buttonClasses('primary', 'lg')}>
-							{t('nav.store')}
+						<Link href={`/${locale}/gta-5`} className={buttonClasses('primary', 'lg')}>
+							{t('nav.gta5')}
 						</Link>
-						<Link href={`/${locale}/co-op`} className={buttonClasses('secondary', 'lg')}>
-							{t('nav.coop')}
+						<Link href={`/${locale}/gta-6`} className={buttonClasses('secondary', 'lg')}>
+							{t('nav.gta6')}
 						</Link>
 					</div>
 

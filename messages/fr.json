@@ -39,7 +39,10 @@
     "dashboard": "Espace client",
     "login": "Connexion",
     "queue": "File d'attente",
-    "admin": "Admin"
+    "admin": "Admin",
+    "gta5": "GTA V",
+    "gta6": "GTA VI",
+    "logout": "Déconnexion"
   },
   "home": {
     "cta": {
@@ -392,6 +395,13 @@
     "commentLabel": "Commentaire",
     "commentPlaceholder": "Autre chose que nous devrions savoir",
     "fillAllFields": "Remplissez tous les champs pour continuer",
-    "payNow": "Payer maintenant"
+    "payNow": "Payer maintenant",
+    "promoLabel": "Code promo (facultatif)",
+    "promoPlaceholder": "ex. WELCOME10",
+    "invalidPromo": "Ce code n'est pas valide ou a déjà été utilisé."
+  },
+  "gta": {
+    "comingSoon": "Bientôt",
+    "gta6Intro": "GTA VI n'est pas encore sorti — cette section sera active au lancement."
   }
 }

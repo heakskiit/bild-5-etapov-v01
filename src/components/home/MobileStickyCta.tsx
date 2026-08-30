@@ -44,7 +44,7 @@ export function MobileStickyCta({ locale }: { locale: string }) {
 					<p className="text-[11px] uppercase tracking-widest text-ink-muted">от</p>
 					<p className="font-display text-lg tabular-nums text-ink">${price.toFixed(2)}</p>
 				</div>
-				<Link href={`/${locale}/store`} className={buttonClasses('primary', 'md')} tabIndex={visible ? 0 : -1}>
+				<Link href={`/${locale}/gta-5`} className={buttonClasses('primary', 'md')} tabIndex={visible ? 0 : -1}>
 					Открыть магазин
 				</Link>
 			</div>

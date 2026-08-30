@@ -1,6 +1,9 @@
 /**
- * Locale negotiation: cookie → Accept-Language → 'en'.
- * Runs before every page render so SSR output is already localised (SEO).
+ * Locale negotiation: cookie → 'en'. New visitors always land on /en
+ * regardless of browser language; once someone picks a different locale
+ * via the language switcher, that choice is remembered via cookie and
+ * wins on every later visit. Runs before every page render so SSR output
+ * is already localised (SEO).
  *
  * Also guards /[locale]/dashboard/** (spec §2: role check at the
  * middleware layer, not just per-page). This is deliberately redundant
@@ -20,7 +23,12 @@ const PUBLIC_FILE = /\.(.*)$/;
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || PUBLIC_FILE.test(pathname)) {
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname === '/auth/callback' ||
+    PUBLIC_FILE.test(pathname)
+  ) {
     return NextResponse.next();
   }
 
@@ -28,15 +36,7 @@ export async function middleware(request: NextRequest) {
 
   if (!hasLocale) {
     const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
-    const headerLocale = request.headers
-      .get('accept-language')
-      ?.split(',')
-      .map((part) => part.split(';')[0].trim().slice(0, 2).toLowerCase())
-      .find((code) => LOCALES.includes(code as (typeof LOCALES)[number]));
-
-    const locale =
-      (LOCALES as readonly string[]).includes(cookieLocale ?? '') ? cookieLocale! :
-      headerLocale ?? DEFAULT_LOCALE;
+    const locale = (LOCALES as readonly string[]).includes(cookieLocale ?? '') ? cookieLocale! : DEFAULT_LOCALE;
 
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;

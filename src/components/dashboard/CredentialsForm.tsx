@@ -24,7 +24,11 @@ export function CredentialsForm({
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setState('sending');
-    const form = new FormData(event.currentTarget);
+    // Captured before the first await: React pools/nulls the SyntheticEvent
+    // (including currentTarget) once this handler yields, so reading
+    // event.currentTarget *after* the fetch resolves throws.
+    const formEl = event.currentTarget;
+    const form = new FormData(formEl);
 
     const res = await fetch('/api/orders/credentials', {
       method: 'POST',
@@ -38,7 +42,7 @@ export function CredentialsForm({
     });
 
     // Nothing is kept in component state: no secret survives the submit.
-    event.currentTarget.reset();
+    formEl.reset();
     if (res.ok) onDone();
     else setState('error');
   };

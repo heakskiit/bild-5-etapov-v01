@@ -14,8 +14,8 @@ export async function Header({ locale }: { locale: string }) {
 	const user = await requireUser();
 
 	const links: NavLink[] = [
-		{ href: `/${locale}/store`, label: t('nav.store') },
-		{ href: `/${locale}/co-op`, label: t('nav.coop') },
+		{ href: `/${locale}/gta-5`, label: t('nav.gta5') },
+		{ href: `/${locale}/gta-6`, label: t('nav.gta6') },
 		{ href: `/${locale}/about`, label: t('nav.about') },
 		{ href: `/${locale}/support`, label: t('nav.support') },
 	];
@@ -28,6 +28,7 @@ export async function Header({ locale }: { locale: string }) {
 				</Link>
 
 				<HeaderNav
+					locale={locale}
 					links={links}
 					// §4.2 point 2: "Для гостя кнопка называется «Войти», для
 					// авторизованного — «Кабинет» с аватаром." `user_metadata.avatar_url`
@@ -37,6 +38,8 @@ export async function Header({ locale }: { locale: string }) {
 					authHref={user ? `/${locale}/dashboard` : `/${locale}/auth`}
 					authLabel={user ? t('nav.dashboard') : t('nav.login')}
 					authAvatarUrl={(user?.user_metadata?.avatar_url as string | undefined) ?? null}
+					isAuthenticated={Boolean(user)}
+					logoutLabel={t('nav.logout')}
 					openMenuLabel={t('common.openMenu')}
 					closeMenuLabel={t('common.closeMenu')}
 				/>

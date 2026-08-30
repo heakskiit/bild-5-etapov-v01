@@ -74,5 +74,13 @@ export const checkoutRequestSchema = z
     contactMethod: contactMethodSchema,
     contactHandle: z.string().trim().min(2, 'contact handle too short').max(120),
     details: orderDetailsSchema,
+    // Optional — normalized to uppercase so 'welcome10' and 'WELCOME10'
+    // hit the same row; the claim itself still happens server-side only.
+    promoCode: z
+      .string()
+      .trim()
+      .max(64)
+      .transform((v) => v.toUpperCase())
+      .optional(),
   })
   .strict();

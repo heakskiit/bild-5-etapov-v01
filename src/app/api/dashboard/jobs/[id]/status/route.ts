@@ -14,7 +14,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { id: publicId } = await params;
 
   const user = await requireUser();
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  if (!user) {
+    console.warn('[jobs/status] rejected: no session on the request');
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
 
   const profile = await getProfile();
   if (!profile || !['modder', 'admin'].includes(profile.role)) {

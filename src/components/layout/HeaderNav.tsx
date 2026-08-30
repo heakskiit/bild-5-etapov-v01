@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { LogoutButton } from './LogoutButton';
 
 export interface NavLink {
 	href: string;
@@ -17,17 +18,23 @@ export interface NavLink {
  * and translations don't have to round-trip to the client.
  */
 export function HeaderNav({
+	locale,
 	links,
 	authHref,
 	authLabel,
 	authAvatarUrl,
+	isAuthenticated,
+	logoutLabel,
 	openMenuLabel,
 	closeMenuLabel,
 }: {
+	locale: string;
 	links: NavLink[];
 	authHref: string;
 	authLabel: string;
 	authAvatarUrl?: string | null;
+	isAuthenticated: boolean;
+	logoutLabel: string;
 	openMenuLabel: string;
 	closeMenuLabel: string;
 }) {
@@ -68,8 +75,9 @@ export function HeaderNav({
 				))}
 			</div>
 
-			<div className="hidden md:block">
+			<div className="hidden items-center gap-2 md:flex">
 				<AuthLink />
+				{isAuthenticated && <LogoutButton locale={locale} label={logoutLabel} />}
 			</div>
 
 			{/* Mobile burger — only the trigger is visible under md; the panel
@@ -108,8 +116,16 @@ export function HeaderNav({
 							</Link>
 						))}
 					</nav>
-					<div className="mt-8">
+					<div className="mt-8 flex flex-col gap-3">
 						<AuthLink onNavigate={() => setOpen(false)} />
+						{isAuthenticated && (
+							<LogoutButton
+								locale={locale}
+								label={logoutLabel}
+								onNavigate={() => setOpen(false)}
+								className="inline-flex items-center gap-2 text-lg text-white/70"
+							/>
+						)}
 					</div>
 				</div>
 			)}

@@ -27,6 +27,8 @@ export function CheckoutModal({
 	onContactChange,
 	details,
 	onDetailsChange,
+	promoCode,
+	onPromoCodeChange,
 	busy,
 	error,
 	onSubmit,
@@ -39,6 +41,8 @@ export function CheckoutModal({
 	onContactChange: (c: Contact) => void;
 	details: OrderDetails;
 	onDetailsChange: (d: OrderDetails) => void;
+	promoCode: string;
+	onPromoCodeChange: (v: string) => void;
 	busy: boolean;
 	error: CheckoutError | null;
 	onSubmit: () => void;
@@ -125,6 +129,21 @@ export function CheckoutModal({
 						onChange={(e) => onDetailsChange({ ...details, comment: e.target.value })}
 						placeholder={t('checkout.commentPlaceholder')}
 						rows={3}
+						className={INPUT}
+					/>
+				</div>
+
+				<div className="space-y-2">
+					<label className="block text-xs uppercase tracking-widest text-white/50" htmlFor="checkout-promo">
+						{t('checkout.promoLabel')}
+					</label>
+					<input
+						id="checkout-promo"
+						type="text"
+						value={promoCode}
+						onChange={(e) => onPromoCodeChange(e.target.value)}
+						placeholder={t('checkout.promoPlaceholder')}
+						autoCapitalize="characters"
 						className={INPUT}
 					/>
 				</div>

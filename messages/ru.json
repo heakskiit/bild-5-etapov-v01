@@ -39,7 +39,10 @@
     "dashboard": "Кабинет",
     "login": "Войти",
     "queue": "Очередь",
-    "admin": "Админ"
+    "admin": "Админ",
+    "gta5": "GTA V",
+    "gta6": "GTA VI",
+    "logout": "Выйти"
   },
   "footer": {
     "shopColumn": "Магазин",
@@ -392,6 +395,13 @@
     "commentLabel": "Комментарий",
     "commentPlaceholder": "Что-то ещё, что нам стоит знать",
     "fillAllFields": "Заполните все поля, чтобы продолжить",
-    "payNow": "Оплатить"
+    "payNow": "Оплатить",
+    "promoLabel": "Промокод (необязательно)",
+    "promoPlaceholder": "например, WELCOME10",
+    "invalidPromo": "Код недействителен или уже использован."
+  },
+  "gta": {
+    "comingSoon": "Скоро",
+    "gta6Intro": "GTA VI ещё не вышла — раздел заработает после релиза."
   }
 }

@@ -6,31 +6,29 @@ import { getTranslations } from '@/lib/i18n/getTranslations';
 import { BtcIcon, EthIcon, UsdtIcon, TonIcon } from '@/components/ui/icons';
 
 /**
- * §4.2 point 9: "Четыре колонки: Магазин · Услуги · Компания · Поддержка.
- * Отдельным блоком с рамкой — обязательный дисклеймер ... Плюс «18+»,
- * иконки принимаемых криптовалют, копирайт и переключатель языка."
+ * §4.2 point 9 (originally): "Четыре колонки: Магазин · Услуги · Компания ·
+ * Поддержка." Since the GTA V / GTA VI restructure, Shop and Services were
+ * both just `section: 'store' | 'coop'` slices of the same GTA V catalog —
+ * now that GTA V is its own top-level section in the header, splitting it
+ * two ways here just duplicates that grouping under a different name.
+ * Merged into one GTA V column instead (three columns total). GTA VI stays
+ * header-only for now — it has no real links yet, so a footer column would
+ * be a heading over a single "Coming Soon", not worth the row.
  *
- * The first two columns are the catalog's own `section: 'store' | 'coop'`
- * split (see lib/catalog.ts) rather than a hand-typed link list, so a new
- * product added to the catalog shows up here automatically instead of
- * silently missing from the footer.
+ * The GTA V column still reads straight from the catalog's `game: 'gta5'`
+ * entries rather than a hand-typed link list, so a new product shows up
+ * here automatically instead of silently missing from the footer.
  */
 export async function Footer({ locale }: { locale: string }) {
   const t = await getTranslations();
 
-  const shopLinks = CATALOG.filter((p) => p.section === 'store');
-  const serviceLinks = CATALOG.filter((p) => p.section === 'coop');
+  const gta5Links = CATALOG.filter((p) => p.game === 'gta5');
 
   const columns: { key: string; heading: string; links: { href: string; label: string }[] }[] = [
     {
-      key: 'shop',
-      heading: t('footer.shopColumn'),
-      links: shopLinks.map((p) => ({ href: `/${locale}/product/${p.slug}`, label: t(p.titleKey) })),
-    },
-    {
-      key: 'services',
-      heading: t('footer.servicesColumn'),
-      links: serviceLinks.map((p) => ({ href: `/${locale}/product/${p.slug}`, label: t(p.titleKey) })),
+      key: 'gta5',
+      heading: t('nav.gta5'),
+      links: gta5Links.map((p) => ({ href: `/${locale}/product/${p.slug}`, label: t(p.titleKey) })),
     },
     {
       key: 'company',
@@ -54,7 +52,7 @@ export async function Footer({ locale }: { locale: string }) {
   return (
     <footer className="mt-16 border-t border-white/10 bg-night px-4 py-10">
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
           {columns.map((col) => (
             <div key={col.key}>
               <p className="font-display text-xs uppercase tracking-widest text-ink-muted">{col.heading}</p>

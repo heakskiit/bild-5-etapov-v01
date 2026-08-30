@@ -38,6 +38,16 @@ export function CheckoutErrorNote({
 		);
 	}
 
+	if (error.code === 'invalid_promo') {
+		// Retrying with the same code fails the same way every time — no
+		// button here, just enough text to point at the field to fix.
+		return (
+			<div className="mt-1">
+				<span className="text-xs text-pink-400">{t('checkout.invalidPromo')}</span>
+			</div>
+		);
+	}
+
 	return (
 		<div className="mt-1 flex items-center gap-2">
 			<span className="text-xs text-pink-400">{t('common.checkoutError')}</span>

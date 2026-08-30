@@ -90,6 +90,7 @@ export function BoostConfigurator({
 	const [modalOpen, setModalOpen] = useState(false);
 	const [contact, setContact] = useState<Contact>({ method: 'telegram', handle: '' });
 	const [details, setDetails] = useState<OrderDetails>(emptyOrderDetails);
+	const [promoCode, setPromoCode] = useState('');
 	const { busy, error, checkout, clearError } = useCheckout();
 
 	const patch = (next: Partial<OrderSelection>) => setSelection((prev) => ({ ...prev, ...next }));
@@ -141,7 +142,7 @@ export function BoostConfigurator({
 		});
 		// Only IDs travel over the wire. No price — the server recomputes it from
 		// pricing.config.ts and never trusts a client-supplied amount.
-		checkout(selection, contact, details);
+		checkout(selection, contact, details, promoCode);
 	};
 
 	return (
@@ -243,6 +244,8 @@ export function BoostConfigurator({
 				onContactChange={setContact}
 				details={details}
 				onDetailsChange={setDetails}
+				promoCode={promoCode}
+				onPromoCodeChange={setPromoCode}
 				busy={busy}
 				error={error}
 				onSubmit={buy}
@@ -270,17 +273,12 @@ function CheckoutBar({
 		// pair OrderRow/Header/the homepage hero already use for an active
 		// state — now that shadow-neon-pink is a single tight 14px bloom
 		// (tailwind.config.ts) instead of a 42px one, it stays crisp here too.
-		<div className="glass-panel-sm border-neon-pink shadow-neon-pink flex flex-wrap items-center justify-between gap-4 p-4">
-			<div className="flex flex-col">
-				<span className="font-display text-xs uppercase tracking-widest text-white/50">{t('common.total')}</span>
-				<span className="font-display text-2xl text-neon-blue">
-					{priceBreakdown ? `$${priceBreakdown.total.toFixed(2)}` : '—'}
-				</span>
-				{priceError && <span className="text-xs text-pink-400">{priceError}</span>}
-			</div>
+		<div className="glass-panel-sm border-neon-pink shadow-neon-pink space-y-2 p-4">
+			{priceError && <p className="text-xs text-pink-400">{priceError}</p>}
 			<Button
 				variant="primary"
 				size="lg"
+				className="w-full"
 				onClick={onBuyClick}
 				disabled={!priceBreakdown}
 				disabledReason={!priceBreakdown ? (priceError ?? undefined) : undefined}
