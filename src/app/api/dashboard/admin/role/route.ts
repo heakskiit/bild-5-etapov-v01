@@ -7,7 +7,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { requireUser, getProfile } from '@/lib/supabase/auth';
+import { requireUser, getVerifiedProfile } from '@/lib/supabase/auth';
 import { serviceClient } from '@/lib/supabase/service';
 import { setRoleSchema } from '@/lib/validation/dashboard';
 
@@ -15,7 +15,10 @@ export async function POST(request: Request) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
 
-  const caller = await getProfile();
+  // getVerifiedProfile(), not getProfile(): serviceClient() below bypasses RLS,
+  // so this role check is the only gate on the write and must come from the
+  // session, never from a request header.
+  const caller = await getVerifiedProfile();
   if (!caller || caller.role !== 'admin') {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }

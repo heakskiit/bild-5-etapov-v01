@@ -23,13 +23,21 @@ const PUBLIC_FILE = /\.(.*)$/;
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // FIX-SEC-001: x-nd-user-* arriving from outside is forged by definition —
+  // guardDashboard() below is the only legitimate writer. Strip on every path,
+  // including /api, before anything downstream can read them.
+  request.headers.delete('x-nd-user-id');
+  request.headers.delete('x-nd-user-role');
+
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname === '/auth/callback' ||
     PUBLIC_FILE.test(pathname)
   ) {
-    return NextResponse.next();
+    // next({ request }) is required for the header deletion above to reach the
+    // handler; a bare next() forwards the original, unmodified headers.
+    return NextResponse.next({ request });
   }
 
   const hasLocale = LOCALES.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
@@ -52,7 +60,7 @@ export async function middleware(request: NextRequest) {
     return guardDashboard(request, locale, rest);
   }
 
-  return NextResponse.next();
+  return NextResponse.next({ request });
 }
 
 /**
@@ -64,9 +72,13 @@ export async function middleware(request: NextRequest) {
  * Also stamps x-nd-user-id/x-nd-user-role onto the downstream request —
  * getProfile() (lib/supabase/auth.ts) reads these instead of re-verifying
  * the session over the network on every single page render. This is the
- * only place that sets them; RLS still independently re-validates the real
- * session cookie for every data query, so the header can only ever affect
- * a redirect decision, never data access.
+ * only place that sets them, and middleware() strips any inbound copy first,
+ * so a client cannot supply its own. RLS independently re-validates the real
+ * session cookie for every data query on top of that.
+ *
+ * Authorisation that leads to a serviceClient() call must still not rely on
+ * these headers — serviceClient bypasses RLS, so there is no second backstop.
+ * Such call sites use getVerifiedProfile() instead.
  */
 async function guardDashboard(request: NextRequest, locale: Locale, path: string) {
   const cookiesToSet: { name: string; value: string; options: CookieOptions }[] = [];

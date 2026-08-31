@@ -68,8 +68,13 @@ export interface Profile {
  * one round trip per page and three. This is a UI-gating shortcut only:
  * every actual data query still goes through routeClient(), which forwards
  * the real session cookie to PostgREST, and RLS re-validates that JWT
- * independently for every query — a forged header can't grant data access,
- * it can only ever affect which redirect a page takes.
+ * independently for every query. The header itself is unforgeable because
+ * middleware() deletes any inbound x-nd-user-* before routing, so the only
+ * value that can reach here is one guardDashboard() wrote.
+ *
+ * Still not sufficient on its own for a decision that leads to a
+ * serviceClient() call, which bypasses RLS entirely — use
+ * getVerifiedProfile() there.
  *
  * Falls back to the full network check for anything middleware didn't
  * cover (e.g. a page outside /dashboard/**, or a direct server-action call).
@@ -85,6 +90,21 @@ export async function getProfile(): Promise<Profile | null> {
     return { id: headerId, email: null, role: headerRole, locale: 'en' };
   }
 
+  return getVerifiedProfile();
+}
+
+/**
+ * Signed-in user + their `profiles.role`, established from the session alone.
+ *
+ * Never reads x-nd-user-*: always re-checks the session over the network and
+ * re-reads profiles.role under RLS. Two extra round trips, deliberately.
+ *
+ * Use this rather than getProfile() wherever the role decides whether a
+ * serviceClient() call happens. serviceClient uses the service-role key and
+ * ignores RLS, so the role check is the only thing standing between the caller
+ * and the write — it has to be the authoritative one.
+ */
+export async function getVerifiedProfile(): Promise<Profile | null> {
   const supabase = await routeClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return null;

@@ -20,7 +20,15 @@ export async function GET(request: Request) {
 
   const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value as Locale | undefined;
   const locale = cookieLocale && LOCALES.includes(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
-  const next = requestedNext ?? `/${locale}/dashboard`;
+  // Only same-origin, non-protocol-relative paths. `new URL(next, origin)`
+  // happily accepts an absolute URL and would hand the freshly authenticated
+  // visitor straight to another site.
+  const isSafeNext =
+    !!requestedNext &&
+    requestedNext.startsWith('/') &&
+    !requestedNext.startsWith('//') &&
+    !requestedNext.startsWith('/\\');
+  const next = isSafeNext ? requestedNext! : `/${locale}/dashboard`;
 
   if (code) {
     const supabase = await routeClient();
