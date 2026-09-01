@@ -149,3 +149,18 @@ export const BOOSTER_PAYOUT_SHARE = 0.5;
 
 /** Rounding applied to every customer-facing total. */
 export const roundMoney = (n: number): number => Math.round(n * 100) / 100;
+
+/* ------------------------------------------------------------------ */
+/* 6. PROMO CODES                                                      */
+/* ------------------------------------------------------------------ */
+/** Hard ceiling on any promo discount, as a share of the order total.
+ *  Enforced for fixed_usd codes too, which the schema check cannot cover. */
+export const MAX_DISCOUNT_SHARE = 0.2;
+
+/** Smallest invoice CryptoBot will accept, in USD. */
+export const MIN_INVOICE_USD = 0.5;
+
+/** How long a code stays held for an unpaid checkout. Matches the CryptoBot
+ *  invoice lifetime (expires_in: 3600 in lib/pricing/cryptobot.ts), so the
+ *  code frees itself exactly when the invoice stops being payable. */
+export const PROMO_HOLD_MINUTES = 60;

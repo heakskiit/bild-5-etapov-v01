@@ -6,7 +6,13 @@
 
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
-import { roundMoney } from '@/../config/pricing.config';
+import {
+  roundMoney,
+  BOOSTER_PAYOUT_SHARE,
+  MAX_DISCOUNT_SHARE,
+  MIN_INVOICE_USD,
+  PROMO_HOLD_MINUTES,
+} from '@/../config/pricing.config';
 import { checkoutRequestSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
@@ -29,7 +35,7 @@ export async function POST(request: Request) {
   const { selection, contactMethod, contactHandle, details, promoCode } = parsed.data;
 
   const db = serviceClient();
-  let claimedPromoId: number | null = null;
+  let heldPromoId: number | null = null;
 
   try {
     const breakdown = calculatePrice(selection);
@@ -37,31 +43,42 @@ export async function POST(request: Request) {
     let discountUsd = 0;
 
     if (promoCode) {
-      // Atomic claim — same shape as the queue-claim pattern (0002): the
-      // UPDATE's WHERE clause is the actual check, not a SELECT-then-UPDATE,
-      // so two customers racing on the same code can't both win it.
-      const nowIso = new Date().toISOString();
+      // Two phases, split by 0007: checkout only *holds* the code, payment
+      // burns it. claim_promo_hold() is a single UPDATE ... WHERE ...
+      // RETURNING, so the WHERE clause is the concurrency control and two
+      // customers racing on one code cannot both get a row back.
+      //
+      // An abandoned checkout needs no cleanup job: the hold stops matching
+      // that WHERE clause once it lapses, and the window equals the CryptoBot
+      // invoice lifetime, so the code frees itself exactly when the invoice
+      // stops being payable.
       const { data: promo, error: promoError } = await db
-        .from('promo_codes')
-        .update({ used_at: nowIso })
-        .eq('code', promoCode)
-        .is('used_at', null)
-        .eq('active', true)
-        .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
-        .select('id, discount_type, discount_value, reserved_for_user_id')
-        .maybeSingle();
+        .rpc('claim_promo_hold', {
+          p_code: promoCode,
+          p_user_id: user.id,
+          p_hold_minutes: PROMO_HOLD_MINUTES,
+        })
+        .maybeSingle<{ id: number; discount_type: 'percent' | 'fixed_usd'; discount_value: number }>();
       if (promoError) throw promoError;
-      if (!promo || (promo.reserved_for_user_id && promo.reserved_for_user_id !== user.id)) {
-        // Reserved-for-someone-else codes fail the same as "doesn't exist" —
-        // no need to leak whose code it is.
-        if (promo) await db.from('promo_codes').update({ used_at: null }).eq('id', promo.id);
+      if (!promo) {
+        // Unknown, spent, held, expired or reserved for somebody else all
+        // answer identically, so this cannot be used to probe which.
         return NextResponse.json({ error: 'invalid_promo' }, { status: 422 });
       }
 
-      claimedPromoId = promo.id;
-      discountUsd =
-        promo.discount_type === 'percent' ? roundMoney(total * (promo.discount_value / 100)) : promo.discount_value;
-      total = roundMoney(Math.max(0.5, total - discountUsd));
+      heldPromoId = promo.id;
+      const requested =
+        promo.discount_type === 'percent'
+          ? total * (Number(promo.discount_value) / 100)
+          : Number(promo.discount_value);
+      // The ceiling is applied here as well as in the schema, because a
+      // fixed_usd code would otherwise slip past it on a cheap order.
+      const granted = Math.min(requested, total * MAX_DISCOUNT_SHARE);
+      const discounted = roundMoney(Math.max(MIN_INVOICE_USD, total - granted));
+      // Record what was actually given, not what was asked for: the floor can
+      // absorb part of it, and total_usd + discount_usd has to reconcile.
+      discountUsd = roundMoney(total - discounted);
+      total = discounted;
     }
 
     const { data: order, error } = await db
@@ -76,7 +93,11 @@ export async function POST(request: Request) {
         // working untouched.
         selection: { ...selection, orderNotes: details },
         total_usd: total,
-        booster_payout_usd: breakdown.boosterPayout,
+        // Share of what the customer actually pays. Payouts are settled off
+        // the site, so this column is reference data — but it must never
+        // exceed revenue, which it would if based on the pre-discount total.
+        booster_payout_usd:
+          breakdown.boosterPayout === 0 ? 0 : roundMoney(total * BOOSTER_PAYOUT_SHARE),
         pricing_version: breakdown.pricingVersion,
         promo_code: promoCode ?? null,
         discount_usd: discountUsd,
@@ -89,12 +110,22 @@ export async function POST(request: Request) {
       .single();
     if (error) throw error;
 
-    if (claimedPromoId) {
+    if (heldPromoId) {
+      // Payment looks the code up by this link to burn it, so a failed write
+      // means the discount was granted but the code quietly returns to the
+      // pool an hour later. Recorded rather than swallowed.
       const { error: linkError } = await db
         .from('promo_codes')
-        .update({ used_by_order_id: order.id })
-        .eq('id', claimedPromoId);
-      if (linkError) console.error('[checkout] promo linked but order_id backfill failed', linkError);
+        .update({ held_by_order_id: order.id })
+        .eq('id', heldPromoId);
+      if (linkError) {
+        console.error('[checkout] promo held but order link failed', linkError);
+        await db.from('order_events').insert({
+          order_id: order.id,
+          kind: 'promo_link_failed',
+          detail: { promo_code: promoCode ?? null },
+        });
+      }
     }
 
     const invoice = await createInvoice({
@@ -108,10 +139,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ payUrl: invoice.pay_url, orderId: order.public_id });
   } catch (err) {
-    if (claimedPromoId) {
-      // Order or invoice creation failed after the code was already burned —
-      // give it back rather than silently costing the customer their code.
-      await db.from('promo_codes').update({ used_at: null, used_by_order_id: null }).eq('id', claimedPromoId);
+    if (heldPromoId) {
+      // Order or invoice creation failed while the code was held — release it
+      // now instead of making the customer wait out the hold.
+      const { error: releaseError } = await db
+        .from('promo_codes')
+        .update({ held_until: null, held_by_order_id: null })
+        .eq('id', heldPromoId)
+        .is('used_at', null);
+      if (releaseError) console.error('[checkout] promo hold release failed', releaseError);
     }
     if (err instanceof PricingError) {
       return NextResponse.json({ error: err.code, message: err.message }, { status: 422 });

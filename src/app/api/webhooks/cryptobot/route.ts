@@ -82,6 +82,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, flagged: 'underpaid' });
   }
 
+  // --- promo: spent only now, at confirmed payment (0007) ----------------
+  if (order.promo_code) {
+    const { error: burnError } = await db.rpc('burn_promo_for_order', { p_order_id: order.id });
+    if (burnError) {
+      // The payment is already good — never fail fulfilment over bookkeeping.
+      console.error('[webhook] promo burn failed', burnError);
+      await db.from('order_events').insert({
+        order_id: order.id,
+        kind: 'promo_burn_failed',
+        detail: { promo_code: order.promo_code },
+      });
+    }
+  }
+
   // --- fulfilment -------------------------------------------------------
   if (order.selection.product === 'shark_card') {
     // Atomic key reservation happens inside Apps Script (LockService).

@@ -2,8 +2,8 @@
  * Booster coordination via a Discord webhook — free-for-all model.
  * Posted to a hidden executors channel after payment clears.
  *
- * The payout figure is computed on the backend (BOOSTER_PAYOUT_SHARE) and is
- * never derived from anything the customer sent.
+ * Payouts are settled off the site, so the embed shows the order total rather
+ * than a computed payout figure that nobody actually pays out.
  */
 
 import type { Order } from '@/types/order';
@@ -28,8 +28,8 @@ export async function notifyBoosters(order: Order & Record<string, any>): Promis
       { name: 'Platform', value: String(s.platform).toUpperCase(), inline: true },
       { name: 'Delivery', value: s.delivery ?? 'normal', inline: true },
       {
-        name: 'Your payout',
-        value: `**$${(order.boosterPayoutUsd ?? order.booster_payout_usd).toFixed(2)}**`,
+        name: 'Order total',
+        value: `**$${Number(order.totalUsd ?? order.total_usd).toFixed(2)}**`,
         inline: true,
       },
       { name: 'Add-ons', value: (s.addonIds ?? []).join(', ') || '—', inline: false },
