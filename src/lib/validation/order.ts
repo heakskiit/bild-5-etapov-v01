@@ -84,3 +84,26 @@ export const checkoutRequestSchema = z
       .optional(),
   })
   .strict();
+
+/**
+ * Body of POST /api/checkout/preview.
+ *
+ * The same trust boundary as a real checkout, minus contact and order
+ * details — those have nothing to do with the price, and asking for them
+ * before the customer has finished typing would be nonsense. Deliberately
+ * reuses `orderSelectionSchema` and the identical promoCode normalisation,
+ * so a total can never be previewed from a selection the real checkout
+ * would go on to reject.
+ */
+export const checkoutPreviewSchema = z
+  .object({
+    selection: orderSelectionSchema,
+    promoCode: z
+      .string()
+      .trim()
+      .max(64)
+      .transform((v) => v.toUpperCase())
+      .optional(),
+  })
+  .strict();
+export type CheckoutPreviewRequest = z.infer<typeof checkoutPreviewSchema>;

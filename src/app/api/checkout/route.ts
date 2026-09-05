@@ -6,11 +6,10 @@
 
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
+import { applyPromoDiscount } from '@/lib/pricing/discount';
 import {
   roundMoney,
   BOOSTER_PAYOUT_SHARE,
-  MAX_DISCOUNT_SHARE,
-  MIN_INVOICE_USD,
   PROMO_HOLD_MINUTES,
 } from '@/../config/pricing.config';
 import { checkoutRequestSchema } from '@/lib/validation/order';
@@ -67,18 +66,13 @@ export async function POST(request: Request) {
       }
 
       heldPromoId = promo.id;
-      const requested =
-        promo.discount_type === 'percent'
-          ? total * (Number(promo.discount_value) / 100)
-          : Number(promo.discount_value);
-      // The ceiling is applied here as well as in the schema, because a
-      // fixed_usd code would otherwise slip past it on a cheap order.
-      const granted = Math.min(requested, total * MAX_DISCOUNT_SHARE);
-      const discounted = roundMoney(Math.max(MIN_INVOICE_USD, total - granted));
-      // Record what was actually given, not what was asked for: the floor can
-      // absorb part of it, and total_usd + discount_usd has to reconcile.
-      discountUsd = roundMoney(total - discounted);
-      total = discounted;
+      // The very same function /api/checkout/preview calls, so the figure the
+      // customer was shown while typing and the figure charged here cannot
+      // drift apart. The ceiling, the invoice floor and the truthful
+      // discount all live in that one module now.
+      const priced = applyPromoDiscount(total, promo.discount_type, promo.discount_value);
+      discountUsd = priced.discountUsd;
+      total = priced.total;
     }
 
     const { data: order, error } = await db

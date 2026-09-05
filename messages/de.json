@@ -397,6 +397,11 @@
     "fillAllFields": "Fülle alle Felder aus, um fortzufahren",
     "payNow": "Jetzt bezahlen",
     "promoLabel": "Aktionscode (optional)",
+    "subtotal": "Zwischensumme",
+    "discount": "Rabatt",
+    "total": "Gesamt",
+    "promoChecking": "Code wird geprüft…",
+    "promoApplied": "Code angewendet",
     "promoPlaceholder": "z. B. WELCOME10",
     "invalidPromo": "Dieser Code ist ungültig oder wurde bereits verwendet."
   },

@@ -397,6 +397,11 @@
     "fillAllFields": "Remplissez tous les champs pour continuer",
     "payNow": "Payer maintenant",
     "promoLabel": "Code promo (facultatif)",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "total": "Total",
+    "promoChecking": "Vérification du code…",
+    "promoApplied": "Code appliqué",
     "promoPlaceholder": "ex. WELCOME10",
     "invalidPromo": "Ce code n'est pas valide ou a déjà été utilisé."
   },

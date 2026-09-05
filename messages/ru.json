@@ -397,6 +397,11 @@
     "fillAllFields": "Заполните все поля, чтобы продолжить",
     "payNow": "Оплатить",
     "promoLabel": "Промокод (необязательно)",
+    "subtotal": "Подытог",
+    "discount": "Скидка",
+    "total": "Итого",
+    "promoChecking": "Проверяем код…",
+    "promoApplied": "Код применён",
     "promoPlaceholder": "например, WELCOME10",
     "invalidPromo": "Код недействителен или уже использован."
   },

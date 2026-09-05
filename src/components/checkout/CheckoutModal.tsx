@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/Button';
 import { ContactField, isContactValid } from '@/components/checkout/ContactField';
 import { CheckoutErrorNote } from '@/components/checkout/CheckoutErrorNote';
 import { isOrderDetailsValid } from '@/lib/hooks/useCheckout';
+import { usePromoPreview } from '@/lib/hooks/usePromoPreview';
 import type { Contact, CheckoutError } from '@/lib/hooks/useCheckout';
 import type { OrderDetails } from '@/lib/validation/order';
+import type { OrderSelection } from '@/types/order';
 
 const INPUT =
 	'w-full rounded-lg border border-white/15 bg-night px-3 py-2 text-sm outline-none focus:border-neon-blue';
@@ -29,6 +31,8 @@ export function CheckoutModal({
 	onDetailsChange,
 	promoCode,
 	onPromoCodeChange,
+	selection,
+	fallbackTotal,
 	busy,
 	error,
 	onSubmit,
@@ -43,6 +47,10 @@ export function CheckoutModal({
 	onDetailsChange: (d: OrderDetails) => void;
 	promoCode: string;
 	onPromoCodeChange: (v: string) => void;
+	/** Priced server-side for the live preview. `null` disables the preview. */
+	selection: OrderSelection | null;
+	/** Locally computed pre-discount total, shown if the preview can't run. */
+	fallbackTotal: number | null;
 	busy: boolean;
 	error: CheckoutError | null;
 	onSubmit: () => void;
@@ -64,9 +72,19 @@ export function CheckoutModal({
 		};
 	}, [open, onClose]);
 
+	// Called before the early return below — hook order must never be conditional.
+	const preview = usePromoPreview(selection, promoCode, open);
+
 	if (!open) return null;
 
 	const canSubmit = isContactValid(contact) && isOrderDetailsValid(details) && !busy;
+
+	// Prefer the server's figures. Fall back to the locally computed total when
+	// the preview cannot run (not signed in, throttled, offline) so the customer
+	// always sees a price — just without a discount line.
+	const subtotal = preview.subtotal ?? fallbackTotal;
+	const total = preview.total ?? fallbackTotal;
+	const money = (n: number) => `$${n.toFixed(2)}`;
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -148,6 +166,46 @@ export function CheckoutModal({
 					/>
 				</div>
 
+				{/* Live order summary — PROMO-6/8. Every figure comes from the
+				    server, and the discount line only appears once the code has
+				    actually been validated, so none of it can be spoofed from the
+				    browser. The amount charged is still recomputed at /api/checkout
+				    from IDs alone. */}
+				{subtotal !== null && (
+					<div className="glass-panel-sm space-y-1.5 p-3 text-sm">
+						<div className="flex items-center justify-between text-white/60">
+							<span>{t('checkout.subtotal')}</span>
+							<span>{money(subtotal)}</span>
+						</div>
+
+						{preview.promoApplied && preview.discountUsd > 0 && (
+							<div className="flex items-center justify-between text-emerald-300">
+								<span>{t('checkout.discount')}</span>
+								<span>−{money(preview.discountUsd)}</span>
+							</div>
+						)}
+
+						<div className="flex items-center justify-between border-t border-white/10 pt-1.5 font-display text-base text-white">
+							<span>{t('checkout.total')}</span>
+							{/* aria-live: this number changes without any click, so it
+							    has to be announced, not silently swapped. */}
+							<span aria-live="polite" className={preview.promoApplied ? 'text-neon-pink' : undefined}>
+								{total !== null ? money(total) : '—'}
+							</span>
+						</div>
+
+						{preview.status === 'loading' && (
+							<p className="text-xs text-white/40">{t('checkout.promoChecking')}</p>
+						)}
+						{preview.status === 'ready' && preview.promoApplied && (
+							<p className="text-xs text-emerald-300">{t('checkout.promoApplied')}</p>
+						)}
+						{preview.status === 'invalid' && (
+							<p className="text-xs text-pink-400">{t('checkout.invalidPromo')}</p>
+						)}
+					</div>
+				)}
+
 				<CheckoutErrorNote error={error} t={t} onRetry={onRetry} />
 
 				<div className="flex gap-2 pt-2">
@@ -163,7 +221,9 @@ export function CheckoutModal({
 						disabledReason={!isContactValid(contact) ? t('checkout.contactLabel') : t('checkout.fillAllFields')}
 						className="flex-1"
 					>
-						{t('checkout.payNow')}
+						{total !== null
+							? t('common.payFor', { price: money(total) })
+							: t('checkout.payNow')}
 					</Button>
 				</div>
 			</div>

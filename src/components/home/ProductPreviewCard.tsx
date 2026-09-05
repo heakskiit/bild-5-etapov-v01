@@ -23,6 +23,7 @@ import { dig, type Dict } from '@/lib/i18n/pick';
 import { useCheckout, emptyOrderDetails, type Contact } from '@/lib/hooks/useCheckout';
 import { CheckoutModal } from '@/components/checkout/CheckoutModal';
 import type { OrderDetails } from '@/lib/validation/order';
+import type { OrderSelection } from '@/types/order';
 
 function formatDenomination(denomination: number): string {
 	if (denomination >= 1_000_000) return `$${denomination / 1_000_000}M`;
@@ -52,7 +53,15 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 		label: formatDenomination(c.denomination),
 	}));
 
-	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details, promoCode);
+	// Memoised deliberately: the modal's live discount preview keys off this
+	// object's contents, and a fresh literal on every render would make it
+	// re-fetch forever.
+	const selection = useMemo<OrderSelection>(
+		() => ({ product: 'shark_card', platform: 'pc', variantId }),
+		[variantId],
+	);
+
+	const buy = () => checkout(selection, contact, details, promoCode);
 
 	return (
 		<div className="glass-panel p-6">
@@ -94,6 +103,8 @@ export function ProductPreviewCard({ messages, stock }: { messages: Dict; stock?
 				onDetailsChange={setDetails}
 				promoCode={promoCode}
 				onPromoCodeChange={setPromoCode}
+				selection={selection}
+				fallbackTotal={card.price}
 				busy={busy}
 				error={error}
 				onSubmit={buy}

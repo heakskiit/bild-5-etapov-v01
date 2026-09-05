@@ -13,6 +13,7 @@ import { dig, type Dict } from '@/lib/i18n/pick';
 import { useCheckout, emptyOrderDetails, type Contact } from '@/lib/hooks/useCheckout';
 import { CheckoutModal } from '@/components/checkout/CheckoutModal';
 import type { OrderDetails } from '@/lib/validation/order';
+import type { OrderSelection } from '@/types/order';
 
 /**
  * §3.1: "Номиналы подписываются единообразно: $100K · $500K · $1M · $2M ·
@@ -49,7 +50,15 @@ export function SharkCardConfigurator({
 		label: formatDenomination(c.denomination),
 	}));
 
-	const buy = () => checkout({ product: 'shark_card', platform: 'pc', variantId }, contact, details, promoCode);
+	// Memoised deliberately: the modal's live discount preview keys off this
+	// object's contents, and a fresh literal on every render would make it
+	// re-fetch forever.
+	const selection = useMemo<OrderSelection>(
+		() => ({ product: 'shark_card', platform: 'pc', variantId }),
+		[variantId],
+	);
+
+	const buy = () => checkout(selection, contact, details, promoCode);
 
 	return (
 		<div className="glass-panel space-y-5 p-6">
@@ -85,6 +94,8 @@ export function SharkCardConfigurator({
 				onDetailsChange={setDetails}
 				promoCode={promoCode}
 				onPromoCodeChange={setPromoCode}
+				selection={selection}
+				fallbackTotal={card.price}
 				busy={busy}
 				error={error}
 				onSubmit={buy}

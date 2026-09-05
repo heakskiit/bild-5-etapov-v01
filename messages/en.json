@@ -397,6 +397,11 @@
     "fillAllFields": "Fill in all fields to continue",
     "payNow": "Pay now",
     "promoLabel": "Promo code (optional)",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "promoChecking": "Checking code…",
+    "promoApplied": "Code applied",
     "promoPlaceholder": "e.g. WELCOME10",
     "invalidPromo": "That code isn't valid or has already been used."
   },

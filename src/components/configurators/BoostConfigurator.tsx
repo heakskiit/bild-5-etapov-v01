@@ -246,6 +246,10 @@ export function BoostConfigurator({
 				onDetailsChange={setDetails}
 				promoCode={promoCode}
 				onPromoCodeChange={setPromoCode}
+				// The modal re-prices this server-side to show the discount; the
+				// local breakdown below is only the fallback when that can't run.
+				selection={selection}
+				fallbackTotal={priceBreakdown?.total ?? null}
 				busy={busy}
 				error={error}
 				onSubmit={buy}
