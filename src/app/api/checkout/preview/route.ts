@@ -25,6 +25,7 @@ import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
 import { applyPromoDiscount, noPromoDiscount } from '@/lib/pricing/discount';
 import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
+import { bonusMultiplierFor, checkBonusProduct } from '@/lib/pricing/promoBonus';
 import { checkoutPreviewSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
 		const db = serviceClient();
 		const { data: promo, error: promoError } = await db
 			.rpc('peek_promo', { p_code: promoCode, p_user_id: user.id })
-			.maybeSingle<{ discount_type: 'percent' | 'fixed_usd'; discount_value: number; min_order_usd: number | string }>();
+			.maybeSingle<{ discount_type: 'percent' | 'fixed_usd' | 'bonus_x2'; discount_value: number; min_order_usd: number | string }>();
 		if (promoError) throw promoError;
 
 		if (!promo) {
@@ -97,6 +98,29 @@ export async function POST(request: Request) {
 				promoApplied: false,
 				error: 'min_order',
 				minOrderUsd: eligibility.minOrderUsd,
+			});
+		}
+
+		// A bonus code buys goods, not money. The price below is deliberately
+		// the undiscounted one: the modal shows "x2 to your order" instead of a
+		// discount row, and the invoice matches what the customer already saw.
+		const bonusMultiplier = bonusMultiplierFor(promo.discount_type, promo.discount_value);
+		if (bonusMultiplier > 1) {
+			const bonus = checkBonusProduct(selection.product);
+			if (!bonus.eligible) {
+				// Its own answer, not "invalid": the code is real and unspent, it
+				// simply does nothing for a levelling job or a cash card, and the
+				// customer deserves to know that rather than retyping it.
+				return NextResponse.json({
+					...noPromoDiscount(subtotal),
+					promoApplied: false,
+					error: 'wrong_product',
+				});
+			}
+			return NextResponse.json({
+				...noPromoDiscount(subtotal),
+				promoApplied: true,
+				bonusMultiplier,
 			});
 		}
 

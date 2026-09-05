@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server';
 import { requireUser, getVerifiedProfile } from '@/lib/supabase/auth';
 import { serviceClient } from '@/lib/supabase/service';
 import { createPromoSchema, togglePromoSchema } from '@/lib/validation/dashboard';
+import { X2_MULTIPLIER } from '@/lib/pricing/promoBonus';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
@@ -53,17 +54,20 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: 'invalid_request', issues: parsed.error.issues }, { status: 400 });
   }
-  const { code, discountValue, minOrderUsd, expiresAt, reservedForUserId } = parsed.data;
+  const { code, kind, discountValue, minOrderUsd, expiresAt, reservedForUserId } = parsed.data;
+  const isBonus = kind === 'bonus_x2';
 
   const { data, error } = await serviceClient()
     .from('promo_codes')
     .insert({
       code,
-      // Percent only, by decision: a fixed amount is capped at 20% of the
-      // order by MAX_DISCOUNT_SHARE anyway, so such a code would promise more
-      // than it can grant on a small basket.
-      discount_type: 'percent',
-      discount_value: discountValue,
+      // Percent or bonus, never fixed_usd: a fixed amount is capped at 20% of
+      // the order by MAX_DISCOUNT_SHARE anyway, so such a code would promise
+      // more than it can grant on a small basket.
+      discount_type: isBonus ? 'bonus_x2' : 'percent',
+      // For a bonus row this column holds the multiplier (2), not a percent --
+      // the same convention bonusMultiplierFor() reads back out.
+      discount_value: isBonus ? X2_MULTIPLIER : discountValue,
       min_order_usd: minOrderUsd,
       expires_at: expiresAt ?? null,
       reserved_for_user_id: reservedForUserId ?? null,
@@ -80,8 +84,9 @@ export async function POST(request: Request) {
     if (error.code === '23505') {
       return NextResponse.json({ error: 'code_exists' }, { status: 409 });
     }
-    // percent_in_range or min_order_usd_non_negative refused a value the zod
-    // schema allowed, which means the two have drifted apart. Worth shouting
+    // percent_in_range, min_order_usd_non_negative or bonus_multiplier_sane
+    // refused a value the zod schema allowed, which means the two have
+    // drifted apart. Worth shouting
     // about rather than reporting as a generic failure.
     if (error.code === '23514') {
       console.error('[admin/promo] a constraint refused a code the schema allowed', error);

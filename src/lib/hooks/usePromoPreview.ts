@@ -39,6 +39,7 @@ export type PreviewStatus =
 	| 'invalid'
 	/** Real code, but this order is below the minimum it requires. */
 	| 'min_order'
+	| 'wrong_product'
 	/** Preview could not run; price shown is pre-discount only. */
 	| 'unavailable';
 
@@ -52,6 +53,8 @@ export interface PromoPreview {
 	promoApplied: boolean;
 	/** Set only when status is min_order: the amount the code needs. */
 	minOrderUsd: number | null;
+	/** 2 for an X2 code, 1 for everything else. Never affects the price. */
+	bonusMultiplier: number;
 }
 
 const EMPTY: PromoPreview = {
@@ -61,6 +64,7 @@ const EMPTY: PromoPreview = {
 	total: null,
 	promoApplied: false,
 	minOrderUsd: null,
+	bonusMultiplier: 1,
 };
 
 export function usePromoPreview(
@@ -109,12 +113,22 @@ export function usePromoPreview(
 					}
 
 					setPreview({
-						status: code && !data.promoApplied ? (data.error === 'min_order' ? 'min_order' : 'invalid') : 'ready',
+						// Every refusal the server can express gets its own status, so the
+						// modal can explain itself. Anything unrecognised falls back to
+						// 'invalid' rather than being silently treated as success.
+						status: code && !data.promoApplied
+							? data.error === 'min_order'
+								? 'min_order'
+								: data.error === 'wrong_product'
+									? 'wrong_product'
+									: 'invalid'
+							: 'ready',
 						subtotal: data.subtotal,
 						discountUsd: typeof data.discountUsd === 'number' ? data.discountUsd : 0,
 						total: data.total,
 						promoApplied: Boolean(data.promoApplied),
 						minOrderUsd: typeof data.minOrderUsd === 'number' ? data.minOrderUsd : null,
+						bonusMultiplier: typeof data.bonusMultiplier === 'number' ? data.bonusMultiplier : 1,
 					});
 				} catch {
 					// AbortError included: a superseded request must not clobber state.

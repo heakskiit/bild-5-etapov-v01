@@ -17,7 +17,7 @@ import {
 	roundMoney,
 } from '@/../config/pricing.config';
 
-export type PromoDiscountType = 'percent' | 'fixed_usd';
+export type PromoDiscountType = 'percent' | 'fixed_usd' | 'bonus_x2';
 
 export interface DiscountedTotal {
 	/** Price before any code, straight from calculatePrice(). */
@@ -41,6 +41,12 @@ export function applyPromoDiscount(
 	discountType: PromoDiscountType,
 	discountValue: number,
 ): DiscountedTotal {
+	// A bonus code buys goods, not money: it must leave the price completely
+	// alone. This branch exists because the fallback below reads any
+	// non-percent type as a fixed dollar amount, which would quietly turn the
+	// multiplier 2 into a $2 discount.
+	if (discountType === 'bonus_x2') return noPromoDiscount(subtotal);
+
 	// Face value the code asks for...
 	const requested =
 		discountType === 'percent'

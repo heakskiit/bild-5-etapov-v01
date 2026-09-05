@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
 import { applyPromoDiscount } from '@/lib/pricing/discount';
 import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
+import { bonusMultiplierFor, checkBonusProduct } from '@/lib/pricing/promoBonus';
 import {
   roundMoney,
   BOOSTER_PAYOUT_SHARE,
@@ -43,6 +44,9 @@ export async function POST(request: Request) {
 
   const db = serviceClient();
   let heldPromoId: number | null = null;
+    // Recorded on the order itself, so deleting the code later cannot
+    // quietly halve what a booster owes an already-paid customer.
+    let deliveryMultiplier = 1;
 
   try {
     const breakdown = calculatePrice(selection);
@@ -65,7 +69,7 @@ export async function POST(request: Request) {
           p_user_id: user.id,
           p_hold_minutes: PROMO_HOLD_MINUTES,
         })
-        .maybeSingle<{ id: number; discount_type: 'percent' | 'fixed_usd'; discount_value: number; min_order_usd: number | string }>();
+        .maybeSingle<{ id: number; discount_type: 'percent' | 'fixed_usd' | 'bonus_x2'; discount_value: number; min_order_usd: number | string }>();
       if (promoError) throw promoError;
       if (!promo) {
         // Unknown, spent, held, expired or reserved for somebody else all
@@ -89,14 +93,33 @@ export async function POST(request: Request) {
         );
       }
 
+      // Checked before the code is claimed: refusing after the claim would
+      // leave a hold behind for no reason, and this refusal is entirely
+      // predictable from the selection.
+      const bonusMultiplier = bonusMultiplierFor(promo.discount_type, promo.discount_value);
+      if (bonusMultiplier > 1) {
+        const bonus = checkBonusProduct(selection.product);
+        if (!bonus.eligible) {
+          return NextResponse.json({ error: 'wrong_product' }, { status: 422 });
+        }
+      }
+
       heldPromoId = promo.id;
-      // The very same function /api/checkout/preview calls, so the figure the
-      // customer was shown while typing and the figure charged here cannot
-      // drift apart. The ceiling, the invoice floor and the truthful
-      // discount all live in that one module now.
-      const priced = applyPromoDiscount(total, promo.discount_type, promo.discount_value);
-      discountUsd = priced.discountUsd;
-      total = priced.total;
+
+      if (bonusMultiplier > 1) {
+        // Price untouched on purpose: the customer pays the ordinary total
+        // and the booster hands over more. discountUsd stays 0, so the
+        // orders list will not claim a saving that never happened.
+        deliveryMultiplier = bonusMultiplier;
+      } else {
+        // The very same function /api/checkout/preview calls, so the figure the
+        // customer was shown while typing and the figure charged here cannot
+        // drift apart. The ceiling, the invoice floor and the truthful
+        // discount all live in that one module now.
+        const priced = applyPromoDiscount(total, promo.discount_type, promo.discount_value);
+        discountUsd = priced.discountUsd;
+        total = priced.total;
+      }
     }
 
     const { data: order, error } = await db
@@ -119,6 +142,7 @@ export async function POST(request: Request) {
         pricing_version: breakdown.pricingVersion,
         promo_code: promoCode ?? null,
         discount_usd: discountUsd,
+        delivery_multiplier: deliveryMultiplier,
         // Single free-text column (0001) — method is folded into the string
         // itself ("telegram: @handle") so notifyBoosters/the dashboard don't
         // need a second field to read.

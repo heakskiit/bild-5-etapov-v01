@@ -209,6 +209,7 @@
     "describeCashCard": "Code carte cash",
     "describeLeveling": "Niveaux → {level}",
     "describeMoney": "Argent → {amount}M",
+    "describeMoneyBonus": "Argent → {amount}M (X{multiplier})",
     "status": {
       "awaiting_payment": "En attente de paiement",
       "action_required": "Action requise",
@@ -277,6 +278,10 @@
       "expiresLabel": "Expire le (facultatif)",
       "reservedLabel": "Réservé à l’ID utilisateur (facultatif)",
       "presetsLabel": "Modèles",
+      "kindLabel": "Type de code",
+      "kindPercent": "Remise en pourcentage",
+      "kindBonus": "Livraison X2",
+      "bonusNote": "X2 double ce que le booster livre sur les commandes d'argent. Le prix ne change pas et le code n'a aucun effet sur le leveling ou les cash cards.",
       "submit": "Émettre le code",
       "creating": "Émission…",
       "created": "Code {code} émis.",
@@ -440,7 +445,10 @@
     "promoApplied": "Code appliqué",
     "promoPlaceholder": "ex. WELCOME10",
     "invalidPromo": "Ce code n'est pas valide ou a déjà été utilisé.",
-    "promoMinOrder": "Ce code s’applique à partir de {amount}."
+    "promoMinOrder": "Ce code s’applique à partir de {amount}.",
+    "promoBonusApplied": "X{multiplier} appliqué — livraison doublée",
+    "promoWrongProduct": "Ce code ne fonctionne que sur les commandes d'argent.",
+    "bonusLine": "Livraison bonus"
   },
   "gta": {
     "comingSoon": "Bientôt",

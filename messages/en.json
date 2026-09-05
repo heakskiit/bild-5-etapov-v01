@@ -209,6 +209,7 @@
     "describeCashCard": "Cash card code",
     "describeLeveling": "Leveling → {level}",
     "describeMoney": "Money → {amount}M",
+    "describeMoneyBonus": "Money → {amount}M (X{multiplier})",
     "status": {
       "awaiting_payment": "Awaiting payment",
       "action_required": "Action required",
@@ -277,6 +278,10 @@
       "expiresLabel": "Expires (optional)",
       "reservedLabel": "Reserved for user ID (optional)",
       "presetsLabel": "Presets",
+      "kindLabel": "Code type",
+      "kindPercent": "Percent off",
+      "kindBonus": "X2 delivery",
+      "bonusNote": "X2 doubles what the booster delivers on money orders. The price stays the same, and the code does nothing on levelling or cash cards.",
       "submit": "Issue code",
       "creating": "Issuing…",
       "created": "Code {code} issued.",
@@ -440,7 +445,10 @@
     "promoApplied": "Code applied",
     "promoPlaceholder": "e.g. WELCOME10",
     "invalidPromo": "That code isn't valid or has already been used.",
-    "promoMinOrder": "This code works on orders from {amount}."
+    "promoMinOrder": "This code works on orders from {amount}.",
+    "promoBonusApplied": "X{multiplier} applied — double delivery",
+    "promoWrongProduct": "This code only works on money orders.",
+    "bonusLine": "Bonus delivery"
   },
   "gta": {
     "comingSoon": "Coming Soon",

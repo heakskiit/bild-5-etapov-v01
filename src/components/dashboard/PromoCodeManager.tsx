@@ -18,6 +18,8 @@ import { dig, type Dict } from '@/lib/i18n/pick';
 export interface PromoRow {
 	id: number;
 	code: string;
+	/** 'bonus_x2' rows carry a multiplier in discount_value, not a percent. */
+	discount_type: 'percent' | 'fixed_usd' | 'bonus_x2';
 	discount_value: number;
 	min_order_usd: number;
 	active: boolean;
@@ -70,6 +72,7 @@ export function PromoCodeManager({
 	// Generated on click, never during render: a random initial value would not
 	// survive hydration.
 	const [code, setCode] = useState('');
+	const [kind, setKind] = useState<'percent' | 'bonus_x2'>('percent');
 	const [percent, setPercent] = useState(10);
 	const [minOrder, setMinOrder] = useState(10);
 	const [expires, setExpires] = useState('');
@@ -91,7 +94,10 @@ export function PromoCodeManager({
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({
 					code: value,
-					discountValue: percent,
+					kind,
+					// Omitted for a bonus code: the multiplier is fixed server-side, and
+					// sending a percent it will ignore would suggest X2 codes have one.
+					discountValue: kind === 'percent' ? percent : undefined,
 					minOrderUsd: minOrder,
 					// A date input yields a day; the code stays usable to the end of it.
 					expiresAt: expires ? new Date(`${expires}T23:59:59Z`).toISOString() : null,
@@ -166,6 +172,27 @@ export function PromoCodeManager({
 				<h2 className="font-display text-sm uppercase tracking-widest text-white/60">{t('admin.promo.createTitle')}</h2>
 				<form onSubmit={submit} className="glass-panel space-y-4 p-4">
 					<div>
+						<p className={labelClass}>{t('admin.promo.kindLabel')}</p>
+						<div className="mt-2 flex flex-wrap gap-2">
+							{(['percent', 'bonus_x2'] as const).map((option) => (
+								<button
+									key={option}
+									type="button"
+									onClick={() => setKind(option)}
+									className={`rounded-full border px-3 py-1 text-xs ${
+										kind === option ? 'border-neon-pink/60 text-neon-pink' : 'border-white/10 text-ink-soft hover:border-white/30'
+									}`}
+								>
+									{option === 'percent' ? t('admin.promo.kindPercent') : t('admin.promo.kindBonus')}
+								</button>
+							))}
+						</div>
+						{kind === 'bonus_x2' && (
+							<p className="mt-2 text-xs text-amber-300">{t('admin.promo.bonusNote')}</p>
+						)}
+					</div>
+
+					<div>
 						<p className={labelClass}>{t('admin.promo.presetsLabel')}</p>
 						<div className="mt-2 flex flex-wrap gap-2">
 							{PRESETS.map((preset) => {
@@ -219,10 +246,11 @@ export function PromoCodeManager({
 									min={1}
 									max={20}
 									step={1}
-									value={percent}
+									value={kind === 'bonus_x2' ? '' : percent}
 									onChange={(e) => setPercent(Number(e.target.value))}
-									className={inputClass}
-									required
+									className={`${inputClass} disabled:opacity-40`}
+									disabled={kind === 'bonus_x2'}
+									required={kind === 'percent'}
 								/>
 							</div>
 							<div className="space-y-1">
@@ -289,7 +317,7 @@ export function PromoCodeManager({
 										<tr key={row.id} className="border-t border-white/5">
 											<td className="px-4 py-3 font-mono text-xs text-ink">{row.code}</td>
 											<td className="px-4 py-3 text-ink-soft">
-												{row.discount_value}%
+												{row.discount_type === 'bonus_x2' ? `X${row.discount_value}` : `${row.discount_value}%`}
 												{row.min_order_usd > 0 ? ` · ${t('admin.promo.fromAmount', { amount: money(row.min_order_usd) })}` : ''}
 											</td>
 											<td className={`px-4 py-3 ${state.className}`}>{state.label}</td>

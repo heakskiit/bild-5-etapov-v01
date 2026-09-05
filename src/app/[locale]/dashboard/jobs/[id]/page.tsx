@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { requireRole, routeClient } from '@/lib/supabase/auth';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { JobStatusStepper } from '@/components/dashboard/JobStatusStepper';
+import { describeSelection } from '@/lib/orders/describeSelection';
 
 const DELIVERY_LABEL_KEYS: Record<string, string> = {
 	normal: 'configurator.deliveryNormal',
@@ -28,7 +29,7 @@ export default async function JobPage({
 	const supabase = await routeClient();
 	const { data: order } = await supabase
 		.from('orders')
-		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, total_usd, created_at')
+		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, total_usd, delivery_multiplier, created_at')
 		.eq('public_id', id)
 		.maybeSingle();
 
@@ -46,10 +47,9 @@ export default async function JobPage({
 		.order('created_at', { ascending: false });
 
 	const s = order.selection;
-	const description =
-		s.product === 'leveling'
-			? t('dashboard.describeLeveling', { level: s.level ?? '—' })
-			: t('dashboard.describeMoney', { amount: s.amountMillions ?? '—' });
+	// The booster reads this heading before anything else, so it has to be
+	// the delivered amount, not the ordered one.
+	const description = describeSelection(s, t, (order as any).delivery_multiplier);
 
 	return (
 		<div className="space-y-6">

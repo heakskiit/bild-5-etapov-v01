@@ -1,3 +1,4 @@
+import { describeSelection } from '@/lib/orders/describeSelection';
 import Link from 'next/link';
 import { requireRole, routeClient } from '@/lib/supabase/auth';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
@@ -176,7 +177,7 @@ export default async function AdminPage({
 														<p className="text-xs text-white/40">{customer?.discord_id ?? order.contact_handle ?? '—'}</p>
 													</div>
 												</td>
-												<td className="px-4 py-3 text-ink">{describeSelection(order.selection, t)}</td>
+												<td className="px-4 py-3 text-ink">{describeSelection(order.selection, t, (order as any).delivery_multiplier)}</td>
 												<td className="px-4 py-3 text-ink">${Number(order.total_usd).toFixed(2)}</td>
 												<td className="px-4 py-3">
 													<span className={statusChipClass(order.status)}>{t(`dashboard.status.${order.status}`)}</span>
@@ -294,7 +295,7 @@ async function loadAdminOrders(
 ) {
 	let query = supabase
 		.from('orders')
-		.select('id, public_id, user_id, status, selection, total_usd, created_at, paid_at, contact_handle, assigned_modder_id', { count: 'exact' })
+		.select('id, public_id, user_id, status, selection, total_usd, created_at, paid_at, contact_handle, assigned_modder_id, delivery_multiplier', { count: 'exact' })
 		.order('created_at', { ascending: false });
 
 	if (filters.status === 'paid') {
@@ -359,12 +360,6 @@ async function loadProfileMap(supabase: Awaited<ReturnType<typeof routeClient>>,
 
 function escapeOrValue(value: string) {
 	return value.replaceAll(',', '\\,').replaceAll('(', '').replaceAll(')', '');
-}
-
-function describeSelection(selection: OrderSelection, t: (key: string, vars?: Record<string, string | number>) => string) {
-	if (selection.product === 'shark_card') return t('dashboard.describeCashCard');
-	if (selection.product === 'leveling') return t('dashboard.describeLeveling', { level: selection.level ?? '—' });
-	return t('dashboard.describeMoney', { amount: selection.amountMillions ?? '—' });
 }
 
 function statusChipClass(status: OrderStatus) {

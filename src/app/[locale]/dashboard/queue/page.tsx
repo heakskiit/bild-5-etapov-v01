@@ -18,7 +18,7 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
 	const supabase = await routeClient();
 	const { data: orders } = await supabase
 		.from('orders')
-		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, created_at')
+		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, delivery_multiplier, created_at')
 		.order('created_at', { ascending: true })
 		.limit(100);
 

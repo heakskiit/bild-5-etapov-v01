@@ -185,11 +185,22 @@ export function CheckoutModal({
 							</div>
 						)}
 
+						{/* A bonus code shows up here instead of a discount row, because
+						    the price genuinely does not move. Without this line the
+						    customer sees "code applied" and an unchanged total, which
+						    reads as a bug. */}
+						{preview.promoApplied && preview.bonusMultiplier > 1 && (
+							<div className="flex items-center justify-between text-emerald-300">
+								<span>{t('checkout.bonusLine')}</span>
+								<span>×{preview.bonusMultiplier}</span>
+							</div>
+						)}
+
 						<div className="flex items-center justify-between border-t border-white/10 pt-1.5 font-display text-base text-white">
 							<span>{t('checkout.total')}</span>
 							{/* aria-live: this number changes without any click, so it
 							    has to be announced, not silently swapped. */}
-							<span aria-live="polite" className={preview.promoApplied ? 'text-neon-pink' : undefined}>
+							<span aria-live="polite" className={preview.discountUsd > 0 ? 'text-neon-pink' : undefined}>
 								{total !== null ? money(total) : '—'}
 							</span>
 						</div>
@@ -198,7 +209,11 @@ export function CheckoutModal({
 							<p className="text-xs text-white/40">{t('checkout.promoChecking')}</p>
 						)}
 						{preview.status === 'ready' && preview.promoApplied && (
-							<p className="text-xs text-emerald-300">{t('checkout.promoApplied')}</p>
+							<p className="text-xs text-emerald-300">
+								{preview.bonusMultiplier > 1
+									? t('checkout.promoBonusApplied', { multiplier: preview.bonusMultiplier })
+									: t('checkout.promoApplied')}
+							</p>
 						)}
 						{preview.status === 'invalid' && (
 							<p className="text-xs text-pink-400">{t('checkout.invalidPromo')}</p>
@@ -207,6 +222,9 @@ export function CheckoutModal({
 							<p className="text-xs text-amber-300">
 								{t('checkout.promoMinOrder', { amount: money(preview.minOrderUsd ?? 0) })}
 							</p>
+						)}
+						{preview.status === 'wrong_product' && (
+							<p className="text-xs text-amber-300">{t('checkout.promoWrongProduct')}</p>
 						)}
 					</div>
 				)}

@@ -209,6 +209,7 @@
     "describeCashCard": "Cash-Card-Code",
     "describeLeveling": "Leveling → {level}",
     "describeMoney": "Geld → {amount}M",
+    "describeMoneyBonus": "Geld → {amount}M (X{multiplier})",
     "status": {
       "awaiting_payment": "Zahlung ausstehend",
       "action_required": "Aktion erforderlich",
@@ -277,6 +278,10 @@
       "expiresLabel": "Gültig bis (optional)",
       "reservedLabel": "Reserviert für Benutzer-ID (optional)",
       "presetsLabel": "Vorlagen",
+      "kindLabel": "Code-Typ",
+      "kindPercent": "Prozentrabatt",
+      "kindBonus": "X2-Lieferung",
+      "bonusNote": "X2 verdoppelt, was der Booster bei Geldbestellungen liefert. Der Preis bleibt gleich; bei Leveling oder Cash Cards wirkt der Code nicht.",
       "submit": "Code ausgeben",
       "creating": "Wird ausgegeben…",
       "created": "Code {code} ausgegeben.",
@@ -440,7 +445,10 @@
     "promoApplied": "Code angewendet",
     "promoPlaceholder": "z. B. WELCOME10",
     "invalidPromo": "Dieser Code ist ungültig oder wurde bereits verwendet.",
-    "promoMinOrder": "Dieser Code gilt ab einem Bestellwert von {amount}."
+    "promoMinOrder": "Dieser Code gilt ab einem Bestellwert von {amount}.",
+    "promoBonusApplied": "X{multiplier} angewendet — doppelte Lieferung",
+    "promoWrongProduct": "Dieser Code gilt nur für Geldbestellungen.",
+    "bonusLine": "Bonus-Lieferung"
   },
   "gta": {
     "comingSoon": "Demnächst",

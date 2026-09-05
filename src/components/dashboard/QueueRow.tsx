@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
 import type { OrderSelection } from '@/types/order';
+import { describeSelection } from '@/lib/orders/describeSelection';
 
 interface QueueOrder {
 	id: string;
@@ -13,6 +14,7 @@ interface QueueOrder {
 	status: string;
 	selection: OrderSelection;
 	contact_handle: string | null;
+	delivery_multiplier?: string | number | null;
 	created_at: string;
 }
 
@@ -54,18 +56,12 @@ export function QueueRow({
 		}
 	};
 
-	const describe = () => {
-		const s = order.selection;
-		if (s.product === 'leveling') return t('dashboard.describeLeveling', { level: s.level ?? '—' });
-		return t('dashboard.describeMoney', { amount: s.amountMillions ?? '—' });
-	};
-
 	return (
 		<div className="glass-panel flex flex-wrap items-center justify-between gap-3 p-4">
 			<div>
 				<p className="font-mono text-xs text-white/50">{order.public_id}</p>
 				<p className="text-sm text-ink">
-					{describe()} · {order.selection.platform?.toUpperCase()}
+					{describeSelection(order.selection, t, order.delivery_multiplier)} · {order.selection.platform?.toUpperCase()}
 				</p>
 				{order.contact_handle && <p className="mt-1 text-xs text-neon-blue">{order.contact_handle}</p>}
 			</div>

@@ -209,6 +209,7 @@
     "describeCashCard": "Код cash-карты",
     "describeLeveling": "Прокачка → {level}",
     "describeMoney": "Деньги → {amount}M",
+    "describeMoneyBonus": "Деньги → {amount}M (X{multiplier})",
     "status": {
       "awaiting_payment": "Ожидает оплаты",
       "action_required": "Требуется действие",
@@ -277,6 +278,10 @@
       "expiresLabel": "Срок действия (необязательно)",
       "reservedLabel": "Только для пользователя, ID (необязательно)",
       "presetsLabel": "Готовые варианты",
+      "kindLabel": "Тип кода",
+      "kindPercent": "Скидка в процентах",
+      "kindBonus": "Удвоение X2",
+      "bonusNote": "X2 удваивает то, что выдаёт бустер по заказам на деньги. Цена не меняется, на прокачку и cash card код не действует.",
       "submit": "Выпустить",
       "creating": "Выпускаем…",
       "created": "Код {code} выпущен.",
@@ -440,7 +445,10 @@
     "promoApplied": "Код применён",
     "promoPlaceholder": "например, WELCOME10",
     "invalidPromo": "Код недействителен или уже использован.",
-    "promoMinOrder": "Код действует при заказе от {amount}."
+    "promoMinOrder": "Код действует при заказе от {amount}.",
+    "promoBonusApplied": "Применён X{multiplier} — двойная выдача",
+    "promoWrongProduct": "Этот код действует только на заказы денег.",
+    "bonusLine": "Бонус к выдаче"
   },
   "gta": {
     "comingSoon": "Скоро",

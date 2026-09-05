@@ -30,7 +30,7 @@ export default async function PromoPage({ params }: { params: Promise<{ locale: 
 	const [listed, issued, active, used] = await Promise.all([
 		db
 			.from('promo_codes')
-			.select('id, code, discount_value, min_order_usd, active, used_at, expires_at, created_at, used_by_order_id')
+			.select('id, code, discount_type, discount_value, min_order_usd, active, used_at, expires_at, created_at, used_by_order_id')
 			.order('created_at', { ascending: false })
 			.limit(100),
 		db.from('promo_codes').select('id', { count: 'exact', head: true }),
@@ -53,6 +53,7 @@ export default async function PromoPage({ params }: { params: Promise<{ locale: 
 	const rows: PromoRow[] = listedRows.map((row) => ({
 		id: Number(row.id),
 		code: row.code,
+		discount_type: row.discount_type,
 		// numeric arrives as a string over PostgREST; coerced once, here.
 		discount_value: Number(row.discount_value),
 		min_order_usd: Number(row.min_order_usd ?? 0),

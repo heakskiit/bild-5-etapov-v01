@@ -5,6 +5,7 @@ import type { Order, OrderStatus } from '@/types/order';
 import { CredentialsForm } from './CredentialsForm';
 import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
+import { describeSelection } from '@/lib/orders/describeSelection';
 
 const CHIP: Record<OrderStatus, string> = {
   awaiting_payment: 'border-white/25 text-white/60',
@@ -25,6 +26,7 @@ export function OrderRow({
     total_usd: string;
     // numeric over PostgREST is a string; absent on pre-promo rows.
     discount_usd?: string | number | null;
+    delivery_multiplier?: string | number | null;
     promo_code?: string | null;
   };
   messages: Dict;
@@ -63,7 +65,7 @@ export function OrderRow({
     <>
       <tr className="border-t border-white/10">
         <td className="px-4 py-3 font-mono text-xs">{order.public_id}</td>
-        <td className="px-4 py-3">{describe(order, t)}</td>
+        <td className="px-4 py-3">{describeSelection(order.selection, t, order.delivery_multiplier)}</td>
         <td className="px-4 py-3">
           ${Number(order.total_usd).toFixed(2)}
           {/* The only place a customer can still see what a code did:
@@ -121,11 +123,4 @@ export function OrderRow({
       )}
     </>
   );
-}
-
-function describe(order: Order, t: (key: string, vars?: Record<string, string | number>) => string): string {
-  const s = order.selection;
-  if (s.product === 'shark_card') return t('dashboard.describeCashCard');
-  if (s.product === 'leveling') return t('dashboard.describeLeveling', { level: s.level ?? '—' });
-  return t('dashboard.describeMoney', { amount: s.amountMillions ?? '—' });
 }

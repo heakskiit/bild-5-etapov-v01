@@ -209,6 +209,7 @@
     "describeCashCard": "Código de tarjeta cash",
     "describeLeveling": "Niveles → {level}",
     "describeMoney": "Dinero → {amount}M",
+    "describeMoneyBonus": "Dinero → {amount}M (X{multiplier})",
     "status": {
       "awaiting_payment": "Esperando pago",
       "action_required": "Requiere acción",
@@ -277,6 +278,10 @@
       "expiresLabel": "Caduca (opcional)",
       "reservedLabel": "Reservado para ID de usuario (opcional)",
       "presetsLabel": "Plantillas",
+      "kindLabel": "Tipo de código",
+      "kindPercent": "Descuento en porcentaje",
+      "kindBonus": "Entrega X2",
+      "bonusNote": "X2 duplica lo que entrega el booster en pedidos de dinero. El precio no cambia y el código no hace nada en leveling ni cash cards.",
       "submit": "Emitir código",
       "creating": "Emitiendo…",
       "created": "Código {code} emitido.",
@@ -440,7 +445,10 @@
     "promoApplied": "Código aplicado",
     "promoPlaceholder": "ej. WELCOME10",
     "invalidPromo": "Ese código no es válido o ya se ha usado.",
-    "promoMinOrder": "Este código funciona en pedidos desde {amount}."
+    "promoMinOrder": "Este código funciona en pedidos desde {amount}.",
+    "promoBonusApplied": "X{multiplier} aplicado: entrega doble",
+    "promoWrongProduct": "Este código solo funciona en pedidos de dinero.",
+    "bonusLine": "Entrega extra"
   },
   "gta": {
     "comingSoon": "Próximamente",

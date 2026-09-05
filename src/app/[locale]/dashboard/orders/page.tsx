@@ -27,7 +27,7 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   // ever revoked UPDATE on orders, never column-level SELECT.
   const { data: orders } = await supabase
     .from('orders')
-    .select('public_id, status, selection, total_usd, discount_usd, promo_code, created_at')
+    .select('public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, created_at')
     .order('created_at', { ascending: false })
     .limit(50);
 
