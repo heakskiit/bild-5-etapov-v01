@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server';
 import { requireUser, getVerifiedProfile } from '@/lib/supabase/auth';
 import { serviceClient } from '@/lib/supabase/service';
 import { setRoleSchema } from '@/lib/validation/dashboard';
+import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   const user = await requireUser();
@@ -22,6 +23,11 @@ export async function POST(request: Request) {
   if (!caller || caller.role !== 'admin') {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
+
+  // Keyed on the caller and placed after the admin gate: a stolen admin
+  // session should not be able to rewrite every role in one burst.
+  const verdict = await consumeRateLimit('adminRole', user.id);
+  if (!verdict.allowed) return tooManyRequests(verdict);
 
   const parsed = setRoleSchema.safeParse(await request.json());
   if (!parsed.success) {

@@ -16,6 +16,7 @@ import { checkoutRequestSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
 import { createInvoice } from '@/lib/pricing/cryptobot';
+import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
 
@@ -25,6 +26,12 @@ export async function POST(request: Request) {
     console.warn('[checkout] rejected: no session on the request');
     return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
   }
+
+  // Checked before any work: each accepted call writes an order row and
+  // asks CryptoBot for an invoice, which makes this the most expensive
+  // endpoint in the app to abuse.
+  const verdict = await consumeRateLimit('checkout', user.id);
+  if (!verdict.allowed) return tooManyRequests(verdict);
 
   // Zod strips unknown keys — a client-supplied `price` cannot survive this.
   const parsed = checkoutRequestSchema.safeParse(await request.json());

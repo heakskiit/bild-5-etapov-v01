@@ -8,12 +8,19 @@ import { NextResponse } from 'next/server';
 import { decryptSecret } from '@/lib/crypto/aes';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
+import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+
+  // Every accepted call decrypts a secret and writes both revealed_at
+  // and an order_events row, so the owner alone could inflate the audit
+  // trail without bound by holding the button down.
+  const verdict = await consumeRateLimit('revealCode', user.id);
+  if (!verdict.allowed) return tooManyRequests(verdict);
 
   const { orderId } = (await request.json()) as { orderId?: string };
   if (!orderId) return NextResponse.json({ error: 'invalid' }, { status: 400 });

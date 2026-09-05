@@ -14,6 +14,7 @@ import { z } from 'zod';
 import { encryptSecret } from '@/lib/crypto/aes';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
+import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
 
@@ -29,6 +30,9 @@ const PAID_STATES = ['action_required', 'in_progress'];
 export async function POST(request: Request) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+
+  const verdict = await consumeRateLimit('credentials', user.id);
+  if (!verdict.allowed) return tooManyRequests(verdict);
 
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) return NextResponse.json({ error: 'invalid' }, { status: 400 });

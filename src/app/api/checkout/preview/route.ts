@@ -27,45 +27,9 @@ import { applyPromoDiscount, noPromoDiscount } from '@/lib/pricing/discount';
 import { checkoutPreviewSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
+import { consumeRateLimit } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
-
-/**
- * Best-effort throttle: 20 code lookups per user per minute.
- *
- * A read-only preview is a promo-code oracle — unlike checkout, probing here
- * costs the attacker nothing, so an authenticated user could enumerate the
- * code space to find live codes. Requiring a session already rules out
- * anonymous scanning; this caps how fast a signed-in account can guess.
- *
- * [KNOWN LIMITATION] Module-level state is per server instance, so on
- * serverless this resets on cold start and is not shared between instances.
- * It raises the cost of enumeration without being a real guarantee — durable
- * rate limiting (shared store, applied to checkout too) remains an open
- * finding (PROMO-5) and is deliberately not solved here.
- */
-const PREVIEW_WINDOW_MS = 60_000;
-// One hand-typed code costs several lookups (the debounce fires on every
-// typing pause), so 20/min throttled real customers mid-word. 60 still
-// bounds enumeration; the durable fix is PROMO-5.
-const PREVIEW_MAX_LOOKUPS = 60;
-const lookupLog = new Map<string, number[]>();
-
-function tooManyLookups(userId: string): boolean {
-	const now = Date.now();
-	const recent = (lookupLog.get(userId) ?? []).filter((at) => now - at < PREVIEW_WINDOW_MS);
-	recent.push(now);
-	lookupLog.set(userId, recent);
-
-	// Keep the map from growing without bound on a long-lived instance.
-	if (lookupLog.size > 5_000) {
-		for (const [key, times] of lookupLog) {
-			if (times.every((at) => now - at >= PREVIEW_WINDOW_MS)) lookupLog.delete(key);
-		}
-	}
-
-	return recent.length > PREVIEW_MAX_LOOKUPS;
-}
 
 export async function POST(request: Request) {
 	const user = await requireUser();
@@ -89,7 +53,12 @@ export async function POST(request: Request) {
 			return NextResponse.json({ ...noPromoDiscount(subtotal), promoApplied: false });
 		}
 
-		if (tooManyLookups(user.id)) {
+		// A read-only preview is a promo-code oracle: unlike checkout, probing
+		// here costs the attacker nothing. The counter is durable now (0009)
+		// and shared between instances — the in-process map it replaces reset
+		// on every cold start, so it bounded nothing.
+		const verdict = await consumeRateLimit('checkoutPreview', user.id);
+		if (!verdict.allowed) {
 			// The price is still valid — only the code lookup was refused, so the
 			// modal keeps showing a correct undiscounted total rather than blanking.
 			return NextResponse.json(
