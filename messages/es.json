@@ -200,6 +200,8 @@
     "columnItem": "Artículo",
     "columnTotal": "Total",
     "columnStatus": "Estado",
+    "discountApplied": "Ahorro de {amount} con {code}",
+    "discountAppliedNoCode": "Ahorro de {amount}",
     "credentialsNotice": "Cifrado con AES-256 y se elimina automáticamente cuando tu pedido se completa.",
     "loginPlaceholder": "Usuario de la cuenta / correo",
     "passwordPlaceholder": "Contraseña de la cuenta",

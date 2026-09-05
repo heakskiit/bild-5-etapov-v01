@@ -22,9 +22,12 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   // instead of calling next/headers itself.
   const messages = await getMessages();
 
+  // discount_usd and promo_code join the selection so a paid order can
+  // still show what the code did. Safe through routeClient(): 0002 only
+  // ever revoked UPDATE on orders, never column-level SELECT.
   const { data: orders } = await supabase
     .from('orders')
-    .select('public_id, status, selection, total_usd, created_at')
+    .select('public_id, status, selection, total_usd, discount_usd, promo_code, created_at')
     .order('created_at', { ascending: false })
     .limit(50);
 

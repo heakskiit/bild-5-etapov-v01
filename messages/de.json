@@ -200,6 +200,8 @@
     "columnItem": "Artikel",
     "columnTotal": "Summe",
     "columnStatus": "Status",
+    "discountApplied": "{amount} gespart mit {code}",
+    "discountAppliedNoCode": "{amount} gespart",
     "credentialsNotice": "AES-256-verschlüsselt und wird automatisch gelöscht, sobald deine Bestellung abgeschlossen ist.",
     "loginPlaceholder": "Account-Login / E-Mail",
     "passwordPlaceholder": "Account-Passwort",

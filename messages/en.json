@@ -200,6 +200,8 @@
     "columnItem": "Item",
     "columnTotal": "Total",
     "columnStatus": "Status",
+    "discountApplied": "Saved {amount} with {code}",
+    "discountAppliedNoCode": "Saved {amount}",
     "credentialsNotice": "Encrypted with AES-256 and erased automatically once your order is completed.",
     "loginPlaceholder": "Account login / email",
     "passwordPlaceholder": "Account password",

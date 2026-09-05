@@ -20,7 +20,13 @@ export function OrderRow({
   order,
   messages,
 }: {
-  order: Order & { public_id: string; total_usd: string };
+  order: Order & {
+    public_id: string;
+    total_usd: string;
+    // numeric over PostgREST is a string; absent on pre-promo rows.
+    discount_usd?: string | number | null;
+    promo_code?: string | null;
+  };
   messages: Dict;
 }) {
   const t = useMemo(() => (key: string, vars?: Record<string, string | number>) => dig(messages, key, vars), [messages]);
@@ -29,6 +35,7 @@ export function OrderRow({
   const [revealError, setRevealError] = useState(false);
   const [open, setOpen] = useState(false);
   const isCode = order.selection.product === 'shark_card';
+  const discount = Number(order.discount_usd ?? 0);
 
   const reveal = async () => {
     setRevealBusy(true);
@@ -57,7 +64,19 @@ export function OrderRow({
       <tr className="border-t border-white/10">
         <td className="px-4 py-3 font-mono text-xs">{order.public_id}</td>
         <td className="px-4 py-3">{describe(order, t)}</td>
-        <td className="px-4 py-3">${Number(order.total_usd).toFixed(2)}</td>
+        <td className="px-4 py-3">
+          ${Number(order.total_usd).toFixed(2)}
+          {/* The only place a customer can still see what a code did:
+              the checkout modal is gone by the time the order exists,
+              and the invoice shows the discounted figure alone. */}
+          {discount > 0 && (
+            <p className="mt-1 text-[11px] text-emerald-300">
+              {order.promo_code
+                ? t('dashboard.discountApplied', { amount: `$${discount.toFixed(2)}`, code: order.promo_code })
+                : t('dashboard.discountAppliedNoCode', { amount: `$${discount.toFixed(2)}` })}
+            </p>
+          )}
+        </td>
         <td className="px-4 py-3">
           <span className={`rounded-full border px-3 py-1 text-[11px] ${CHIP[order.status]}`}>
             {t(`dashboard.status.${order.status}`)}

@@ -200,6 +200,8 @@
     "columnItem": "Товар",
     "columnTotal": "Сумма",
     "columnStatus": "Статус",
+    "discountApplied": "Сэкономлено {amount} по коду {code}",
+    "discountAppliedNoCode": "Сэкономлено {amount}",
     "credentialsNotice": "Шифруется AES-256 и удаляется автоматически после завершения заказа.",
     "loginPlaceholder": "Логин аккаунта / email",
     "passwordPlaceholder": "Пароль аккаунта",
