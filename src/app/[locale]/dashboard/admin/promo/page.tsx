@@ -38,6 +38,27 @@ export default async function PromoPage({ params }: { params: Promise<{ locale: 
 		db.from('promo_codes').select('id', { count: 'exact', head: true }).not('used_at', 'is', null),
 	]);
 
+	// PostgREST reports a failed read as { data: null, error } instead of
+	// throwing, so every one of these queries used to fail silently: a broken
+	// list rendered exactly like "no codes issued yet".
+	if (listed.error) {
+		console.error('[admin/promo] promo_codes list read failed', listed.error);
+		// The list is the whole point of the page, so failing loudly is the
+		// lesser evil: an admin who sees an error retries, while an admin who
+		// sees an empty table issues a duplicate code.
+		throw new Error(`promo_codes read failed: ${listed.error.message}`);
+	}
+
+	for (const [label, result] of [
+		['issued', issued],
+		['active', active],
+		['used', used],
+	] as const) {
+		// A wrong counter is cosmetic, so these still degrade to 0 -- but they
+		// no longer do it without saying so.
+		if (result.error) console.error(`[admin/promo] ${label} count failed`, result.error);
+	}
+
 	const listedRows = (listed.data ?? []) as any[];
 
 	// Resolved in a second read rather than an embedded join: the same shape
@@ -46,7 +67,10 @@ export default async function PromoPage({ params }: { params: Promise<{ locale: 
 	const orderIds = listedRows.map((row) => row.used_by_order_id).filter(Boolean);
 	const orderMap = new Map<string, string>();
 	if (orderIds.length > 0) {
-		const { data: orders } = await db.from('orders').select('id, public_id').in('id', orderIds);
+		const { data: orders, error: ordersError } = await db.from('orders').select('id, public_id').in('id', orderIds);
+		// Not fatal: without this map the code column simply shows no order
+		// link, which is a degraded page rather than a misleading one.
+		if (ordersError) console.error('[admin/promo] used_by_order_id lookup failed', ordersError);
 		for (const order of (orders ?? []) as any[]) orderMap.set(order.id, order.public_id);
 	}
 
