@@ -84,7 +84,9 @@ export async function POST(request: Request) {
 
   // --- promo: spent only now, at confirmed payment (0007) ----------------
   if (order.promo_code) {
-    const { error: burnError } = await db.rpc('burn_promo_for_order', { p_order_id: order.id });
+    const { data: burnedPromoId, error: burnError } = await db.rpc('burn_promo_for_order', {
+      p_order_id: order.id,
+    });
     if (burnError) {
       // The payment is already good — never fail fulfilment over bookkeeping.
       console.error('[webhook] promo burn failed', burnError);
@@ -93,6 +95,37 @@ export async function POST(request: Request) {
         kind: 'promo_burn_failed',
         detail: { promo_code: order.promo_code },
       });
+    } else if (burnedPromoId == null) {
+      // Nothing was burned. Since 0010 a code stays valid until it is paid
+      // for, so two checkouts can both carry it and only the first payment
+      // finds anything to spend. The money is already in and the discount
+      // was already applied to the invoice, so this cannot be prevented
+      // here — only recorded, so a double-used code is never silent.
+      //
+      // One benign case looks identical: this very order burned the code and
+      // we are re-running after a failure between the burn and the status
+      // update. used_by_order_id tells the two apart.
+      const { data: promoRow } = await db
+        .from('promo_codes')
+        .select('used_by_order_id')
+        .eq('code', order.promo_code)
+        .maybeSingle<{ used_by_order_id: string | null }>();
+
+      if (promoRow?.used_by_order_id !== order.id) {
+        console.error('[webhook] discount not backed by an unused code', {
+          order: order.public_id,
+          promoCode: order.promo_code,
+        });
+        await db.from('order_events').insert({
+          order_id: order.id,
+          kind: 'promo_already_used',
+          detail: {
+            promo_code: order.promo_code,
+            discount_usd: order.discount_usd,
+            used_by_order_id: promoRow?.used_by_order_id ?? null,
+          },
+        });
+      }
     }
   }
 
