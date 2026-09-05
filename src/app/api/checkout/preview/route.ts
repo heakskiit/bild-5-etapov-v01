@@ -24,6 +24,7 @@
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
 import { applyPromoDiscount, noPromoDiscount } from '@/lib/pricing/discount';
+import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
 import { checkoutPreviewSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
 		const db = serviceClient();
 		const { data: promo, error: promoError } = await db
 			.rpc('peek_promo', { p_code: promoCode, p_user_id: user.id })
-			.maybeSingle<{ discount_type: 'percent' | 'fixed_usd'; discount_value: number }>();
+			.maybeSingle<{ discount_type: 'percent' | 'fixed_usd'; discount_value: number; min_order_usd: number | string }>();
 		if (promoError) throw promoError;
 
 		if (!promo) {
@@ -82,6 +83,20 @@ export async function POST(request: Request) {
 				...noPromoDiscount(subtotal),
 				promoApplied: false,
 				error: 'invalid_promo',
+			});
+		}
+
+		// A real, unspent code that this order is simply too small for.
+		// Answered with the figure rather than "invalid", which would send the
+		// customer away from a code that does work. Still 200, for the same
+		// reason as above: the selection and its price are both fine.
+		const eligibility = checkPromoMinOrder(subtotal, promo.min_order_usd);
+		if (!eligibility.eligible) {
+			return NextResponse.json({
+				...noPromoDiscount(subtotal),
+				promoApplied: false,
+				error: 'min_order',
+				minOrderUsd: eligibility.minOrderUsd,
 			});
 		}
 

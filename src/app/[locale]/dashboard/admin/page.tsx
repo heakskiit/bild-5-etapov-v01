@@ -85,6 +85,12 @@ export default async function AdminPage({
 				>
 					{t('admin.inventory.title')}
 				</Link>
+				<Link
+					href={`/${locale}/dashboard/admin/promo`}
+					className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-neon-blue hover:border-neon-blue"
+				>
+					{t('admin.promo.title')}
+				</Link>
 			</div>
 
 			<section className="space-y-4">

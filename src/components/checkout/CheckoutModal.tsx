@@ -203,6 +203,11 @@ export function CheckoutModal({
 						{preview.status === 'invalid' && (
 							<p className="text-xs text-pink-400">{t('checkout.invalidPromo')}</p>
 						)}
+						{preview.status === 'min_order' && (
+							<p className="text-xs text-amber-300">
+								{t('checkout.promoMinOrder', { amount: money(preview.minOrderUsd ?? 0) })}
+							</p>
+						)}
 					</div>
 				)}
 

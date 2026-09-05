@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
 import { applyPromoDiscount } from '@/lib/pricing/discount';
+import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
 import {
   roundMoney,
   BOOSTER_PAYOUT_SHARE,
@@ -64,12 +65,28 @@ export async function POST(request: Request) {
           p_user_id: user.id,
           p_hold_minutes: PROMO_HOLD_MINUTES,
         })
-        .maybeSingle<{ id: number; discount_type: 'percent' | 'fixed_usd'; discount_value: number }>();
+        .maybeSingle<{ id: number; discount_type: 'percent' | 'fixed_usd'; discount_value: number; min_order_usd: number | string }>();
       if (promoError) throw promoError;
       if (!promo) {
         // Unknown, spent, held, expired or reserved for somebody else all
         // answer identically, so this cannot be used to probe which.
         return NextResponse.json({ error: 'invalid_promo' }, { status: 422 });
+      }
+
+      // Compared against the pre-discount total -- the very figure the
+      // preview compares, so a code that previewed as eligible cannot be
+      // refused here.
+      //
+      // The claim above already wrote held_until, and that is harmless:
+      // since 0010 nothing gates on it, so a refused order leaves the code
+      // fully usable. heldPromoId is still null, so the catch below has
+      // nothing to release either.
+      const eligibility = checkPromoMinOrder(total, promo.min_order_usd);
+      if (!eligibility.eligible) {
+        return NextResponse.json(
+          { error: 'min_order', minOrderUsd: eligibility.minOrderUsd },
+          { status: 422 },
+        );
       }
 
       heldPromoId = promo.id;

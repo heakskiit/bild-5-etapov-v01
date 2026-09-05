@@ -17,3 +17,34 @@ export const setRoleSchema = z.object({
   userId: z.string().uuid(),
   role: z.enum(['ghost', 'modder', 'admin']),
 }).strict();
+
+/**
+ * Promo codes are admin-issued only (PROMO-7).
+ *
+ * Percent is the only type the form offers. fixed_usd still exists in the
+ * enum, but MAX_DISCOUNT_SHARE caps any amount at 20% of the order, so a
+ * fixed code would silently grant less than it claims on small baskets --
+ * a support ticket waiting to happen.
+ */
+export const createPromoSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .min(4)
+    .max(32)
+    .regex(/^[A-Z0-9][A-Z0-9-]*$/, 'Uppercase letters, digits and dashes only'),
+  // Whole percents, never above the ceiling that percent_in_range (0007) and
+  // MAX_DISCOUNT_SHARE already enforce independently of each other.
+  discountValue: z.number().int().min(1).max(20),
+  // 0 means no threshold, which is how every pre-0011 code behaves.
+  minOrderUsd: z.number().min(0).max(100000),
+  expiresAt: z.string().datetime().nullable().optional(),
+  reservedForUserId: z.string().uuid().nullable().optional(),
+}).strict();
+
+/** Codes are switched off, never deleted: a spent code is the only record of
+ *  what a discount on a paid order was for. */
+export const togglePromoSchema = z.object({
+  id: z.number().int().positive(),
+  active: z.boolean(),
+}).strict();

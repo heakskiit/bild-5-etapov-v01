@@ -37,6 +37,8 @@ export type PreviewStatus =
 	| 'ready'
 	/** Code was checked and rejected — unknown, spent, held, expired or not yours. */
 	| 'invalid'
+	/** Real code, but this order is below the minimum it requires. */
+	| 'min_order'
 	/** Preview could not run; price shown is pre-discount only. */
 	| 'unavailable';
 
@@ -48,6 +50,8 @@ export interface PromoPreview {
 	/** Server-computed amount that would actually be charged, or null. */
 	total: number | null;
 	promoApplied: boolean;
+	/** Set only when status is min_order: the amount the code needs. */
+	minOrderUsd: number | null;
 }
 
 const EMPTY: PromoPreview = {
@@ -56,6 +60,7 @@ const EMPTY: PromoPreview = {
 	discountUsd: 0,
 	total: null,
 	promoApplied: false,
+	minOrderUsd: null,
 };
 
 export function usePromoPreview(
@@ -104,11 +109,12 @@ export function usePromoPreview(
 					}
 
 					setPreview({
-						status: code && !data.promoApplied ? 'invalid' : 'ready',
+						status: code && !data.promoApplied ? (data.error === 'min_order' ? 'min_order' : 'invalid') : 'ready',
 						subtotal: data.subtotal,
 						discountUsd: typeof data.discountUsd === 'number' ? data.discountUsd : 0,
 						total: data.total,
 						promoApplied: Boolean(data.promoApplied),
+						minOrderUsd: typeof data.minOrderUsd === 'number' ? data.minOrderUsd : null,
 					});
 				} catch {
 					// AbortError included: a superseded request must not clobber state.
