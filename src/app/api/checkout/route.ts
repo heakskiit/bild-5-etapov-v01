@@ -19,6 +19,7 @@ import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
 import { createInvoice } from '@/lib/pricing/cryptobot';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
+import { canPlaceOrder, dayWindowStart, pendingWindowStart } from '@/lib/orders/orderLimits';
 
 export const runtime = 'nodejs';
 
@@ -43,6 +44,44 @@ export async function POST(request: Request) {
   const { selection, contactMethod, contactHandle, details, promoCode } = parsed.data;
 
   const db = serviceClient();
+
+  // Unpaid orders are the cheap abuse: the row and the invoice cost whoever
+  // placed them nothing, and a few dozen of them bury every list the owner
+  // actually reads. Checked before the price is recomputed, so a refusal never
+  // reaches CryptoBot.
+  //
+  // Two head-only COUNT(*) reads, run together -- the answer to "may this
+  // profile order at all" should not cost more than the cheapest question we
+  // can ask the database.
+  const [pendingRead, dailyRead] = await Promise.all([
+    db
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'awaiting_payment')
+      .gte('created_at', pendingWindowStart()),
+    db
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', dayWindowStart()),
+  ]);
+  if (pendingRead.error || dailyRead.error) {
+    // Fail open like the rate limiter does -- but never silently.
+    console.error(
+      '[checkout] order limit counts failed, allowing request',
+      pendingRead.error ?? dailyRead.error,
+    );
+  }
+  const volume = canPlaceOrder({
+    pendingCount: pendingRead.error ? null : pendingRead.count,
+    dailyCount: dailyRead.error ? null : dailyRead.count,
+  });
+  if (!volume.allowed) {
+    console.warn(`[checkout] refused for ${user.id}: ${volume.reason} (limit ${volume.limit})`);
+    return NextResponse.json({ error: volume.reason, limit: volume.limit }, { status: 429 });
+  }
+
   let heldPromoId: number | null = null;
     // Recorded on the order itself, so deleting the code later cannot
     // quietly halve what a booster owes an already-paid customer.

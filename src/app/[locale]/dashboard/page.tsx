@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getProfile, routeClient } from '@/lib/supabase/auth';
 import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher';
 import { getTranslations } from '@/lib/i18n/getTranslations';
+import { pendingWindowStart } from '@/lib/orders/orderLimits';
 
 /** Dashboard overview: totals plus language preference. */
 export default async function DashboardPage({
@@ -18,21 +19,30 @@ export default async function DashboardPage({
 
   const { data: orders } = await supabase
     .from('orders')
-    .select('status, total_usd')
+    .select('status, total_usd, created_at')
     .order('created_at', { ascending: false });
 
   const list = orders ?? [];
   const spent = list.reduce((sum, o) => sum + Number(o.total_usd), 0);
   const active = list.filter((o) => ['action_required', 'in_progress'].includes(o.status)).length;
+  // Only orders still inside the pending window: once the invoice has
+  // lapsed the order cannot be paid any more, so counting it would show a
+  // bill the customer has no way to settle. Same window the checkout route
+  // enforces, so this tile and that refusal always agree.
+  const pendingCutoff = Date.parse(pendingWindowStart());
+  const pending = list.filter(
+    (o) => o.status === 'awaiting_payment' && Date.parse(o.created_at) >= pendingCutoff,
+  ).length;
 
   return (
     <div className="space-y-8">
       <h1 className="font-display text-3xl text-neon-pink">{t('nav.dashboard')}</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label={t('dashboard.ordersLabel')} value={String(list.length)} />
         <Stat label={t('dashboard.activeLabel')} value={String(active)} />
         <Stat label={t('dashboard.totalSpentLabel')} value={`$${spent.toFixed(2)}`} />
+        <Stat label={t('dashboard.pendingLabel')} value={String(pending)} />
       </div>
 
       <div className="glass-panel p-5">

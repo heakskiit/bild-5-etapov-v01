@@ -195,6 +195,7 @@
     "ordersLabel": "Commandes",
     "activeLabel": "Actives",
     "totalSpentLabel": "Total dépensé",
+    "pendingLabel": "En attente de paiement",
     "languageLabel": "Langue",
     "columnOrder": "Commande",
     "columnItem": "Article",
@@ -448,6 +449,8 @@
     "promoMinOrder": "Ce code s’applique à partir de {amount}.",
     "promoBonusApplied": "X{multiplier} appliqué — livraison doublée",
     "promoWrongProduct": "Ce code ne fonctionne que sur les commandes d'argent.",
+    "tooManyPending": "Vous avez déjà {limit} commandes impayées. Payez-en une avant d’en créer une nouvelle.",
+    "dailyLimit": "Limite quotidienne de commandes atteinte ({limit}). Réessayez demain.",
     "bonusLine": "Livraison bonus"
   },
   "gta": {

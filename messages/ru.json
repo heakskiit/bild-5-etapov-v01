@@ -195,6 +195,7 @@
     "ordersLabel": "Заказы",
     "activeLabel": "Активные",
     "totalSpentLabel": "Всего потрачено",
+    "pendingLabel": "Ожидают оплаты",
     "languageLabel": "Язык",
     "columnOrder": "Заказ",
     "columnItem": "Товар",
@@ -448,6 +449,8 @@
     "promoMinOrder": "Код действует при заказе от {amount}.",
     "promoBonusApplied": "Применён X{multiplier} — двойная выдача",
     "promoWrongProduct": "Этот код действует только на заказы денег.",
+    "tooManyPending": "У вас уже {limit} неоплаченных заказов. Оплатите или дождитесь их истечения, прежде чем создавать новый.",
+    "dailyLimit": "Достигнут суточный лимит заказов ({limit}). Попробуйте завтра.",
     "bonusLine": "Бонус к выдаче"
   },
   "gta": {

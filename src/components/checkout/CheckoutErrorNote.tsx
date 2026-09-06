@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { CheckoutError } from '@/lib/hooks/useCheckout';
+import { MAX_ORDERS_PER_DAY, MAX_PENDING_ORDERS } from '@/lib/orders/orderLimits';
 
 /**
  * `error.code` was already distinct per failure (`useCheckout` passes the
@@ -17,7 +18,7 @@ export function CheckoutErrorNote({
 	onRetry,
 }: {
 	error: CheckoutError | null;
-	t: (key: string) => string;
+	t: (key: string, vars?: Record<string, string | number>) => string;
 	onRetry: () => void;
 }) {
 	const pathname = usePathname();
@@ -34,6 +35,22 @@ export function CheckoutErrorNote({
 				>
 					{t('nav.login')}
 				</Link>
+			</div>
+		);
+	}
+
+	if (error.code === 'too_many_pending' || error.code === 'daily_limit') {
+		// A deliberate refusal, so there is nothing to retry: the text has to
+		// carry the whole explanation. The numbers come from the module the
+		// route enforces, so the copy cannot drift away from the rule.
+		const daily = error.code === 'daily_limit';
+		return (
+			<div className="mt-1">
+				<span className="text-xs text-amber-300">
+					{t(daily ? 'checkout.dailyLimit' : 'checkout.tooManyPending', {
+						limit: daily ? MAX_ORDERS_PER_DAY : MAX_PENDING_ORDERS,
+					})}
+				</span>
 			</div>
 		);
 	}

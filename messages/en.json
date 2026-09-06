@@ -195,6 +195,7 @@
     "ordersLabel": "Orders",
     "activeLabel": "Active",
     "totalSpentLabel": "Total spent",
+    "pendingLabel": "Awaiting payment",
     "languageLabel": "Language",
     "columnOrder": "Order",
     "columnItem": "Item",
@@ -448,6 +449,8 @@
     "promoMinOrder": "This code works on orders from {amount}.",
     "promoBonusApplied": "X{multiplier} applied — double delivery",
     "promoWrongProduct": "This code only works on money orders.",
+    "tooManyPending": "You already have {limit} unpaid orders. Pay or let one lapse before starting another.",
+    "dailyLimit": "Daily order limit reached ({limit}). Please try again tomorrow.",
     "bonusLine": "Bonus delivery"
   },
   "gta": {

@@ -195,6 +195,7 @@
     "ordersLabel": "Pedidos",
     "activeLabel": "Activos",
     "totalSpentLabel": "Total gastado",
+    "pendingLabel": "Pendiente de pago",
     "languageLabel": "Idioma",
     "columnOrder": "Pedido",
     "columnItem": "Artículo",
@@ -448,6 +449,8 @@
     "promoMinOrder": "Este código funciona en pedidos desde {amount}.",
     "promoBonusApplied": "X{multiplier} aplicado: entrega doble",
     "promoWrongProduct": "Este código solo funciona en pedidos de dinero.",
+    "tooManyPending": "Ya tienes {limit} pedidos sin pagar. Paga uno o espera a que caduque antes de crear otro.",
+    "dailyLimit": "Límite diario de pedidos alcanzado ({limit}). Inténtalo de nuevo mañana.",
     "bonusLine": "Entrega extra"
   },
   "gta": {

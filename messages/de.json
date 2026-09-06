@@ -195,6 +195,7 @@
     "ordersLabel": "Bestellungen",
     "activeLabel": "Aktiv",
     "totalSpentLabel": "Ausgegeben gesamt",
+    "pendingLabel": "Zahlung offen",
     "languageLabel": "Sprache",
     "columnOrder": "Bestellung",
     "columnItem": "Artikel",
@@ -448,6 +449,8 @@
     "promoMinOrder": "Dieser Code gilt ab einem Bestellwert von {amount}.",
     "promoBonusApplied": "X{multiplier} angewendet — doppelte Lieferung",
     "promoWrongProduct": "Dieser Code gilt nur für Geldbestellungen.",
+    "tooManyPending": "Sie haben bereits {limit} unbezahlte Bestellungen. Bezahlen Sie eine davon, bevor Sie eine neue anlegen.",
+    "dailyLimit": "Tageslimit für Bestellungen erreicht ({limit}). Bitte versuchen Sie es morgen erneut.",
     "bonusLine": "Bonus-Lieferung"
   },
   "gta": {
