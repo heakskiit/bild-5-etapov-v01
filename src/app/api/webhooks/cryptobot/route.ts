@@ -18,6 +18,7 @@ import { NextResponse } from 'next/server';
 import { serviceClient } from '@/lib/supabase/service';
 import { fulfilDigitalCode } from '@/lib/keys/googleSheets';
 import { notifyBoosters } from '@/lib/discord/notifyBoosters';
+import { AUTO_DELIVERY, mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
 
 export const runtime = 'nodejs';
 
@@ -135,6 +136,22 @@ export async function POST(request: Request) {
     const code = await fulfilDigitalCode(order.selection.variantId, order.public_id);
     await db.from('digital_codes').insert({ order_id: order.id, code_ciphertext: code });
     await db.from('orders').update({ status: 'completed', paid_at: new Date().toISOString() }).eq('id', order.id);
+
+    // BATCH E3: a cash card is delivered the moment it is paid for, so this
+    // is where such an order becomes "done" -- nobody closes it by hand.
+    // mirrorCompletedOrder never throws: the key is already issued and the
+    // customer is already owed it, so a spreadsheet outage cannot be allowed
+    // to turn a successful payment into a failed webhook and a retry.
+    await mirrorCompletedOrder({
+      publicId: order.public_id,
+      selection: order.selection,
+      totalUsd: order.total_usd,
+      discountUsd: order.discount_usd,
+      promoCode: order.promo_code,
+      deliveryMultiplier: order.delivery_multiplier,
+      contactHandle: order.contact_handle,
+      completedBy: AUTO_DELIVERY,
+    });
   } else {
     await db
       .from('orders')

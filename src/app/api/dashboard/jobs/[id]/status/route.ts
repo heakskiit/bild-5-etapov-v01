@@ -9,6 +9,7 @@
 import { NextResponse } from 'next/server';
 import { routeClient, requireUser, getProfile } from '@/lib/supabase/auth';
 import { jobStatusSchema } from '@/lib/validation/dashboard';
+import { mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: publicId } = await params;
@@ -34,7 +35,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     .from('orders')
     .update({ status: parsed.data.status })
     .eq('public_id', publicId)
-    .select('id, public_id, status')
+    .select('id, public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, contact_handle')
     .maybeSingle();
 
   if (error) {
@@ -51,6 +52,25 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     detail: { to: parsed.data.status, actor_id: user.id },
   });
   if (eventError) console.error('[jobs/status] event insert failed (status change itself still succeeded)', eventError);
+
+  // BATCH E3: mirror the finished job into the owner's sheet. Awaited so any
+  // failure is logged inside this request rather than after the response, but
+  // mirrorCompletedOrder resolves in every case -- the status change above is
+  // already committed and must not be undone by an unreachable Google.
+  if (parsed.data.status === 'completed') {
+    await mirrorCompletedOrder({
+      publicId: order.public_id,
+      selection: order.selection,
+      totalUsd: order.total_usd,
+      discountUsd: order.discount_usd,
+      promoCode: order.promo_code,
+      deliveryMultiplier: order.delivery_multiplier,
+      contactHandle: order.contact_handle,
+      // Who closed it, not who was assigned: an admin may finish someone
+      // else's job, and the sheet should name the person who pressed it.
+      completedBy: profile.email ?? user.id,
+    });
+  }
 
   return NextResponse.json({ ok: true, status: order.status });
 }
