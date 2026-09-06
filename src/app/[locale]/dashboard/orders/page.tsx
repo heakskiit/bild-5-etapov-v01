@@ -4,12 +4,31 @@ import { getProfile, routeClient } from '@/lib/supabase/auth';
 import { OrderRow } from '@/components/dashboard/OrderRow';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { buttonClasses } from '@/components/ui/buttonStyles';
+import { pendingWindowStart } from '@/lib/orders/orderLimits';
+import type { Dict } from '@/lib/i18n/pick';
 
 /**
  * Orders table. Two behaviours share one row component:
- *  - digital codes → "Show Code" (enabled only once status is completed)
- *  - boost services → status chip + the encrypted handover form when required
+ *  - digital codes -> "Show Code" (enabled only once status is completed)
+ *  - boost services -> status chip + the encrypted handover form when required
+ *
+ * BATCH E2: paid work comes first, unpaid orders sit in their own section
+ * underneath. The customer keeps every route back to an unfinished payment --
+ * removing them outright would strand anyone who closed the invoice tab --
+ * but they no longer interleave with real orders.
+ *
+ * Unpaid orders older than the pending window are dropped: the CryptoBot
+ * invoice has lapsed, so the row offers a bill that can no longer be settled.
+ * How many were dropped is still reported, because an order disappearing
+ * without a word is worse than one that is plainly stale.
  */
+
+type OrderListRow = {
+  public_id: string;
+  status: string;
+  created_at: string;
+};
+
 export default async function OrdersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const profile = await getProfile();
@@ -31,30 +50,30 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
     .order('created_at', { ascending: false })
     .limit(50);
 
+  const all = (orders ?? []) as OrderListRow[];
+  const pendingCutoff = Date.parse(pendingWindowStart());
+  const unpaid = (order: OrderListRow) => order.status === 'awaiting_payment';
+
+  const settled = all.filter((order) => !unpaid(order));
+  const pending = all.filter((order) => unpaid(order) && Date.parse(order.created_at) >= pendingCutoff);
+  const lapsed = all.length - settled.length - pending.length;
+
   return (
     <div>
       <h1 className="font-display text-3xl text-neon-pink">{t('dashboard.ordersLabel')}</h1>
 
-      {orders && orders.length > 0 ? (
-        <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
-          <table className="w-full text-sm">
-            <thead className="bg-surface/80 text-left text-xs uppercase tracking-widest text-white/50">
-              <tr>
-                <th className="px-4 py-3">{t('dashboard.columnOrder')}</th>
-                <th className="px-4 py-3">{t('dashboard.columnItem')}</th>
-                <th className="px-4 py-3">{t('dashboard.columnTotal')}</th>
-                <th className="px-4 py-3">{t('dashboard.columnStatus')}</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <OrderRow key={order.public_id} order={order as any} messages={messages} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
+      {settled.length > 0 && <OrdersTable rows={settled} messages={messages} t={t} />}
+
+      {pending.length > 0 && (
+        <section className="mt-8 space-y-3">
+          <h2 className="font-display text-sm uppercase tracking-widest text-white/60">
+            {t('dashboard.pendingLabel')}
+          </h2>
+          <OrdersTable rows={pending} messages={messages} t={t} />
+        </section>
+      )}
+
+      {settled.length === 0 && pending.length === 0 && (
         // §3.4 / item 5: "пусто" is one of the mandatory screen states this
         // page didn't have — it used to render a table with headers and zero
         // rows, which reads as broken rather than "you have no orders".
@@ -66,6 +85,42 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
           </Link>
         </div>
       )}
+
+      {lapsed > 0 && (
+        <p className="mt-4 text-xs text-white/40">{t('dashboard.expiredHidden', { count: lapsed })}</p>
+      )}
+    </div>
+  );
+}
+
+/** One markup definition, rendered once per section. */
+function OrdersTable({
+  rows,
+  messages,
+  t,
+}: {
+  rows: OrderListRow[];
+  messages: Dict;
+  t: (key: string) => string;
+}) {
+  return (
+    <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
+      <table className="w-full text-sm">
+        <thead className="bg-surface/80 text-left text-xs uppercase tracking-widest text-white/50">
+          <tr>
+            <th className="px-4 py-3">{t('dashboard.columnOrder')}</th>
+            <th className="px-4 py-3">{t('dashboard.columnItem')}</th>
+            <th className="px-4 py-3">{t('dashboard.columnTotal')}</th>
+            <th className="px-4 py-3">{t('dashboard.columnStatus')}</th>
+            <th className="px-4 py-3" />
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((order) => (
+            <OrderRow key={order.public_id} order={order as any} messages={messages} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

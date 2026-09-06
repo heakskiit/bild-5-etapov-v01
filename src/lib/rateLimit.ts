@@ -37,7 +37,6 @@ export const RATE_LIMITS = {
 	checkoutPreview: { limit: 60, windowSeconds: 60 },
 	revealCode: { limit: 20, windowSeconds: 60 },
 	credentials: { limit: 10, windowSeconds: 60 },
-	adminRole: { limit: 20, windowSeconds: 60 },
 	adminPromo: { limit: 30, windowSeconds: 60 },
 } as const;
 

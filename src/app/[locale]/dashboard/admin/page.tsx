@@ -1,11 +1,11 @@
 import { describeSelection } from '@/lib/orders/describeSelection';
 import Link from 'next/link';
 import { requireRole, routeClient } from '@/lib/supabase/auth';
-import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
-import { AdminRoleTable } from '@/components/dashboard/AdminRoleTable';
+import { getTranslations } from '@/lib/i18n/getTranslations';
+import { dayWindowStart } from '@/lib/orders/orderLimits';
 import type { OrderSelection, OrderStatus } from '@/types/order';
 
-type AdminFilterStatus = 'all' | 'paid' | 'awaiting_payment' | 'cancelled' | 'completed';
+type AdminFilterStatus = 'paid24' | 'all' | 'paid' | 'awaiting_payment' | 'cancelled' | 'completed';
 
 type AdminSearchParams = {
 	status?: string | string[];
@@ -34,6 +34,7 @@ type ProfileLookup = {
 
 const PAGE_SIZE = 25;
 const FILTERS: Array<{ value: AdminFilterStatus; labelKey: string }> = [
+	{ value: 'paid24', labelKey: 'admin.filterPaid24' },
 	{ value: 'all', labelKey: 'admin.filterAll' },
 	{ value: 'paid', labelKey: 'admin.filterPaid' },
 	{ value: 'awaiting_payment', labelKey: 'admin.filterAwaiting' },
@@ -42,9 +43,18 @@ const FILTERS: Array<{ value: AdminFilterStatus; labelKey: string }> = [
 ];
 
 /**
- * admin → /dashboard/admin. Adds an orders workbench with server-side
- * filters, search, newest-first sorting, and pagination while keeping the
- * existing role and audit tools below.
+ * admin → /dashboard/admin. An orders workbench with server-side filters,
+ * search, newest-first sorting and pagination.
+ *
+ * BATCH E2: the default view is "paid in the last 24 hours" rather than
+ * everything ever ordered. Unpaid orders cost nothing to create, so an
+ * unfiltered list is the one thing an abuser can fill up for free -- and the
+ * owner would be reading past it every single day. Full history is still one
+ * click away behind the "all" filter.
+ *
+ * Role management lived here until E2 and now doesn't: roles are changed
+ * directly in the database. A button with no API behind it is dead weight,
+ * and an API with no button is an unwatched door -- so both went.
  */
 export default async function AdminPage({
 	params,
@@ -55,19 +65,11 @@ export default async function AdminPage({
 }) {
 	const { locale } = await params;
 	await requireRole(locale, ['admin']);
-	const [rawSearchParams, t, messages] = await Promise.all([searchParams, getTranslations(), getMessages()]);
+	const [rawSearchParams, t] = await Promise.all([searchParams, getTranslations()]);
 	const filters = normalizeFilters(rawSearchParams);
 
 	const supabase = await routeClient();
-	const [ordersResult, profilesResult, auditResult] = await Promise.all([
-		loadAdminOrders(supabase, filters),
-		supabase.from('profiles').select('id, email, role, created_at').order('created_at', { ascending: false }),
-		supabase
-			.from('role_audit')
-			.select('target_user_id, changed_by, old_role, new_role, created_at')
-			.order('created_at', { ascending: false })
-			.limit(20),
-	]);
+	const ordersResult = await loadAdminOrders(supabase, filters);
 
 	const totalPages = Math.max(1, Math.ceil(ordersResult.totalCount / PAGE_SIZE));
 	const from = ordersResult.totalCount === 0 ? 0 : (filters.page - 1) * PAGE_SIZE + 1;
@@ -225,30 +227,6 @@ export default async function AdminPage({
 					<div className="glass-panel p-8 text-center text-sm text-ink-soft">{t('admin.ordersEmpty')}</div>
 				)}
 			</section>
-
-			<section className="space-y-3">
-				<h2 className="font-display text-sm uppercase tracking-widest text-white/60">{t('admin.rolesTitle')}</h2>
-				<AdminRoleTable profiles={profilesResult.data ?? []} messages={messages} />
-			</section>
-
-			<section className="space-y-3">
-				<h2 className="font-display text-sm uppercase tracking-widest text-white/60">{t('admin.auditTitle')}</h2>
-				{auditResult.data && auditResult.data.length > 0 ? (
-					<div className="glass-panel divide-y divide-white/5 p-2">
-						{auditResult.data.map((entry: { target_user_id: string; old_role: string; new_role: string; created_at: string }, i: number) => (
-							<div key={i} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm text-ink-soft">
-								<span className="font-mono text-xs text-white/50">{entry.target_user_id.slice(0, 8)}</span>
-								<span>
-									{entry.old_role} → <span className="text-neon-blue">{entry.new_role}</span>
-								</span>
-								<span className="text-xs text-white/40">{new Date(entry.created_at).toLocaleString(locale)}</span>
-							</div>
-						))}
-					</div>
-				) : (
-					<p className="text-sm text-ink-soft">{t('admin.auditEmpty')}</p>
-				)}
-			</section>
 		</div>
 	);
 }
@@ -261,18 +239,18 @@ function normalizeFilters(searchParams: AdminSearchParams) {
 	const status = pickFirst(searchParams.status);
 	const page = Number.parseInt(pickFirst(searchParams.page) ?? '1', 10);
 	return {
-		status: isAdminFilterStatus(status) ? status : 'all',
+		status: isAdminFilterStatus(status) ? status : 'paid24',
 		q: (pickFirst(searchParams.q) ?? '').trim(),
 		page: Number.isFinite(page) && page > 0 ? page : 1,
 	};
 }
 
 function isAdminFilterStatus(value: string | undefined): value is AdminFilterStatus {
-	return value === 'all' || value === 'paid' || value === 'awaiting_payment' || value === 'cancelled' || value === 'completed';
+	return value === 'paid24' || value === 'all' || value === 'paid' || value === 'awaiting_payment' || value === 'cancelled' || value === 'completed';
 }
 
 function hasActiveFilters(filters: { status: AdminFilterStatus; q: string; page: number }) {
-	return filters.status !== 'all' || filters.q.length > 0 || filters.page > 1;
+	return filters.status !== 'paid24' || filters.q.length > 0 || filters.page > 1;
 }
 
 function buildAdminHref(
@@ -282,7 +260,9 @@ function buildAdminHref(
 ) {
 	const next = { ...filters, ...overrides };
 	const params = new URLSearchParams();
-	if (next.status !== 'all') params.set('status', next.status);
+	// 'paid24' is the default, so it stays out of the URL; 'all' has to be
+	// spelled out because it is now an explicit choice.
+	if (next.status !== 'paid24') params.set('status', next.status);
 	if (next.q) params.set('q', next.q);
 	if (next.page > 1) params.set('page', String(next.page));
 	const query = params.toString();
@@ -298,7 +278,11 @@ async function loadAdminOrders(
 		.select('id, public_id, user_id, status, selection, total_usd, created_at, paid_at, contact_handle, assigned_modder_id, delivery_multiplier', { count: 'exact' })
 		.order('created_at', { ascending: false });
 
-	if (filters.status === 'paid') {
+	if (filters.status === 'paid24') {
+		// The default view: what actually came in overnight. Unpaid rows cannot
+		// reach this list at all, which is the entire point of it.
+		query = query.not('paid_at', 'is', null).gte('paid_at', dayWindowStart());
+	} else if (filters.status === 'paid') {
 		query = query.not('paid_at', 'is', null);
 	} else if (filters.status === 'awaiting_payment') {
 		query = query.eq('status', 'awaiting_payment');

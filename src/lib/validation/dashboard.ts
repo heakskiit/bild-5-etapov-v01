@@ -13,11 +13,6 @@ export const jobStatusSchema = z.object({
   status: z.enum(['in_progress', 'action_required', 'completed']),
 }).strict();
 
-export const setRoleSchema = z.object({
-  userId: z.string().uuid(),
-  role: z.enum(['ghost', 'modder', 'admin']),
-}).strict();
-
 /**
  * Promo codes are admin-issued only (PROMO-7).
  *
