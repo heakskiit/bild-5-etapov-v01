@@ -84,8 +84,15 @@ function baseForSelection(selection: OrderSelection): number {
     case 'leveling': {
       if (selection.platform === 'pc') {
         const level = selection.level ?? 0;
-        if (level < LEVELING_PC.minLevel || level > LEVELING_PC.maxLevel) {
-          throw new PricingError('OUT_OF_RANGE', 'Level outside 1..8000');
+        // A level is a whole number in the game. The range check alone let
+        // `100.5` (typed by hand into the number field, or posted straight to
+        // /api/checkout) price an order no booster can actually fulfil.
+        if (
+          !Number.isInteger(level) ||
+          level < LEVELING_PC.minLevel ||
+          level > LEVELING_PC.maxLevel
+        ) {
+          throw new PricingError('OUT_OF_RANGE', 'Level must be a whole number in 1..8000');
         }
         return LEVELING_PC.basePrice + tieredPrice(level, LEVELING_PC.tiers);
       }
@@ -100,7 +107,11 @@ function baseForSelection(selection: OrderSelection): number {
     case 'money': {
       if (selection.platform === 'pc') {
         const millions = selection.amountMillions ?? 0;
+        // Same reasoning as the level guard above: the step check catches most
+        // fractions, but `Number.isInteger` is what actually makes that
+        // guarantee hold against float dust like 150.0000001.
         if (
+          !Number.isInteger(millions) ||
           millions < MONEY_PC.minMillions ||
           millions > MONEY_PC.maxMillions ||
           millions % MONEY_PC.step !== 0

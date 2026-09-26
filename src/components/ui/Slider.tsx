@@ -89,11 +89,19 @@ export function Slider({
 		}
 	};
 
+	// Typing into the number field is free-form: `type="number"` accepts
+	// `100.5` (and `100,5` in locales where the comma is the decimal mark)
+	// regardless of `step`, which browsers only enforce on arrow keys and form
+	// submit. Every value this slider produces is a whole unit — a level or a
+	// million — so hand-typed input is snapped onto the step grid, anchored at
+	// `min` the same way the native arrows do it.
+	const snapToStep = (n: number) => min + Math.round((n - min) / step) * step;
+
 	const onNumberInput = (raw: string) => {
 		if (raw === '' || raw === '-') return;
-		const n = Number(raw);
-		if (Number.isNaN(n)) return;
-		onChange(clamp(n, min, max));
+		const n = Number(raw.replace(',', '.'));
+		if (!Number.isFinite(n)) return;
+		onChange(clamp(snapToStep(n), min, max));
 	};
 
 	return (
