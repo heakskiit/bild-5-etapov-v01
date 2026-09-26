@@ -23,7 +23,7 @@
 
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
-import { applyPromoDiscount, noPromoDiscount } from '@/lib/pricing/discount';
+import { applyPromoDiscount, isUsableDiscountValue, noPromoDiscount } from '@/lib/pricing/discount';
 import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
 import { bonusMultiplierFor, checkBonusProduct } from '@/lib/pricing/promoBonus';
 import { checkoutPreviewSchema } from '@/lib/validation/order';
@@ -121,6 +121,23 @@ export async function POST(request: Request) {
 				...noPromoDiscount(subtotal),
 				promoApplied: true,
 				bonusMultiplier,
+			});
+		}
+
+		// Same refusal as /api/checkout, so a code that previews as broken is
+		// the same code that checkout refuses: a row whose discount_value is
+		// null, empty, non-numeric or negative is answered as "invalid", using
+		// the wording that already exists rather than a new key. 200, like the
+		// other code-level refusals above -- the selection and its price are fine.
+		if (!isUsableDiscountValue(promo.discount_type, promo.discount_value)) {
+			console.error('[checkout/preview] promo row is unusable, previewing as invalid_promo', {
+				discountType: promo.discount_type,
+				discountValue: promo.discount_value,
+			});
+			return NextResponse.json({
+				...noPromoDiscount(subtotal),
+				promoApplied: false,
+				error: 'invalid_promo',
 			});
 		}
 

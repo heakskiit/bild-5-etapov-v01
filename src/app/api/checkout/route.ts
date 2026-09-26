@@ -6,7 +6,7 @@
 
 import { NextResponse } from 'next/server';
 import { calculatePrice, PricingError } from '@/lib/pricing/calculate';
-import { applyPromoDiscount } from '@/lib/pricing/discount';
+import { applyPromoDiscount, isUsableDiscountValue } from '@/lib/pricing/discount';
 import { checkPromoMinOrder } from '@/lib/pricing/promoEligibility';
 import { bonusMultiplierFor, checkBonusProduct } from '@/lib/pricing/promoBonus';
 import {
@@ -141,6 +141,24 @@ export async function POST(request: Request) {
         if (!bonus.eligible) {
           return NextResponse.json({ error: 'wrong_product' }, { status: 422 });
         }
+      }
+
+      // A promo row whose discount_value is null, empty, non-numeric or
+      // negative cannot be turned into money: coerced it becomes NaN, which
+      // survives the arithmetic and lands on the invoice floor, or it becomes
+      // an upcharge. Answered exactly like an unknown code -- the customer
+      // sees the wording that already exists in all five dictionaries, and no
+      // new i18n key is introduced.
+      //
+      // Checked before the hold is recorded, for the same reason as the
+      // bonus-product refusal above: a refused order must not leave a claim
+      // behind for the catch to unwind.
+      if (!isUsableDiscountValue(promo.discount_type, promo.discount_value)) {
+        console.error(
+          '[checkout] promo row is unusable, refusing as invalid_promo',
+          { promoId: promo.id, discountType: promo.discount_type, discountValue: promo.discount_value },
+        );
+        return NextResponse.json({ error: 'invalid_promo' }, { status: 422 });
       }
 
       heldPromoId = promo.id;
