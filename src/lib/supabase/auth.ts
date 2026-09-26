@@ -20,6 +20,13 @@ export async function routeClient() {
             // Actions can actually write. Safe to ignore here: middleware.ts
             // is what's responsible for refreshing the session cookie on
             // navigation; this component only ever needed to *read* it.
+            //
+            // "Safe" only holds because middleware refreshes on EVERY page,
+            // which it did not before FIX-AUTH-014: while the refresh lived
+            // in guardDashboard() alone, a getUser() from this client on a
+            // public page rotated the refresh token and dropped the new one
+            // here, silently ending the session an hour in. If that refresh
+            // is ever narrowed again, this swallow turns back into a bug.
           }
         },
       },
