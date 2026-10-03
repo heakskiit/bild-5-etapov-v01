@@ -226,6 +226,11 @@ export function CheckoutModal({
 						{preview.status === 'wrong_product' && (
 							<p className="text-xs text-amber-300">{t('checkout.promoWrongProduct')}</p>
 						)}
+						{preview.status === 'rate_limited' && (
+							<p className="text-xs text-amber-300">
+								{t('checkout.promoRateLimited', { seconds: preview.retryAfterSeconds ?? 60 })}
+							</p>
+						)}
 					</div>
 				)}
 

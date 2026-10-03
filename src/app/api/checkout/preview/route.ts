@@ -63,9 +63,12 @@ export async function POST(request: Request) {
 		if (!verdict.allowed) {
 			// The price is still valid — only the code lookup was refused, so the
 			// modal keeps showing a correct undiscounted total rather than blanking.
+			// retryAfterSeconds goes in the body too (FIX-RATE-015): the modal tells
+			// the customer how long to wait instead of going silent.
+			const retryAfterSeconds = verdict.retryAfterSeconds || 60;
 			return NextResponse.json(
-				{ ...noPromoDiscount(subtotal), promoApplied: false, error: 'rate_limited' },
-				{ status: 429 },
+				{ ...noPromoDiscount(subtotal), promoApplied: false, error: 'rate_limited', retryAfterSeconds },
+				{ status: 429, headers: { 'retry-after': String(retryAfterSeconds) } },
 			);
 		}
 

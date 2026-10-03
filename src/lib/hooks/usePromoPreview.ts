@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { OrderSelection } from '@/types/order';
+import { EMPTY_PREVIEW, readPromoPreview, type PromoPreview } from '@/lib/hooks/promoPreviewStatus';
+
+// Re-exported so existing imports from this module keep working.
+export type { PreviewStatus, PromoPreview } from '@/lib/hooks/promoPreviewStatus';
 
 /**
  * Live discount preview for the checkout modal (PROMO-6/8).
@@ -24,48 +28,14 @@ import type { OrderSelection } from '@/types/order';
  *     has already edited away.
  *
  *  3. GRACEFUL DEGRADATION. If the preview is unavailable (not signed in,
- *     throttled, network down) the hook reports no discount rather than
+ *     network down) the hook reports no discount rather than
  *     blanking the price: the caller falls back to the locally computed
- *     subtotal, which is always correct pre-discount.
+ *     subtotal, which is always correct pre-discount. Throttling is the one
+ *     refusal reported separately ('rate_limited'), because it is the one
+ *     the customer can fix by waiting (FIX-RATE-015).
  */
 
 const DEBOUNCE_MS = 600;
-
-export type PreviewStatus =
-	| 'idle'
-	| 'loading'
-	| 'ready'
-	/** Code was checked and rejected — unknown, spent, held, expired or not yours. */
-	| 'invalid'
-	/** Real code, but this order is below the minimum it requires. */
-	| 'min_order'
-	| 'wrong_product'
-	/** Preview could not run; price shown is pre-discount only. */
-	| 'unavailable';
-
-export interface PromoPreview {
-	status: PreviewStatus;
-	/** Server-computed price before any code, or null if the preview never ran. */
-	subtotal: number | null;
-	discountUsd: number;
-	/** Server-computed amount that would actually be charged, or null. */
-	total: number | null;
-	promoApplied: boolean;
-	/** Set only when status is min_order: the amount the code needs. */
-	minOrderUsd: number | null;
-	/** 2 for an X2 code, 1 for everything else. Never affects the price. */
-	bonusMultiplier: number;
-}
-
-const EMPTY: PromoPreview = {
-	status: 'idle',
-	subtotal: null,
-	discountUsd: 0,
-	total: null,
-	promoApplied: false,
-	minOrderUsd: null,
-	bonusMultiplier: 1,
-};
 
 export function usePromoPreview(
 	selection: OrderSelection | null,
@@ -73,7 +43,7 @@ export function usePromoPreview(
 	/** Pass the modal's `open` flag — no point previewing a closed modal. */
 	enabled: boolean,
 ): PromoPreview {
-	const [preview, setPreview] = useState<PromoPreview>(EMPTY);
+	const [preview, setPreview] = useState<PromoPreview>(EMPTY_PREVIEW);
 	const latest = useRef(0);
 
 	// Selection is compared by content, not identity: some call sites build it
@@ -84,7 +54,7 @@ export function usePromoPreview(
 
 	useEffect(() => {
 		if (!enabled || !selection) {
-			setPreview(EMPTY);
+			setPreview(EMPTY_PREVIEW);
 			return;
 		}
 
@@ -106,34 +76,13 @@ export function usePromoPreview(
 					// A newer keystroke already superseded this request.
 					if (requestId !== latest.current) return;
 
-					if (!res.ok || typeof data?.total !== 'number' || typeof data?.subtotal !== 'number') {
-						// Only a 200 may judge a code: 401/429/400/500 mean "unknown", never "invalid".
-						setPreview({ ...EMPTY, status: 'unavailable' });
-						return;
-					}
-
-					setPreview({
-						// Every refusal the server can express gets its own status, so the
-						// modal can explain itself. Anything unrecognised falls back to
-						// 'invalid' rather than being silently treated as success.
-						status: code && !data.promoApplied
-							? data.error === 'min_order'
-								? 'min_order'
-								: data.error === 'wrong_product'
-									? 'wrong_product'
-									: 'invalid'
-							: 'ready',
-						subtotal: data.subtotal,
-						discountUsd: typeof data.discountUsd === 'number' ? data.discountUsd : 0,
-						total: data.total,
-						promoApplied: Boolean(data.promoApplied),
-						minOrderUsd: typeof data.minOrderUsd === 'number' ? data.minOrderUsd : null,
-						bonusMultiplier: typeof data.bonusMultiplier === 'number' ? data.bonusMultiplier : 1,
-					});
+					// The mapping lives in a pure function so every status is unit-tested;
+					// see promoPreviewStatus.ts for why only a 200 may judge a code.
+					setPreview(readPromoPreview(res.status, data, Boolean(code)));
 				} catch {
 					// AbortError included: a superseded request must not clobber state.
 					if (requestId === latest.current) {
-						setPreview({ ...EMPTY, status: 'unavailable' });
+						setPreview({ ...EMPTY_PREVIEW, status: 'unavailable' });
 					}
 				}
 			},

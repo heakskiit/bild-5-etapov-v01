@@ -465,6 +465,7 @@
     "promoMinOrder": "Dieser Code gilt ab einem Bestellwert von {amount}.",
     "promoBonusApplied": "X{multiplier} angewendet — doppelte Lieferung",
     "promoWrongProduct": "Dieser Code gilt nur für Geldbestellungen.",
+    "promoRateLimited": "Zu viele Code-Versuche. Bitte in {seconds} s erneut versuchen.",
     "tooManyPending": "Sie haben bereits {limit} unbezahlte Bestellungen. Bezahlen Sie eine davon, bevor Sie eine neue anlegen.",
     "dailyLimit": "Tageslimit für Bestellungen erreicht ({limit}). Bitte versuchen Sie es morgen erneut.",
     "bonusLine": "Bonus-Lieferung"

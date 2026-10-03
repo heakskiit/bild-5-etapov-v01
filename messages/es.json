@@ -465,6 +465,7 @@
     "promoMinOrder": "Este código funciona en pedidos desde {amount}.",
     "promoBonusApplied": "X{multiplier} aplicado: entrega doble",
     "promoWrongProduct": "Este código solo funciona en pedidos de dinero.",
+    "promoRateLimited": "Demasiados intentos con el código. Vuelve a intentarlo en {seconds} s.",
     "tooManyPending": "Ya tienes {limit} pedidos sin pagar. Paga uno o espera a que caduque antes de crear otro.",
     "dailyLimit": "Límite diario de pedidos alcanzado ({limit}). Inténtalo de nuevo mañana.",
     "bonusLine": "Entrega extra"

@@ -34,7 +34,10 @@ const ALLOW: RateLimitVerdict = { allowed: true, resetAt: null, retryAfterSecond
  */
 export const RATE_LIMITS = {
 	checkout: { limit: 10, windowSeconds: 60 },
-	checkoutPreview: { limit: 60, windowSeconds: 60 },
+	// Lowered from 60 (FIX-RATE-015): 60 code guesses a minute per account was
+	// a brute-force budget. 20 still covers a slow hand-typed code with several
+	// typing pauses; price-only recalculation never reaches this bucket.
+	checkoutPreview: { limit: 20, windowSeconds: 60 },
 	revealCode: { limit: 20, windowSeconds: 60 },
 	credentials: { limit: 10, windowSeconds: 60 },
 	adminPromo: { limit: 30, windowSeconds: 60 },

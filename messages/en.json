@@ -465,6 +465,7 @@
     "promoMinOrder": "This code works on orders from {amount}.",
     "promoBonusApplied": "X{multiplier} applied — double delivery",
     "promoWrongProduct": "This code only works on money orders.",
+    "promoRateLimited": "Too many code attempts. Try again in {seconds}s.",
     "tooManyPending": "You already have {limit} unpaid orders. Pay or let one lapse before starting another.",
     "dailyLimit": "Daily order limit reached ({limit}). Please try again tomorrow.",
     "bonusLine": "Bonus delivery"

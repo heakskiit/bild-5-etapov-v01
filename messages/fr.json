@@ -465,6 +465,7 @@
     "promoMinOrder": "Ce code s’applique à partir de {amount}.",
     "promoBonusApplied": "X{multiplier} appliqué — livraison doublée",
     "promoWrongProduct": "Ce code ne fonctionne que sur les commandes d'argent.",
+    "promoRateLimited": "Trop de tentatives de code. Réessayez dans {seconds} s.",
     "tooManyPending": "Vous avez déjà {limit} commandes impayées. Payez-en une avant d’en créer une nouvelle.",
     "dailyLimit": "Limite quotidienne de commandes atteinte ({limit}). Réessayez demain.",
     "bonusLine": "Livraison bonus"
