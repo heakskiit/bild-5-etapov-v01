@@ -44,7 +44,7 @@ export const DELIVERY_MODIFIERS: Record<DeliverySpeed, number> = {
 /* 2. SHARK CARDS — digital codes, single card + radio group           */
 /* ------------------------------------------------------------------ */
 export const SHARK_CARDS = [
-  { id: 'sc_100k', denomination: 100_000, price: 2.49, sheetSku: 'SHARK_100K' },
+  { id: 'sc_100k', denomination: 100_000, price: 0.5, sheetSku: 'SHARK_100K' },
   { id: 'sc_500k', denomination: 500_000, price: 5.99, sheetSku: 'SHARK_500K' },
   { id: 'sc_1m', denomination: 1_000_000, price: 9.99, sheetSku: 'SHARK_1M' },
   { id: 'sc_2m', denomination: 2_000_000, price: 17.99, sheetSku: 'SHARK_2M' },
@@ -62,7 +62,7 @@ export const LEVELING_PC = {
   maxLevel: 8000,
   basePrice: 1.5,
   tiers: [
-    { upTo: 100, pricePerUnit: 0.05 },
+    { upTo: 100, pricePerUnit: 0.02 },
     { upTo: 500, pricePerUnit: 0.03 },
     { upTo: 1000, pricePerUnit: 0.018 },
     { upTo: 3000, pricePerUnit: 0.011 },
@@ -130,7 +130,7 @@ export const MONEY_PC = {
   maxMillions: 5000,
   step: 50,
   tiers: [
-    { upTo: 500, pricePerUnit: 0.09 },
+    { upTo: 500, pricePerUnit: 0.01 },
     { upTo: 1000, pricePerUnit: 0.07 },
     { upTo: 2000, pricePerUnit: 0.055 },
     { upTo: 3500, pricePerUnit: 0.042 },
