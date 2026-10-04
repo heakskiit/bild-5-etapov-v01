@@ -7,6 +7,7 @@
  */
 
 import { encryptSecret } from '@/lib/crypto/aes';
+import { parseStockResponse } from '@/lib/keys/vault';
 
 interface VaultResponse {
   ok: boolean;
@@ -46,8 +47,8 @@ export async function stockLevel(sku: string): Promise<number> {
     body: JSON.stringify({ secret, action: 'stock', sku }),
     next: { revalidate: 60 },
   });
-  const data = (await res.json()) as VaultResponse;
-  return data.remaining ?? 0;
+  // FIX-PAY-016: a reply without a stock figure is an error, never "0 left".
+  return parseStockResponse(await res.json(), sku);
 }
 
 /**
@@ -61,6 +62,9 @@ export async function stockLevel(sku: string): Promise<number> {
  * — both configurators already treat "no stock prop" as "don't render a
  * stock claim at all", which is correct here: a Sheets outage should hide
  * the stock badge, not make every card look sold out.
+ *
+ * FIX-PAY-016: a reply that is not a stock figure (wrong URL, wrong secret)
+ * now throws inside stockLevel and lands in the same catch.
  */
 export async function getSharkCardStock(skus: string[]): Promise<Record<string, number> | undefined> {
   if (!process.env.SHEETS_WEBAPP_URL || !process.env.SHEETS_WEBAPP_SECRET) return undefined;

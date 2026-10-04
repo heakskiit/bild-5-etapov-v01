@@ -322,7 +322,7 @@
     "inventory": {
       "title": "Склад",
       "stockTitle": "Остатки",
-      "stockUnavailable": "Склад в Sheets не настроен — заполните SHEETS_WEBAPP_URL/SECRET, чтобы видеть остатки.",
+      "stockUnavailable": "Склад ключей недоступен — проверьте SHEETS_WEBAPP_URL/SECRET и развёртывание скрипта склада.",
       "sku": "SKU",
       "denomination": "GTA$",
       "price": "Цена",

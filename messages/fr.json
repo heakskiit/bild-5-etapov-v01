@@ -322,7 +322,7 @@
     "inventory": {
       "title": "Inventaire",
       "stockTitle": "Niveaux de stock",
-      "stockUnavailable": "L'entrepôt Sheets n'est pas configuré — définissez SHEETS_WEBAPP_URL/SECRET pour voir le stock.",
+      "stockUnavailable": "L'entrepôt de clés est indisponible — vérifiez SHEETS_WEBAPP_URL/SECRET et le déploiement du script de l'entrepôt.",
       "sku": "SKU",
       "denomination": "GTA$",
       "price": "Prix",

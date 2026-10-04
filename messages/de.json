@@ -322,7 +322,7 @@
     "inventory": {
       "title": "Lager",
       "stockTitle": "Bestand",
-      "stockUnavailable": "Sheets-Lager ist nicht konfiguriert — SHEETS_WEBAPP_URL/SECRET setzen, um den Bestand zu sehen.",
+      "stockUnavailable": "Schlüssellager nicht erreichbar — SHEETS_WEBAPP_URL/SECRET und die Bereitstellung des Lager-Skripts prüfen.",
       "sku": "SKU",
       "denomination": "GTA$",
       "price": "Preis",

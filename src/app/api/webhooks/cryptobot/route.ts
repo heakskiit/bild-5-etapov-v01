@@ -19,6 +19,7 @@ import { serviceClient } from '@/lib/supabase/service';
 import { fulfilDigitalCode } from '@/lib/keys/googleSheets';
 import { notifyBoosters } from '@/lib/discord/notifyBoosters';
 import { AUTO_DELIVERY, mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
+import { sheetSkuForVariant } from '@/lib/keys/vault';
 
 export const runtime = 'nodejs';
 
@@ -133,7 +134,31 @@ export async function POST(request: Request) {
   // --- fulfilment -------------------------------------------------------
   if (order.selection.product === 'shark_card') {
     // Atomic key reservation happens inside Apps Script (LockService).
-    const code = await fulfilDigitalCode(order.selection.variantId, order.public_id);
+    //
+    // FIX-PAY-016: the vault is keyed by the sheet SKU (SHARK_100K), not by
+    // the variant id (sc_100k). And a failed reservation must not throw: the
+    // update_id is already recorded above, so CryptoBot's retry would be
+    // dropped as a duplicate and a paid order would sit in awaiting_payment
+    // forever. Instead the order goes to action_required with the reason.
+    const sku = sheetSkuForVariant(order.selection.variantId);
+    let code: string;
+    try {
+      if (!sku) throw new Error(`unknown cash card variant: ${String(order.selection.variantId)}`);
+      code = await fulfilDigitalCode(sku, order.public_id);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      console.error('[webhook] cash card delivery failed', { order: order.public_id, sku, reason });
+      await db
+        .from('orders')
+        .update({ status: 'action_required', paid_at: new Date().toISOString() })
+        .eq('id', order.id);
+      await db.from('order_events').insert({
+        order_id: order.id,
+        kind: 'fulfilment_failed',
+        detail: { variant_id: order.selection.variantId ?? null, sku, reason },
+      });
+      return NextResponse.json({ ok: true, flagged: 'fulfilment_failed' });
+    }
     await db.from('digital_codes').insert({ order_id: order.id, code_ciphertext: code });
     await db.from('orders').update({ status: 'completed', paid_at: new Date().toISOString() }).eq('id', order.id);
 

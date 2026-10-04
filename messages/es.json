@@ -322,7 +322,7 @@
     "inventory": {
       "title": "Inventario",
       "stockTitle": "Niveles de stock",
-      "stockUnavailable": "El almacén de Sheets no está configurado — define SHEETS_WEBAPP_URL/SECRET para ver el stock.",
+      "stockUnavailable": "El almacén de claves no está disponible — revisa SHEETS_WEBAPP_URL/SECRET y el despliegue del script del almacén.",
       "sku": "SKU",
       "denomination": "GTA$",
       "price": "Precio",

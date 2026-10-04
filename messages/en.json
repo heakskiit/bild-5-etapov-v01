@@ -322,7 +322,7 @@
     "inventory": {
       "title": "Inventory",
       "stockTitle": "Stock levels",
-      "stockUnavailable": "Sheets warehouse isn't configured — set SHEETS_WEBAPP_URL/SECRET to see live stock.",
+      "stockUnavailable": "Key warehouse is unavailable — check SHEETS_WEBAPP_URL/SECRET and the vault script deployment.",
       "sku": "SKU",
       "denomination": "GTA$",
       "price": "Price",
