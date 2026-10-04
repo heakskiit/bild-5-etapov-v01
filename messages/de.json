@@ -257,6 +257,20 @@
       "in_progress": "Auftrag starten",
       "action_required": "Kunde benötigt",
       "completed": "Als erledigt markieren"
+    },
+    "credentials": {
+      "title": "Kontodaten des Kunden",
+      "show": "Kontodaten anzeigen",
+      "hide": "Ausblenden",
+      "login": "Login",
+      "password": "Passwort",
+      "note": "Notiz / 2FA",
+      "hint": "Jeder Abruf wird im Bestellverlauf protokolliert. Die Daten werden nach 2 Minuten ausgeblendet und nach Abschluss der Bestellung gelöscht.",
+      "notInProgress": "Kontodaten sind nur verfügbar, solange die Bestellung in Bearbeitung ist.",
+      "none": "Der Kunde hat noch keine Kontodaten übermittelt.",
+      "wiped": "Die Kontodaten wurden nach Abschluss der Bestellung gelöscht.",
+      "tooMany": "Zu viele Anfragen — bitte eine Minute warten.",
+      "error": "Kontodaten konnten nicht geladen werden — bitte erneut versuchen."
     }
   },
   "admin": {

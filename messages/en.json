@@ -257,6 +257,20 @@
       "in_progress": "Start job",
       "action_required": "Needs customer",
       "completed": "Mark completed"
+    },
+    "credentials": {
+      "title": "Customer account data",
+      "show": "Show account data",
+      "hide": "Hide",
+      "login": "Login",
+      "password": "Password",
+      "note": "Note / 2FA",
+      "hint": "Every view is recorded in the order history. The data hides after 2 minutes and is deleted when the order is completed.",
+      "notInProgress": "Account data is available only while the order is in progress.",
+      "none": "The customer has not submitted account data yet.",
+      "wiped": "Account data was deleted when the order was completed.",
+      "tooMany": "Too many requests — wait a minute.",
+      "error": "Could not load the account data — try again."
     }
   },
   "admin": {

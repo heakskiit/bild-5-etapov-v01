@@ -257,6 +257,20 @@
       "in_progress": "Démarrer",
       "action_required": "Client requis",
       "completed": "Marquer comme terminé"
+    },
+    "credentials": {
+      "title": "Données du compte client",
+      "show": "Afficher les données du compte",
+      "hide": "Masquer",
+      "login": "Identifiant",
+      "password": "Mot de passe",
+      "note": "Note / 2FA",
+      "hint": "Chaque consultation est enregistrée dans l'historique de la commande. Les données sont masquées après 2 minutes et supprimées à la fin de la commande.",
+      "notInProgress": "Les données du compte ne sont disponibles que pendant le traitement de la commande.",
+      "none": "Le client n'a pas encore transmis les données du compte.",
+      "wiped": "Les données du compte ont été supprimées à la fin de la commande.",
+      "tooMany": "Trop de requêtes — patientez une minute.",
+      "error": "Impossible de charger les données du compte — réessayez."
     }
   },
   "admin": {

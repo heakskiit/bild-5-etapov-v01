@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { requireRole, routeClient } from '@/lib/supabase/auth';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { JobStatusStepper } from '@/components/dashboard/JobStatusStepper';
+import { CredentialsReveal } from '@/components/dashboard/CredentialsReveal';
 import { describeSelection } from '@/lib/orders/describeSelection';
 
 const DELIVERY_LABEL_KEYS: Record<string, string> = {
@@ -11,10 +12,11 @@ const DELIVERY_LABEL_KEYS: Record<string, string> = {
 };
 
 /**
- * modder → /dashboard/jobs/[id] (§4). Deliberately does NOT read or render
- * account_credentials — coordinating the actual session (when the modder
- * plays, on which platform) happens off-platform via the contact handle
- * shown here, per the checkout/queue design agreed for this pass.
+ * modder → /dashboard/jobs/[id] (§4). Still never reads account_credentials
+ * itself: the login is fetched on demand through
+ * /api/dashboard/jobs/[id]/credentials (FIX-JOB-017), which checks ownership,
+ * requires in_progress and writes an audit event before revealing anything.
+ * Scheduling the session still happens via the contact handle shown here.
  */
 export default async function JobPage({
 	params,
@@ -68,6 +70,11 @@ export default async function JobPage({
 			<div className="glass-panel p-5">
 				<h2 className="mb-3 font-display text-sm uppercase tracking-widest text-white/60">{t('jobs.statusTitle')}</h2>
 				<JobStatusStepper orderId={order.public_id} currentStatus={order.status} messages={messages} />
+			</div>
+
+			<div className="glass-panel p-5">
+				<h2 className="mb-3 font-display text-sm uppercase tracking-widest text-white/60">{t('jobs.credentials.title')}</h2>
+				<CredentialsReveal orderId={order.public_id} status={order.status} messages={messages} />
 			</div>
 
 			<div className="glass-panel p-5">

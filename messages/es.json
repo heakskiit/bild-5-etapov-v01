@@ -257,6 +257,20 @@
       "in_progress": "Iniciar",
       "action_required": "Requiere cliente",
       "completed": "Marcar como completado"
+    },
+    "credentials": {
+      "title": "Datos de la cuenta del cliente",
+      "show": "Mostrar datos de la cuenta",
+      "hide": "Ocultar",
+      "login": "Usuario",
+      "password": "Contraseña",
+      "note": "Nota / 2FA",
+      "hint": "Cada consulta queda registrada en el historial del pedido. Los datos se ocultan tras 2 minutos y se eliminan al completar el pedido.",
+      "notInProgress": "Los datos de la cuenta solo están disponibles mientras el pedido está en curso.",
+      "none": "El cliente aún no ha enviado los datos de la cuenta.",
+      "wiped": "Los datos de la cuenta se eliminaron al completar el pedido.",
+      "tooMany": "Demasiadas solicitudes — espera un minuto.",
+      "error": "No se pudieron cargar los datos de la cuenta — inténtalo de nuevo."
     }
   },
   "admin": {

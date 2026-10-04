@@ -40,6 +40,9 @@ export const RATE_LIMITS = {
 	checkoutPreview: { limit: 20, windowSeconds: 60 },
 	revealCode: { limit: 20, windowSeconds: 60 },
 	credentials: { limit: 10, windowSeconds: 60 },
+	// FIX-JOB-017: every accepted call decrypts a customer's game login and
+	// writes an audit row; a booster needs it a handful of times per job.
+	revealCredentials: { limit: 10, windowSeconds: 60 },
 	adminPromo: { limit: 30, windowSeconds: 60 },
 } as const;
 
