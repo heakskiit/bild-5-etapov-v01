@@ -1,6 +1,7 @@
 import { requireRole, routeClient } from '@/lib/supabase/auth';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { QueueRow } from '@/components/dashboard/QueueRow';
+import { isQueueOrder, QUEUE_PRODUCTS, QUEUE_STATUSES } from '@/lib/orders/queueFilter';
 
 /**
  * Booster board (§4, modder → /dashboard/queue). Rows here are exactly what
@@ -8,6 +9,10 @@ import { QueueRow } from '@/components/dashboard/QueueRow';
  * caller's own claimed jobs. Contact handle is shown so a modder can reach
  * the customer to coordinate a session — no account credentials are read,
  * queried, or rendered on this route.
+ *
+ * FIX-QUEUE-018: the slice is now requested explicitly. An admin also matches
+ * `admin_select_all_orders`, so relying on RLS alone listed unpaid, completed
+ * and cash-card orders on an admin's board.
  */
 export default async function QueuePage({ params }: { params: Promise<{ locale: string }> }) {
 	const { locale } = await params;
@@ -19,10 +24,12 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
 	const { data: orders } = await supabase
 		.from('orders')
 		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, delivery_multiplier, created_at')
+		.in('status', [...QUEUE_STATUSES])
+		.in('selection->>product', [...QUEUE_PRODUCTS])
 		.order('created_at', { ascending: true })
 		.limit(100);
 
-	const list = orders ?? [];
+	const list = (orders ?? []).filter(isQueueOrder);
 	const unclaimed = list.filter((o) => !o.assigned_modder_id);
 	const mine = list.filter((o) => o.assigned_modder_id === profile.id);
 
