@@ -20,6 +20,7 @@ import { fulfilDigitalCode } from '@/lib/keys/googleSheets';
 import { notifyBoosters } from '@/lib/discord/notifyBoosters';
 import { AUTO_DELIVERY, mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
 import { sheetSkuForVariant } from '@/lib/keys/vault';
+import { isPaidAfterCancel, isPayableStatus } from '@/lib/orders/payableStatus';
 
 export const runtime = 'nodejs';
 
@@ -69,8 +70,17 @@ export async function POST(request: Request) {
     .eq('invoice_id', String(update.payload.invoice_id))
     .single();
   if (error || !order) return NextResponse.json({ error: 'order not found' }, { status: 404 });
-  if (order.status !== 'awaiting_payment') {
+  if (!isPayableStatus(order.status)) {
     return NextResponse.json({ ok: true, alreadyProcessed: true });
+  }
+  // FIX-PAY-019: 0015 may have auto-cancelled it; the money is real, settle it.
+  if (isPaidAfterCancel(order.status)) {
+    console.warn(`[webhook] payment arrived for auto-cancelled order ${order.public_id}`);
+    await db.from('order_events').insert({
+      order_id: order.id,
+      kind: 'paid_after_cancel',
+      detail: { invoice_id: update.payload.invoice_id },
+    });
   }
 
   // --- amount sanity check ---------------------------------------------
