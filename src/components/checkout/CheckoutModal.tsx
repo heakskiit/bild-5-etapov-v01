@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/Button';
 import { ContactField, isContactValid } from '@/components/checkout/ContactField';
 import { CheckoutErrorNote } from '@/components/checkout/CheckoutErrorNote';
@@ -75,7 +76,7 @@ export function CheckoutModal({
 	// Called before the early return below — hook order must never be conditional.
 	const preview = usePromoPreview(selection, promoCode, open);
 
-	if (!open) return null;
+	if (!open || typeof document === 'undefined') return null;
 
 	const canSubmit = isContactValid(contact) && isOrderDetailsValid(details) && !busy;
 
@@ -86,14 +87,19 @@ export function CheckoutModal({
 	const total = preview.total ?? fallbackTotal;
 	const money = (n: number) => `$${n.toFixed(2)}`;
 
-	return (
+	// FIX-UI-020: render into <body>. Every caller sits inside a `.glass-panel`,
+	// whose backdrop-filter makes it the containing block for `position: fixed`:
+	// the overlay was pinned to the card instead of the viewport, so it opened
+	// clipped (home hero) or above the screen after scrolling (product pages),
+	// with page scroll locked. The panel also scrolls itself on short screens.
+	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
 			<div className="absolute inset-0 bg-[#05050A]/75 backdrop-blur-xl" onClick={onClose} aria-hidden="true" />
 			<div
 				role="dialog"
 				aria-modal="true"
 				aria-label={t('checkout.modalTitle')}
-				className="glass-panel relative w-full max-w-md space-y-4 p-6"
+				className="glass-panel relative max-h-[90dvh] w-full max-w-md space-y-4 overflow-y-auto overscroll-contain p-6"
 			>
 				<div className="flex items-center justify-between">
 					<h2 className="font-display text-lg text-neon-pink">{t('checkout.modalTitle')}</h2>
@@ -255,6 +261,7 @@ export function CheckoutModal({
 					</Button>
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	);
 }
