@@ -3,6 +3,7 @@ import { LocaleSwitcher } from './LocaleSwitcher';
 import { HeaderNav, type NavLink } from './HeaderNav';
 import { getTranslations } from '@/lib/i18n/getTranslations';
 import { requireUser } from '@/lib/supabase/auth';
+import { CartButton } from '@/components/cart/CartButton';
 
 /**
  * §4.2 point 2. Sticky, blurred, logo left / links center / language +
@@ -43,6 +44,8 @@ export async function Header({ locale }: { locale: string }) {
 					openMenuLabel={t('common.openMenu')}
 					closeMenuLabel={t('common.closeMenu')}
 				/>
+
+				<CartButton locale={locale} label={t('nav.cart')} />
 
 				{/* Custom dropdown with locale code + flag — §3.4. See LocaleSwitcher.tsx. */}
 				<LocaleSwitcher current={locale} />

@@ -42,7 +42,8 @@
     "admin": "Admin",
     "gta5": "GTA V",
     "gta6": "GTA VI",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "cart": "Warenkorb"
   },
   "home": {
     "cta": {
@@ -493,5 +494,17 @@
   "gta": {
     "comingSoon": "Demnächst",
     "gta6Intro": "GTA VI ist noch nicht erschienen — dieser Bereich startet zum Release."
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "add": "In den Warenkorb",
+    "added": "Hinzugefügt",
+    "full": "Warenkorb ist voll (max. {max})",
+    "empty": "Dein Warenkorb ist leer.",
+    "emptyCta": "Zum Shop",
+    "remove": "Entfernen",
+    "clear": "Warenkorb leeren",
+    "count": "{count} von {max}",
+    "paySoon": "Die Bezahlung des gesamten Warenkorbs auf einmal kommt mit dem nächsten Update."
   }
 }

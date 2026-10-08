@@ -42,7 +42,8 @@
     "admin": "Admin",
     "gta5": "GTA V",
     "gta6": "GTA VI",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "cart": "Carrito"
   },
   "home": {
     "cta": {
@@ -493,5 +494,17 @@
   "gta": {
     "comingSoon": "Próximamente",
     "gta6Intro": "GTA VI aún no ha salido — esta sección estará activa en el lanzamiento."
+  },
+  "cart": {
+    "title": "Carrito",
+    "add": "Añadir al carrito",
+    "added": "Añadido",
+    "full": "Carrito lleno (máx. {max})",
+    "empty": "Tu carrito está vacío.",
+    "emptyCta": "Ir a la tienda",
+    "remove": "Eliminar",
+    "clear": "Vaciar carrito",
+    "count": "{count} de {max}",
+    "paySoon": "El pago de todo el carrito de una vez llegará en la próxima actualización."
   }
 }

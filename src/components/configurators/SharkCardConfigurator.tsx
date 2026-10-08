@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
 import { useCheckout, emptyOrderDetails, type Contact } from '@/lib/hooks/useCheckout';
 import { CheckoutModal } from '@/components/checkout/CheckoutModal';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import type { OrderDetails } from '@/lib/validation/order';
 import type { OrderSelection } from '@/types/order';
 
@@ -69,7 +70,7 @@ export function SharkCardConfigurator({
 				onChange={setVariantId}
 			/>
 
-			<div className="glass-panel-sm border-neon-pink shadow-neon-pink p-4">
+			<div className="glass-panel-sm border-neon-pink shadow-neon-pink space-y-2 p-4">
 				<Button
 					variant="primary"
 					size="lg"
@@ -83,6 +84,7 @@ export function SharkCardConfigurator({
 					    correct in all 5 locales instead of a hardcoded RU literal. */}
 					{soldOut ? t('common.outOfStock') : t('common.buyFor', { price: `$${card.price.toFixed(2)}` })}
 				</Button>
+				<AddToCartButton selection={selection} disabled={soldOut} t={t} />
 			</div>
 
 			<CheckoutModal

@@ -43,6 +43,7 @@ import { ChipGroup, type ChipOption } from '@/components/ui/Chip';
 import { Button } from '@/components/ui/Button';
 import { useCheckout, emptyOrderDetails, type Contact } from '@/lib/hooks/useCheckout';
 import { CheckoutModal } from '@/components/checkout/CheckoutModal';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import type { OrderDetails } from '@/lib/validation/order';
 
 const PLATFORM_OPTIONS: ChipOption<Platform>[] = [
@@ -236,6 +237,8 @@ export function BoostConfigurator({
 				onBuyClick={() => setModalOpen(true)}
 				t={t}
 			/>
+
+			<AddToCartButton selection={selection} disabled={!priceBreakdown} t={t} />
 
 			<CheckoutModal
 				open={modalOpen}

@@ -42,7 +42,8 @@
     "admin": "Admin",
     "gta5": "GTA V",
     "gta6": "GTA VI",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "cart": "Panier"
   },
   "home": {
     "cta": {
@@ -493,5 +494,17 @@
   "gta": {
     "comingSoon": "Bientôt",
     "gta6Intro": "GTA VI n'est pas encore sorti — cette section sera active au lancement."
+  },
+  "cart": {
+    "title": "Panier",
+    "add": "Ajouter au panier",
+    "added": "Ajouté",
+    "full": "Panier plein (max. {max})",
+    "empty": "Votre panier est vide.",
+    "emptyCta": "Aller à la boutique",
+    "remove": "Retirer",
+    "clear": "Vider le panier",
+    "count": "{count} sur {max}",
+    "paySoon": "Le paiement du panier entier en une fois arrive dans la prochaine mise à jour."
   }
 }
