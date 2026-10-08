@@ -59,7 +59,7 @@ export function CartView({ locale, messages }: { locale: string; messages: Dict 
 				<div className="glass-panel space-y-4 p-8 text-center">
 					<p className="text-ink-soft">{t('cart.empty')}</p>
 					<Link href={`/${locale}/gta-5`} className="inline-block text-cyan-500 underline-offset-4 hover:underline">
-						{t('cart.emptyCta')} \u2192
+						{t('cart.emptyCta')} {'\u2192'}
 					</Link>
 				</div>
 			) : (
@@ -82,7 +82,7 @@ export function CartView({ locale, messages }: { locale: string; messages: Dict 
 										title={t('cart.remove')}
 										className="shrink-0 px-1 text-lg leading-none text-white/50 hover:text-pink-400 disabled:opacity-40"
 									>
-										\u00d7
+										{'\u00d7'}
 									</button>
 								</li>
 							);

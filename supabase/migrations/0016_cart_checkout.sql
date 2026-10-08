@@ -13,6 +13,12 @@ create index if not exists orders_cart_id_idx
   on public.orders (cart_id)
   where cart_id is not null;
 
+-- 0001 made invoice_id UNIQUE (one invoice = one order). A cart invoice now
+-- covers several orders, so the uniqueness goes; duplicate payments are still
+-- stopped by webhook_events (update_id) and by the payable-status check.
+alter table public.orders
+  drop constraint if exists orders_invoice_id_key;
+
 -- The webhook now loads every order of an invoice.
 create index if not exists orders_invoice_id_idx
   on public.orders (invoice_id);
