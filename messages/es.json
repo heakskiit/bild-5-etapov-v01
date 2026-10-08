@@ -505,6 +505,7 @@
     "remove": "Eliminar",
     "clear": "Vaciar carrito",
     "count": "{count} de {max}",
-    "paySoon": "El pago de todo el carrito de una vez llegará en la próxima actualización."
+    "outOfStock": "No quedan suficientes códigos para una de las tarjetas de tu carrito. Elimina algunas e inténtalo de nuevo.",
+    "payHint": "Una sola factura para todo el carrito. Cada artículo será un pedido en \"Mis pedidos\"."
   }
 }

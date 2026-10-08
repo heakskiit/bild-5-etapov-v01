@@ -20,6 +20,7 @@ import { requireUser } from '@/lib/supabase/auth';
 import { createInvoice } from '@/lib/pricing/cryptobot';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { canPlaceOrder, dayWindowStart, pendingWindowStart } from '@/lib/orders/orderLimits';
+import { countPurchases } from '@/lib/cart/cartCheckout';
 
 export const runtime = 'nodejs';
 
@@ -56,13 +57,14 @@ export async function POST(request: Request) {
   const [pendingRead, dailyRead] = await Promise.all([
     db
       .from('orders')
-      .select('id', { count: 'exact', head: true })
+      // BATCH F12: rows, not a head count -- a cart is one purchase.
+      .select('id, cart_id')
       .eq('user_id', user.id)
       .eq('status', 'awaiting_payment')
       .gte('created_at', pendingWindowStart()),
     db
       .from('orders')
-      .select('id', { count: 'exact', head: true })
+      .select('id, cart_id')
       .eq('user_id', user.id)
       .gte('created_at', dayWindowStart()),
   ]);
@@ -74,8 +76,8 @@ export async function POST(request: Request) {
     );
   }
   const volume = canPlaceOrder({
-    pendingCount: pendingRead.error ? null : pendingRead.count,
-    dailyCount: dailyRead.error ? null : dailyRead.count,
+    pendingCount: pendingRead.error ? null : countPurchases(pendingRead.data ?? []),
+    dailyCount: dailyRead.error ? null : countPurchases(dailyRead.data ?? []),
   });
   if (!volume.allowed) {
     console.warn(`[checkout] refused for ${user.id}: ${volume.reason} (limit ${volume.limit})`);

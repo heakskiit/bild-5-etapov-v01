@@ -38,7 +38,8 @@ export type { PreviewStatus, PromoPreview } from '@/lib/hooks/promoPreviewStatus
 const DEBOUNCE_MS = 600;
 
 export function usePromoPreview(
-	selection: OrderSelection | null,
+	/** One selection, or (BATCH F12) every selection of the cart. */
+	selection: OrderSelection | readonly OrderSelection[] | null,
 	promoCode: string,
 	/** Pass the modal's `open` flag — no point previewing a closed modal. */
 	enabled: boolean,
@@ -53,7 +54,7 @@ export function usePromoPreview(
 	const code = promoCode.trim();
 
 	useEffect(() => {
-		if (!enabled || !selection) {
+		if (!enabled || !selection || (Array.isArray(selection) && selection.length === 0)) {
 			setPreview(EMPTY_PREVIEW);
 			return;
 		}
@@ -65,10 +66,14 @@ export function usePromoPreview(
 		const timer = setTimeout(
 			async () => {
 				try {
-					const res = await fetch('/api/checkout/preview', {
+					const isCart = Array.isArray(selection);
+					const res = await fetch(isCart ? '/api/checkout/cart/preview' : '/api/checkout/preview', {
 						method: 'POST',
 						headers: { 'content-type': 'application/json' },
-						body: JSON.stringify({ selection, ...(code ? { promoCode: code } : {}) }),
+						body: JSON.stringify({
+							...(isCart ? { items: selection } : { selection }),
+							...(code ? { promoCode: code } : {}),
+						}),
 						signal: controller.signal,
 					});
 					const data = await res.json().catch(() => null);

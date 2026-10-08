@@ -21,6 +21,7 @@ import { notifyBoosters } from '@/lib/discord/notifyBoosters';
 import { AUTO_DELIVERY, mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
 import { sheetSkuForVariant } from '@/lib/keys/vault';
 import { isPaidAfterCancel, isPayableStatus } from '@/lib/orders/payableStatus';
+import { sumMoney } from '@/lib/cart/cartCheckout';
 
 export const runtime = 'nodejs';
 
@@ -63,77 +64,87 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, ignored: update.update_type });
   }
 
-  // --- locate the order -------------------------------------------------
-  const { data: order, error } = await db
+  // --- locate the order(s) ----------------------------------------------
+  // BATCH F12: one invoice may now cover a whole cart. A single order is just
+  // a group of one, so the old path is the same code running once.
+  const { data: group, error } = await db
     .from('orders')
     .select('*')
     .eq('invoice_id', String(update.payload.invoice_id))
-    .single();
-  if (error || !order) return NextResponse.json({ error: 'order not found' }, { status: 404 });
-  if (!isPayableStatus(order.status)) {
+    .order('created_at', { ascending: true })
+    .order('id', { ascending: true });
+  if (error || !group || group.length === 0) {
+    return NextResponse.json({ error: 'order not found' }, { status: 404 });
+  }
+  const payable = group.filter((o) => isPayableStatus(o.status));
+  if (payable.length === 0) {
     return NextResponse.json({ ok: true, alreadyProcessed: true });
   }
+
   // FIX-PAY-019: 0015 may have auto-cancelled it; the money is real, settle it.
-  if (isPaidAfterCancel(order.status)) {
-    console.warn(`[webhook] payment arrived for auto-cancelled order ${order.public_id}`);
-    await db.from('order_events').insert({
-      order_id: order.id,
-      kind: 'paid_after_cancel',
-      detail: { invoice_id: update.payload.invoice_id },
-    });
+  for (const order of payable) {
+    if (isPaidAfterCancel(order.status)) {
+      console.warn(`[webhook] payment arrived for auto-cancelled order ${order.public_id}`);
+      await db.from('order_events').insert({
+        order_id: order.id,
+        kind: 'paid_after_cancel',
+        detail: { invoice_id: update.payload.invoice_id },
+      });
+    }
   }
 
-  // --- amount sanity check ---------------------------------------------
-  if (Number(update.payload.amount) + 1e-9 < Number(order.total_usd)) {
-    await db.from('orders').update({ status: 'action_required' }).eq('id', order.id);
-    await db.from('order_events').insert({
-      order_id: order.id,
-      kind: 'underpaid',
-      detail: { expected: order.total_usd, received: update.payload.amount },
-    });
+  // --- amount sanity check: against the WHOLE invoice -------------------
+  const expected = sumMoney(group.map((o) => o.total_usd));
+  if (Number(update.payload.amount) + 1e-9 < expected) {
+    for (const order of payable) {
+      await db.from('orders').update({ status: 'action_required' }).eq('id', order.id);
+      await db.from('order_events').insert({
+        order_id: order.id,
+        kind: 'underpaid',
+        detail: { expected, received: update.payload.amount, cart_id: order.cart_id ?? null },
+      });
+    }
     return NextResponse.json({ ok: true, flagged: 'underpaid' });
   }
 
   // --- promo: spent only now, at confirmed payment (0007) ----------------
-  if (order.promo_code) {
+  // Once per invoice: every order of a cart carries the code, but the code
+  // is a single use. burn_promo_for_order matches on the code, so burning it
+  // through the first order spends it for the whole cart.
+  const promoOrder = payable.find((o) => o.promo_code);
+  if (promoOrder) {
+    const groupIds = new Set(group.map((o) => o.id));
     const { data: burnedPromoId, error: burnError } = await db.rpc('burn_promo_for_order', {
-      p_order_id: order.id,
+      p_order_id: promoOrder.id,
     });
     if (burnError) {
       // The payment is already good — never fail fulfilment over bookkeeping.
       console.error('[webhook] promo burn failed', burnError);
       await db.from('order_events').insert({
-        order_id: order.id,
+        order_id: promoOrder.id,
         kind: 'promo_burn_failed',
-        detail: { promo_code: order.promo_code },
+        detail: { promo_code: promoOrder.promo_code },
       });
     } else if (burnedPromoId == null) {
-      // Nothing was burned. Since 0010 a code stays valid until it is paid
-      // for, so two checkouts can both carry it and only the first payment
-      // finds anything to spend. The money is already in and the discount
-      // was already applied to the invoice, so this cannot be prevented
-      // here — only recorded, so a double-used code is never silent.
-      //
-      // One benign case looks identical: this very order burned the code and
-      // we are re-running after a failure between the burn and the status
-      // update. used_by_order_id tells the two apart.
+      // Nothing burned: either a re-run after this very invoice already spent
+      // it (used_by_order_id is one of ours), or a genuinely double-used code.
       const { data: promoRow } = await db
         .from('promo_codes')
         .select('used_by_order_id')
-        .eq('code', order.promo_code)
+        .eq('code', promoOrder.promo_code)
         .maybeSingle<{ used_by_order_id: string | null }>();
 
-      if (promoRow?.used_by_order_id !== order.id) {
+      if (!promoRow?.used_by_order_id || !groupIds.has(promoRow.used_by_order_id)) {
         console.error('[webhook] discount not backed by an unused code', {
-          order: order.public_id,
-          promoCode: order.promo_code,
+          order: promoOrder.public_id,
+          promoCode: promoOrder.promo_code,
         });
         await db.from('order_events').insert({
-          order_id: order.id,
+          order_id: promoOrder.id,
           kind: 'promo_already_used',
           detail: {
-            promo_code: order.promo_code,
-            discount_usd: order.discount_usd,
+            promo_code: promoOrder.promo_code,
+            discount_usd: sumMoney(group.map((o) => o.discount_usd)),
             used_by_order_id: promoRow?.used_by_order_id ?? null,
           },
         });
@@ -141,15 +152,32 @@ export async function POST(request: Request) {
     }
   }
 
-  // --- fulfilment -------------------------------------------------------
-  if (order.selection.product === 'shark_card') {
+  // --- fulfilment: one order at a time ----------------------------------
+  // Sequential on purpose: two cards of the same SKU must not race for the
+  // same Apps Script lock. One failed line never stops the others.
+  const flagged: string[] = [];
+  for (const order of payable) {
+    const flag = await fulfilOrder(db, order);
+    if (flag) flagged.push(`${order.public_id}:${flag}`);
+  }
+
+  return NextResponse.json({ ok: true, orders: payable.length, ...(flagged.length ? { flagged } : {}) });
+}
+
+/** Settles one paid order. Never throws; returns a flag when it needs a human. */
+async function fulfilOrder(
+  db: ReturnType<typeof serviceClient>,
+  order: Record<string, any>,
+): Promise<string | null> {
+  const paidAt = new Date().toISOString();
+
+  if (order.selection?.product === 'shark_card') {
     // Atomic key reservation happens inside Apps Script (LockService).
     //
     // FIX-PAY-016: the vault is keyed by the sheet SKU (SHARK_100K), not by
-    // the variant id (sc_100k). And a failed reservation must not throw: the
-    // update_id is already recorded above, so CryptoBot's retry would be
-    // dropped as a duplicate and a paid order would sit in awaiting_payment
-    // forever. Instead the order goes to action_required with the reason.
+    // the variant id (sc_100k). A failed reservation must not throw: the
+    // update_id is already recorded, so CryptoBot's retry would be dropped
+    // as a duplicate. Instead this order goes to action_required.
     const sku = sheetSkuForVariant(order.selection.variantId);
     let code: string;
     try {
@@ -158,25 +186,18 @@ export async function POST(request: Request) {
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
       console.error('[webhook] cash card delivery failed', { order: order.public_id, sku, reason });
-      await db
-        .from('orders')
-        .update({ status: 'action_required', paid_at: new Date().toISOString() })
-        .eq('id', order.id);
+      await db.from('orders').update({ status: 'action_required', paid_at: paidAt }).eq('id', order.id);
       await db.from('order_events').insert({
         order_id: order.id,
         kind: 'fulfilment_failed',
         detail: { variant_id: order.selection.variantId ?? null, sku, reason },
       });
-      return NextResponse.json({ ok: true, flagged: 'fulfilment_failed' });
+      return 'fulfilment_failed';
     }
     await db.from('digital_codes').insert({ order_id: order.id, code_ciphertext: code });
-    await db.from('orders').update({ status: 'completed', paid_at: new Date().toISOString() }).eq('id', order.id);
+    await db.from('orders').update({ status: 'completed', paid_at: paidAt }).eq('id', order.id);
 
-    // BATCH E3: a cash card is delivered the moment it is paid for, so this
-    // is where such an order becomes "done" -- nobody closes it by hand.
-    // mirrorCompletedOrder never throws: the key is already issued and the
-    // customer is already owed it, so a spreadsheet outage cannot be allowed
-    // to turn a successful payment into a failed webhook and a retry.
+    // BATCH E3: mirrorCompletedOrder never throws.
     await mirrorCompletedOrder({
       publicId: order.public_id,
       selection: order.selection,
@@ -187,13 +208,17 @@ export async function POST(request: Request) {
       contactHandle: order.contact_handle,
       completedBy: AUTO_DELIVERY,
     });
-  } else {
-    await db
-      .from('orders')
-      .update({ status: 'action_required', paid_at: new Date().toISOString() })
-      .eq('id', order.id);
-    await notifyBoosters(order);
+    return null;
   }
 
-  return NextResponse.json({ ok: true });
+  await db.from('orders').update({ status: 'action_required', paid_at: paidAt }).eq('id', order.id);
+  try {
+    await notifyBoosters(order as any);
+  } catch (err) {
+    // The order is already paid and in the queue; a Discord outage must not
+    // stop the rest of the cart from being settled.
+    console.error('[webhook] booster notification failed', { order: order.public_id, err });
+    return 'notify_failed';
+  }
+  return null;
 }

@@ -55,6 +55,15 @@ export function CheckoutErrorNote({
 		);
 	}
 
+	if (error.code === 'out_of_stock') {
+		// BATCH F12: the cart asks for more codes of one card than are left.
+		return (
+			<div className="mt-1">
+				<span className="text-xs text-amber-300">{t('cart.outOfStock')}</span>
+			</div>
+		);
+	}
+
 	if (error.code === 'invalid_promo') {
 		// Retrying with the same code fails the same way every time — no
 		// button here, just enough text to point at the field to fix.

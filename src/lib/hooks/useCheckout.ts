@@ -86,5 +86,58 @@ export function useCheckout() {
 		[],
 	);
 
-	return { busy, error, checkout, clearError: () => setError(null) };
+	/**
+	 * BATCH F12: pay the whole cart with one invoice. `beforeRedirect` runs only
+	 * once the invoice exists (the owner's choice: the cart empties on the way
+	 * to payment; the orders themselves stay in "My orders").
+	 */
+	const checkoutCart = useCallback(
+		async (
+			items: readonly OrderSelection[],
+			contact: Contact,
+			details: OrderDetails,
+			promoCode: string | undefined,
+			locale: string,
+			beforeRedirect?: () => void,
+		) => {
+			setBusy(true);
+			setError(null);
+			try {
+				const res = await fetch('/api/checkout/cart', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						items,
+						contactMethod: contact.method,
+						contactHandle: contact.handle.trim(),
+						details: {
+							detailOne: details.detailOne.trim(),
+							detailTwo: details.detailTwo.trim(),
+							comment: details.comment.trim(),
+						},
+						locale,
+						...(promoCode?.trim() ? { promoCode: promoCode.trim() } : {}),
+					}),
+				});
+				const data = await res.json().catch(() => null);
+
+				if (!res.ok || !data?.payUrl) {
+					console.error('[checkout/cart] failed', { status: res.status, data });
+					setError({ code: data?.error ?? String(res.status), message: data?.message });
+					setBusy(false);
+					return;
+				}
+
+				beforeRedirect?.();
+				window.location.href = data.payUrl;
+			} catch (err) {
+				console.error('[checkout/cart] network error', err);
+				setError({ code: 'network' });
+				setBusy(false);
+			}
+		},
+		[],
+	);
+
+	return { busy, error, checkout, checkoutCart, clearError: () => setError(null) };
 }

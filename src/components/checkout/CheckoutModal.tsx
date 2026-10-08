@@ -49,7 +49,7 @@ export function CheckoutModal({
 	promoCode: string;
 	onPromoCodeChange: (v: string) => void;
 	/** Priced server-side for the live preview. `null` disables the preview. */
-	selection: OrderSelection | null;
+	selection: OrderSelection | readonly OrderSelection[] | null;
 	/** Locally computed pre-discount total, shown if the preview can't run. */
 	fallbackTotal: number | null;
 	busy: boolean;

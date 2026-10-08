@@ -107,3 +107,36 @@ export const checkoutPreviewSchema = z
   })
   .strict();
 export type CheckoutPreviewRequest = z.infer<typeof checkoutPreviewSchema>;
+
+/**
+ * BATCH F12 (FEAT-CART-023): body of POST /api/checkout/cart. Same trust
+ * boundary as a single checkout -- every item goes through the strict
+ * orderSelectionSchema -- with one contact, one set of details and one promo
+ * code for the whole cart. Capped at the cart size the UI allows.
+ */
+export const MAX_CART_CHECKOUT_ITEMS = 10;
+
+const promoCodeField = z
+  .string()
+  .trim()
+  .max(64)
+  .transform((v) => v.toUpperCase())
+  .optional();
+
+export const cartCheckoutRequestSchema = z
+  .object({
+    items: z.array(orderSelectionSchema).min(1).max(MAX_CART_CHECKOUT_ITEMS),
+    contactMethod: contactMethodSchema,
+    contactHandle: z.string().trim().min(2, 'contact handle too short').max(120),
+    details: orderDetailsSchema,
+    promoCode: promoCodeField,
+    locale: z.enum(['en', 'de', 'fr', 'es', 'ru']).optional(),
+  })
+  .strict();
+
+export const cartPreviewSchema = z
+  .object({
+    items: z.array(orderSelectionSchema).min(1).max(MAX_CART_CHECKOUT_ITEMS),
+    promoCode: promoCodeField,
+  })
+  .strict();

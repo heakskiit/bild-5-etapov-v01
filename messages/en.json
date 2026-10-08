@@ -505,6 +505,7 @@
     "remove": "Remove",
     "clear": "Clear cart",
     "count": "{count} of {max}",
-    "paySoon": "Paying for the whole cart at once is coming in the next update."
+    "outOfStock": "Not enough codes left for one of the cash cards in your cart. Remove some and try again.",
+    "payHint": "One invoice for the whole cart. Each item becomes its own order in \"My orders\"."
   }
 }

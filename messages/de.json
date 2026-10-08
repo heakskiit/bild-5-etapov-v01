@@ -505,6 +505,7 @@
     "remove": "Entfernen",
     "clear": "Warenkorb leeren",
     "count": "{count} von {max}",
-    "paySoon": "Die Bezahlung des gesamten Warenkorbs auf einmal kommt mit dem nächsten Update."
+    "outOfStock": "Für eine der Cash Cards in deinem Warenkorb sind nicht genug Codes vorrätig. Entferne einige und versuche es erneut.",
+    "payHint": "Eine Rechnung für den ganzen Warenkorb. Jeder Artikel wird eine eigene Bestellung unter \"Meine Bestellungen\"."
   }
 }

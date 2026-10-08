@@ -505,6 +505,7 @@
     "remove": "Retirer",
     "clear": "Vider le panier",
     "count": "{count} sur {max}",
-    "paySoon": "Le paiement du panier entier en une fois arrive dans la prochaine mise à jour."
+    "outOfStock": "Pas assez de codes en stock pour une des cartes de votre panier. Retirez-en et réessayez.",
+    "payHint": "Une seule facture pour tout le panier. Chaque article devient une commande dans « Mes commandes »."
   }
 }
