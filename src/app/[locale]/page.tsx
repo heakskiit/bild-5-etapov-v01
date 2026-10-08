@@ -2,7 +2,7 @@ import { Hero } from '@/components/home/Hero';
 import { PopularProducts } from '@/components/home/PopularProducts';
 import { HowItWorks } from '@/components/home/HowItWorks';
 import { Safety } from '@/components/home/Safety';
-import { Faq } from '@/components/home/Faq';
+import { ReviewPlatforms } from '@/components/home/ReviewPlatforms';
 import { CtaStrip } from '@/components/home/CtaStrip';
 import { MobileStickyCta } from '@/components/home/MobileStickyCta';
 
@@ -27,7 +27,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 				<PopularProducts locale={locale} />
 				<HowItWorks />
 				<Safety />
-				<Faq locale={locale} />
+				<ReviewPlatforms />
 				<CtaStrip locale={locale} />
 			</div>
 			<MobileStickyCta locale={locale} />

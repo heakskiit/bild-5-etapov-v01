@@ -100,7 +100,13 @@
       "sharingTitle": "Safe Account Sharing",
       "title": "Seguridad"
     },
-    "trustpilotRating": "{rating}/5 según nuestros clientes"
+    "trustpilotRating": "{rating}/5 según nuestros clientes",
+    "reviews": {
+      "title": "Nuestras reseñas",
+      "subtitle": "Opiniones reales de clientes en plataformas de confianza.",
+      "read": "Leer reseñas",
+      "soon": "Próximamente"
+    }
   },
   "safety": {
     "badge": "Sin baneos reportados",

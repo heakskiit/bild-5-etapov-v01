@@ -100,7 +100,13 @@
       "sharingTitle": "Safe Account Sharing",
       "title": "Sicherheit"
     },
-    "trustpilotRating": "{rating}/5 von unseren Kunden"
+    "trustpilotRating": "{rating}/5 von unseren Kunden",
+    "reviews": {
+      "title": "Unsere Bewertungen",
+      "subtitle": "Echtes Kundenfeedback auf vertrauenswürdigen Marktplätzen.",
+      "read": "Bewertungen lesen",
+      "soon": "Demnächst"
+    }
   },
   "safety": {
     "badge": "Keine Sperren gemeldet",

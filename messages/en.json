@@ -112,7 +112,13 @@
       "subtitle": "Pick a product or service — crypto payment, delivery from 5 minutes.",
       "primary": "Open the store"
     },
-    "trustpilotRating": "{rating}/5 from our customers"
+    "trustpilotRating": "{rating}/5 from our customers",
+    "reviews": {
+      "title": "Our reviews",
+      "subtitle": "Real feedback from customers on trusted marketplaces.",
+      "read": "Read reviews",
+      "soon": "Coming soon"
+    }
   },
   "safety": {
     "badge": "No bans reported",
