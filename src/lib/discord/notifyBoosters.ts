@@ -8,13 +8,49 @@
 
 import type { Order } from '@/types/order';
 import { deliveredMillions } from '@/lib/pricing/promoBonus';
+import { shortCartId } from '@/lib/orders/groupByCart';
 
 const NEON_PINK = 0xff2a85;
 
-export async function notifyBoosters(order: Order & Record<string, any>): Promise<void> {
+type DispatchOrder = Order & Record<string, any>;
+
+export async function notifyBoosters(order: DispatchOrder): Promise<void> {
+  await send({ username: 'Order Dispatch', embeds: [buildEmbed(order)] });
+}
+
+/**
+ * BATCH F13 (FEAT-CART-025): every job of one paid cart in ONE message, one
+ * embed per job (a cart holds at most 10 items = Discord's embed limit), so
+ * boosters see at a glance that the jobs belong to the same customer.
+ * A single job falls back to the ordinary message.
+ */
+export async function notifyBoostersCart(orders: readonly DispatchOrder[]): Promise<void> {
+  if (orders.length === 0) return;
+  if (orders.length === 1) return notifyBoosters(orders[0]);
+
+  const cartId = String(orders[0].cart_id ?? '');
+  const total = orders.reduce((sum, o) => sum + Number(o.totalUsd ?? o.total_usd ?? 0), 0);
+  await send({
+    username: 'Order Dispatch',
+    content: `🛒 **Cart ${cartId ? shortCartId(cartId) : ''}** — ${orders.length} jobs from one customer · $${total.toFixed(2)} · ${orders[0].contact_handle ?? 'see dashboard'}`,
+    embeds: orders.slice(0, 10).map(buildEmbed),
+  });
+}
+
+async function send(body: Record<string, unknown>): Promise<void> {
   const url = process.env.DISCORD_BOOSTER_WEBHOOK_URL;
   if (!url) throw new Error('DISCORD_BOOSTER_WEBHOOK_URL is not set');
 
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(`Discord webhook failed: ${res.status} ${await res.text()}`);
+}
+
+function buildEmbed(order: DispatchOrder) {
   const s = order.selection;
 
   // The single number this whole feature exists for. A booster who reads the
@@ -56,12 +92,5 @@ export async function notifyBoosters(order: Order & Record<string, any>): Promis
     footer: { text: 'First to claim in thread takes the job · free-for-all' },
     timestamp: new Date().toISOString(),
   };
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ username: 'Order Dispatch', embeds: [embed] }),
-  });
-
-  if (!res.ok) throw new Error(`Discord webhook failed: ${res.status} ${await res.text()}`);
+  return embed;
 }

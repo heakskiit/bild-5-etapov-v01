@@ -226,7 +226,9 @@
       "completed": "Abgeschlossen",
       "cancelled": "Storniert",
       "refunded": "Erstattet"
-    }
+    },
+    "cartGroup": "Warenkorb ·{id} — {count} Artikel",
+    "cartGroupTotal": "gesamt {total}"
   },
   "support": {
     "faq": {
@@ -248,7 +250,8 @@
     "mineEmpty": "Du hast noch keinen Auftrag übernommen.",
     "claim": "Übernehmen",
     "claimError": "Bereits übernommen — Liste aktualisieren.",
-    "openJob": "Öffnen"
+    "openJob": "Öffnen",
+    "cartBadge": "Warenkorb ·{id}"
   },
   "jobs": {
     "platform": "Plattform",

@@ -226,7 +226,9 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "refunded": "Refunded"
-    }
+    },
+    "cartGroup": "Cart ·{id} — {count} items",
+    "cartGroupTotal": "total {total}"
   },
   "support": {
     "faq": {
@@ -248,7 +250,8 @@
     "mineEmpty": "You haven't claimed any jobs yet.",
     "claim": "Claim",
     "claimError": "Someone already claimed this — refresh the board.",
-    "openJob": "Open"
+    "openJob": "Open",
+    "cartBadge": "Cart ·{id}"
   },
   "jobs": {
     "platform": "Platform",

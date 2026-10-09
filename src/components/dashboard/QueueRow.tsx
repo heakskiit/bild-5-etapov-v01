@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
 import type { OrderSelection } from '@/types/order';
 import { describeSelection } from '@/lib/orders/describeSelection';
+import { shortCartId } from '@/lib/orders/groupByCart';
 
 interface QueueOrder {
 	id: string;
@@ -15,6 +16,7 @@ interface QueueOrder {
 	selection: OrderSelection;
 	contact_handle: string | null;
 	delivery_multiplier?: string | number | null;
+	cart_id?: string | null;
 	created_at: string;
 }
 
@@ -59,7 +61,15 @@ export function QueueRow({
 	return (
 		<div className="glass-panel flex flex-wrap items-center justify-between gap-3 p-4">
 			<div>
-				<p className="font-mono text-xs text-white/50">{order.public_id}</p>
+				<p className="font-mono text-xs text-white/50">
+					{order.public_id}
+					{/* BATCH F13: same customer, same payment as the other jobs with this label. */}
+					{order.cart_id && (
+						<span className="ml-2 rounded-full border border-neon-pink/60 px-2 py-0.5 font-sans text-[10px] uppercase tracking-wider text-pink-400">
+							{t('queue.cartBadge', { id: shortCartId(order.cart_id) })}
+						</span>
+					)}
+				</p>
 				<p className="text-sm text-ink">
 					{describeSelection(order.selection, t, order.delivery_multiplier)} · {order.selection.platform?.toUpperCase()}
 				</p>

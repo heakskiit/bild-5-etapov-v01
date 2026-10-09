@@ -226,7 +226,9 @@
       "completed": "Completado",
       "cancelled": "Cancelado",
       "refunded": "Reembolsado"
-    }
+    },
+    "cartGroup": "Carrito ·{id} — {count} artículos",
+    "cartGroupTotal": "total {total}"
   },
   "support": {
     "faq": {
@@ -248,7 +250,8 @@
     "mineEmpty": "Aún no has tomado ningún pedido.",
     "claim": "Tomar",
     "claimError": "Ya fue tomado — actualiza la lista.",
-    "openJob": "Abrir"
+    "openJob": "Abrir",
+    "cartBadge": "Carrito ·{id}"
   },
   "jobs": {
     "platform": "Plataforma",

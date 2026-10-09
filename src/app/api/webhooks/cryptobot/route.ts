@@ -17,7 +17,7 @@ import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { serviceClient } from '@/lib/supabase/service';
 import { fulfilDigitalCode } from '@/lib/keys/googleSheets';
-import { notifyBoosters } from '@/lib/discord/notifyBoosters';
+import { notifyBoostersCart } from '@/lib/discord/notifyBoosters';
 import { AUTO_DELIVERY, mirrorCompletedOrder } from '@/lib/orders/mirrorCompleted';
 import { sheetSkuForVariant } from '@/lib/keys/vault';
 import { isPaidAfterCancel, isPayableStatus } from '@/lib/orders/payableStatus';
@@ -156,9 +156,21 @@ export async function POST(request: Request) {
   // Sequential on purpose: two cards of the same SKU must not race for the
   // same Apps Script lock. One failed line never stops the others.
   const flagged: string[] = [];
+  const jobs: Record<string, any>[] = [];
   for (const order of payable) {
     const flag = await fulfilOrder(db, order);
     if (flag) flagged.push(`${order.public_id}:${flag}`);
+    else if (order.selection?.product !== 'shark_card') jobs.push(order);
+  }
+
+  // BATCH F13: one Discord message per invoice (a cart = one message).
+  // The orders are already paid and in the queue; a Discord outage must not
+  // turn into a failed webhook.
+  try {
+    await notifyBoostersCart(jobs as any);
+  } catch (err) {
+    console.error('[webhook] booster notification failed', { orders: jobs.map((o) => o.public_id), err });
+    flagged.push('notify_failed');
   }
 
   return NextResponse.json({ ok: true, orders: payable.length, ...(flagged.length ? { flagged } : {}) });
@@ -211,14 +223,7 @@ async function fulfilOrder(
     return null;
   }
 
+  // Boost job: into the queue. Discord is told once, by the caller.
   await db.from('orders').update({ status: 'action_required', paid_at: paidAt }).eq('id', order.id);
-  try {
-    await notifyBoosters(order as any);
-  } catch (err) {
-    // The order is already paid and in the queue; a Discord outage must not
-    // stop the rest of the cart from being settled.
-    console.error('[webhook] booster notification failed', { order: order.public_id, err });
-    return 'notify_failed';
-  }
   return null;
 }

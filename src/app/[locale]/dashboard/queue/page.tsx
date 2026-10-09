@@ -23,7 +23,7 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
 	const supabase = await routeClient();
 	const { data: orders } = await supabase
 		.from('orders')
-		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, delivery_multiplier, created_at')
+		.select('id, public_id, status, selection, contact_handle, assigned_modder_id, delivery_multiplier, cart_id, created_at')
 		.in('status', [...QUEUE_STATUSES])
 		.in('selection->>product', [...QUEUE_PRODUCTS])
 		.order('created_at', { ascending: true })

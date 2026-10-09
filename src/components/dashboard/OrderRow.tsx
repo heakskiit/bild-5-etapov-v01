@@ -20,6 +20,7 @@ const CHIP: Record<OrderStatus, string> = {
 export function OrderRow({
   order,
   messages,
+  grouped = false,
 }: {
   order: Order & {
     public_id: string;
@@ -30,6 +31,8 @@ export function OrderRow({
     promo_code?: string | null;
   };
   messages: Dict;
+  /** BATCH F13: part of a cart card -- indented under the cart header. */
+  grouped?: boolean;
 }) {
   const t = useMemo(() => (key: string, vars?: Record<string, string | number>) => dig(messages, key, vars), [messages]);
   const [code, setCode] = useState<string | null>(null);
@@ -63,8 +66,10 @@ export function OrderRow({
 
   return (
     <>
-      <tr className="border-t border-white/10">
-        <td className="px-4 py-3 font-mono text-xs">{order.public_id}</td>
+      <tr className={grouped ? 'border-t border-white/5 bg-neon-pink/[0.02]' : 'border-t border-white/10'}>
+        <td className={grouped ? 'border-l-2 border-neon-pink py-3 pl-6 pr-4 font-mono text-xs' : 'px-4 py-3 font-mono text-xs'}>
+          {order.public_id}
+        </td>
         <td className="px-4 py-3">{describeSelection(order.selection, t, order.delivery_multiplier)}</td>
         <td className="px-4 py-3">
           ${Number(order.total_usd).toFixed(2)}

@@ -5,6 +5,7 @@ import { OrderRow } from '@/components/dashboard/OrderRow';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { buttonClasses } from '@/components/ui/buttonStyles';
 import { pendingWindowStart } from '@/lib/orders/orderLimits';
+import { groupByCart, shortCartId } from '@/lib/orders/groupByCart';
 import type { Dict } from '@/lib/i18n/pick';
 
 /**
@@ -27,6 +28,8 @@ type OrderListRow = {
   public_id: string;
   status: string;
   created_at: string;
+  cart_id?: string | null;
+  total_usd?: string | number | null;
 };
 
 export default async function OrdersPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -46,7 +49,7 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   // ever revoked UPDATE on orders, never column-level SELECT.
   const { data: orders } = await supabase
     .from('orders')
-    .select('public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, created_at')
+    .select('public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, cart_id, created_at')
     .order('created_at', { ascending: false })
     .limit(50);
 
@@ -101,7 +104,7 @@ function OrdersTable({
 }: {
   rows: OrderListRow[];
   messages: Dict;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
   return (
     <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
@@ -116,11 +119,49 @@ function OrdersTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((order) => (
-            <OrderRow key={order.public_id} order={order as any} messages={messages} />
-          ))}
+          {/* BATCH F13: orders paid as one cart share a header row and a
+              left accent, so they read as one purchase. */}
+          {groupByCart(rows).map((unit) =>
+            unit.kind === 'single' ? (
+              <OrderRow key={unit.order.public_id} order={unit.order as any} messages={messages} />
+            ) : (
+              <CartGroup key={unit.cartId} cartId={unit.cartId} count={unit.orders.length} totalUsd={unit.totalUsd} t={t}>
+                {unit.orders.map((order) => (
+                  <OrderRow key={order.public_id} order={order as any} messages={messages} grouped />
+                ))}
+              </CartGroup>
+            ),
+          )}
         </tbody>
       </table>
     </div>
+  );
+}
+
+function CartGroup({
+  cartId,
+  count,
+  totalUsd,
+  t,
+  children,
+}: {
+  cartId: string;
+  count: number;
+  totalUsd: number;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <tr className="border-t border-white/10 bg-neon-pink/5">
+        <td colSpan={5} className="border-l-2 border-neon-pink px-4 py-2 text-xs">
+          <span className="font-display uppercase tracking-widest text-pink-400">
+            {t('dashboard.cartGroup', { id: shortCartId(cartId), count })}
+          </span>
+          <span className="ml-3 text-white/60">{t('dashboard.cartGroupTotal', { total: `$${totalUsd.toFixed(2)}` })}</span>
+        </td>
+      </tr>
+      {children}
+    </>
   );
 }
