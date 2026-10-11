@@ -243,7 +243,7 @@
       "q3": "¿Qué métodos de pago aceptan?",
       "a3": "Solo cripto, procesado por CryptoBot Pay.",
       "q4": "¿Puedo obtener un reembolso?",
-      "a4": "Los códigos no canjeados y los servicios no iniciados son reembolsables — consulta la política de reembolso."
+      "a4": "Los códigos no canjeados y los servicios no iniciados son reembolsables — abre «Pedidos» en tu cuenta y pulsa «Necesito ayuda con este pedido». Detalles en la política de reembolso."
     },
     "button": "Necesito ayuda con este pedido",
     "title": "Ayuda con el pedido {id}",
@@ -289,7 +289,14 @@
     "staff": "Soporte",
     "loading": "Cargando…",
     "threadError": "No se pudo cargar la conversación.",
-    "noMessages": "Aún no hay mensajes."
+    "noMessages": "Aún no hay mensajes.",
+    "hub": {
+      "orderTitle": "¿Problema con un pedido?",
+      "orderBody": "Abre «Pedidos» en tu cuenta y pulsa «Necesito ayuda con este pedido» debajo del pedido. Los datos del pedido se adjuntan automáticamente, y la respuesta y toda la conversación aparecen en la ficha del pedido.",
+      "orderCta": "Ir a Pedidos",
+      "discordTitle": "Preguntas generales e inicio de sesión",
+      "discordBody": "¿No puedes iniciar sesión o tu pregunta no es sobre un pedido concreto? Escríbenos en Discord."
+    }
   },
   "queue": {
     "unclaimedTitle": "Pedidos disponibles",
@@ -517,11 +524,11 @@
       },
       "coopServices": {
         "heading": "Servicios coop y boost",
-        "body": "Reembolso completo si el pedido aún no ha sido tomado de la cola. Una vez que un miembro del equipo lo toma y empieza el trabajo, el reembolso se evalúa caso por caso según el trabajo realizado — contacta con soporte y lo resolveremos de forma justa."
+        "body": "Reembolso completo si el pedido aún no ha sido tomado de la cola. Una vez que un miembro del equipo lo toma y empieza el trabajo, el reembolso se evalúa caso por caso según el trabajo realizado — abre una solicitud sobre el pedido y lo resolveremos de forma justa."
       },
       "howToRequest": {
         "heading": "Cómo solicitar un reembolso",
-        "body": "Abre un ticket en nuestro servidor de soporte de Discord con tu número de pedido. Solemos responder en 24 horas."
+        "body": "Abre «Pedidos» en tu cuenta, pulsa «Necesito ayuda con este pedido» debajo del pedido y elige «Quiero cancelar o pedir un reembolso». El número y los datos del pedido se adjuntan automáticamente, y nuestra respuesta aparece en la ficha del pedido. Solemos responder en 24 horas. ¿No puedes iniciar sesión? Escríbenos en Discord."
       },
       "paymentMethod": {
         "heading": "Cómo se pagan los reembolsos",
@@ -529,7 +536,7 @@
       },
       "disputes": {
         "heading": "Antes de abrir una disputa",
-        "body": "Por favor contacta primero con soporte — la mayoría de los problemas se resuelven más rápido así que mediante una disputa con el procesador de pago, y nos ayuda a solucionar el problema de verdad."
+        "body": "Por favor abre primero una solicitud sobre el pedido («Pedidos» → «Necesito ayuda con este pedido») — la mayoría de los problemas se resuelven más rápido así que mediante una disputa con el procesador de pago, y nos ayuda a solucionar el problema de verdad."
       }
     }
   },

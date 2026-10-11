@@ -243,7 +243,7 @@
       "q3": "Welche Zahlungsmethoden akzeptieren Sie?",
       "a3": "Nur Krypto, abgewickelt über CryptoBot Pay.",
       "q4": "Kann ich eine Rückerstattung bekommen?",
-      "a4": "Nicht eingelöste Codes und noch nicht begonnene Dienste sind erstattungsfähig — siehe die Rückerstattungsrichtlinie."
+      "a4": "Nicht eingelöste Codes und noch nicht begonnene Dienste sind erstattungsfähig — öffne „Bestellungen\" in deinem Konto und klicke auf „Hilfe zu dieser Bestellung\". Details in der Rückerstattungsrichtlinie."
     },
     "button": "Hilfe zu dieser Bestellung",
     "title": "Hilfe zu Bestellung {id}",
@@ -289,7 +289,14 @@
     "staff": "Support",
     "loading": "Lädt…",
     "threadError": "Unterhaltung konnte nicht geladen werden.",
-    "noMessages": "Noch keine Nachrichten."
+    "noMessages": "Noch keine Nachrichten.",
+    "hub": {
+      "orderTitle": "Problem mit einer Bestellung?",
+      "orderBody": "Öffne „Bestellungen\" in deinem Konto und klicke unter der Bestellung auf „Hilfe zu dieser Bestellung\". Die Bestelldaten werden automatisch angehängt, Antwort und Verlauf erscheinen direkt in der Bestellkarte.",
+      "orderCta": "Zu meinen Bestellungen",
+      "discordTitle": "Allgemeine Fragen und Anmeldung",
+      "discordBody": "Anmeldung klappt nicht oder die Frage betrifft keine bestimmte Bestellung? Schreib uns auf Discord."
+    }
   },
   "queue": {
     "unclaimedTitle": "Offene Aufträge",
@@ -517,11 +524,11 @@
       },
       "coopServices": {
         "heading": "Koop- & Boost-Dienste",
-        "body": "Volle Erstattung, solange die Bestellung noch unbearbeitet in der Warteschlange steht. Hat ein Teammitglied den Auftrag bereits übernommen, wird die Erstattung je nach geleisteter Arbeit individuell geprüft — wende dich an den Support, wir finden eine faire Lösung."
+        "body": "Volle Erstattung, solange die Bestellung noch unbearbeitet in der Warteschlange steht. Hat ein Teammitglied den Auftrag bereits übernommen, wird die Erstattung je nach geleisteter Arbeit individuell geprüft — eröffne eine Anfrage zur Bestellung, wir finden eine faire Lösung."
       },
       "howToRequest": {
         "heading": "Erstattung anfragen",
-        "body": "Eröffne mit deiner Bestellnummer ein Ticket in unserem Discord-Support. Wir antworten in der Regel innerhalb von 24 Stunden."
+        "body": "Öffne „Bestellungen\" in deinem Konto, klicke unter der Bestellung auf „Hilfe zu dieser Bestellung\" und wähle „Ich möchte stornieren oder eine Erstattung\". Bestellnummer und Details werden automatisch angehängt, unsere Antwort erscheint in der Bestellkarte. Wir antworten in der Regel innerhalb von 24 Stunden. Anmeldung klappt nicht? Schreib uns auf Discord."
       },
       "paymentMethod": {
         "heading": "Wie Erstattungen ausgezahlt werden",
@@ -529,7 +536,7 @@
       },
       "disputes": {
         "heading": "Bevor du einen Streitfall eröffnest",
-        "body": "Bitte kontaktiere zuerst den Support — das löst die meisten Probleme schneller als ein Streitfall beim Zahlungsdienstleister und hilft uns, das Problem wirklich zu beheben."
+        "body": "Bitte eröffne zuerst eine Anfrage zur Bestellung („Bestellungen\" → „Hilfe zu dieser Bestellung\") — das löst die meisten Probleme schneller als ein Streitfall beim Zahlungsdienstleister und hilft uns, das Problem wirklich zu beheben."
       }
     }
   },

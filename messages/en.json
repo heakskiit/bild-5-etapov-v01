@@ -243,7 +243,7 @@
       "q3": "Which payments do you accept?",
       "a3": "Crypto only, processed by CryptoBot Pay.",
       "q4": "Can I get a refund?",
-      "a4": "Unredeemed codes and unstarted services are refundable — see the refund policy."
+      "a4": "Unredeemed codes and unstarted services are refundable — open Orders in your account and press \"Need help with this order\". See the refund policy for details."
     },
     "button": "Need help with this order",
     "title": "Help with order {id}",
@@ -289,7 +289,14 @@
     "staff": "Support",
     "loading": "Loading…",
     "threadError": "Could not load the conversation.",
-    "noMessages": "No messages yet."
+    "noMessages": "No messages yet.",
+    "hub": {
+      "orderTitle": "Problem with an order?",
+      "orderBody": "Open Orders in your account and press \"Need help with this order\" under the order. The order details are attached automatically, and the reply and the whole conversation appear right in the order card.",
+      "orderCta": "Go to Orders",
+      "discordTitle": "General questions and sign-in",
+      "discordBody": "Can't sign in, or have a question that isn't about a specific order? Ask us on Discord."
+    }
   },
   "queue": {
     "unclaimedTitle": "Open jobs",
@@ -517,11 +524,11 @@
       },
       "coopServices": {
         "heading": "Co-op & boost services",
-        "body": "Full refund if your order is still unclaimed in the queue. Once a team member has claimed and started the job, refunds are handled case by case depending on how much work was completed — contact support and we'll sort it out fairly."
+        "body": "Full refund if your order is still unclaimed in the queue. Once a team member has claimed and started the job, refunds are handled case by case depending on how much work was completed — open a request on the order and we'll sort it out fairly."
       },
       "howToRequest": {
         "heading": "How to request a refund",
-        "body": "Open a ticket in our Discord support server with your order ID. We aim to respond within 24 hours."
+        "body": "Open Orders in your account, press \"Need help with this order\" under the order and choose \"I want to cancel or request a refund\". The order ID and details are attached automatically, and our reply appears in the order card. We aim to respond within 24 hours. Can't sign in? Contact us on Discord."
       },
       "paymentMethod": {
         "heading": "How refunds are paid",
@@ -529,7 +536,7 @@
       },
       "disputes": {
         "heading": "Before opening a dispute",
-        "body": "Please contact support first — most issues are resolved faster that way than through a payment processor dispute, and it helps us actually fix the problem."
+        "body": "Please open a request on the order first (Orders → \"Need help with this order\") — most issues are resolved faster that way than through a payment processor dispute, and it helps us actually fix the problem."
       }
     }
   },

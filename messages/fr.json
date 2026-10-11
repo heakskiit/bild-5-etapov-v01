@@ -243,7 +243,7 @@
       "q3": "Quels moyens de paiement acceptez-vous ?",
       "a3": "Uniquement la crypto, traitée par CryptoBot Pay.",
       "q4": "Puis-je obtenir un remboursement ?",
-      "a4": "Les codes non utilisés et les services non commencés sont remboursables — voir la politique de remboursement."
+      "a4": "Les codes non utilisés et les services non commencés sont remboursables — ouvrez « Commandes » de votre compte et cliquez sur « Besoin d’aide pour cette commande ». Détails dans la politique de remboursement."
     },
     "button": "Besoin d’aide pour cette commande",
     "title": "Aide pour la commande {id}",
@@ -289,7 +289,14 @@
     "staff": "Support",
     "loading": "Chargement…",
     "threadError": "Impossible de charger la conversation.",
-    "noMessages": "Pas encore de messages."
+    "noMessages": "Pas encore de messages.",
+    "hub": {
+      "orderTitle": "Un problème avec une commande ?",
+      "orderBody": "Ouvrez « Commandes » de votre compte et cliquez sur « Besoin d’aide pour cette commande » sous la commande. Les détails de la commande sont joints automatiquement, et la réponse comme toute la conversation apparaissent dans la fiche de commande.",
+      "orderCta": "Aller aux commandes",
+      "discordTitle": "Questions générales et connexion",
+      "discordBody": "Impossible de vous connecter, ou une question qui ne concerne pas une commande précise ? Écrivez-nous sur Discord."
+    }
   },
   "queue": {
     "unclaimedTitle": "Commandes disponibles",
@@ -517,11 +524,11 @@
       },
       "coopServices": {
         "heading": "Services coop et boost",
-        "body": "Remboursement intégral si la commande est encore non prise en charge dans la file d'attente. Une fois qu'un membre de l'équipe a pris en charge et démarré la tâche, le remboursement est étudié au cas par cas selon le travail effectué — contactez le support, nous trouverons une solution équitable."
+        "body": "Remboursement intégral si la commande est encore non prise en charge dans la file d'attente. Une fois qu'un membre de l'équipe a pris en charge et démarré la tâche, le remboursement est étudié au cas par cas selon le travail effectué — ouvrez une demande sur la commande, nous trouverons une solution équitable."
       },
       "howToRequest": {
         "heading": "Comment demander un remboursement",
-        "body": "Ouvrez un ticket sur notre serveur Discord de support avec votre numéro de commande. Nous répondons généralement sous 24 heures."
+        "body": "Ouvrez « Commandes » de votre compte, cliquez sur « Besoin d’aide pour cette commande » sous la commande et choisissez « Je veux annuler ou demander un remboursement ». Le numéro et les détails de la commande sont joints automatiquement, et notre réponse apparaît dans la fiche de commande. Nous répondons généralement sous 24 heures. Impossible de vous connecter ? Écrivez-nous sur Discord."
       },
       "paymentMethod": {
         "heading": "Comment les remboursements sont versés",
@@ -529,7 +536,7 @@
       },
       "disputes": {
         "heading": "Avant d'ouvrir un litige",
-        "body": "Merci de contacter d'abord le support — la plupart des problèmes se résolvent plus vite ainsi que via un litige auprès du prestataire de paiement, et cela nous aide à réellement corriger le problème."
+        "body": "Merci d'ouvrir d'abord une demande sur la commande (« Commandes » → « Besoin d’aide pour cette commande ») — la plupart des problèmes se résolvent plus vite ainsi que via un litige auprès du prestataire de paiement, et cela nous aide à réellement corriger le problème."
       }
     }
   },
