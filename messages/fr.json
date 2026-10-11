@@ -244,7 +244,39 @@
       "a3": "Uniquement la crypto, traitée par CryptoBot Pay.",
       "q4": "Puis-je obtenir un remboursement ?",
       "a4": "Les codes non utilisés et les services non commencés sont remboursables — voir la politique de remboursement."
-    }
+    },
+    "button": "Besoin d’aide pour cette commande",
+    "title": "Aide pour la commande {id}",
+    "reasonLabel": "Que s’est-il passé ?",
+    "reasons": {
+      "payment_not_confirmed": "Le paiement n’a pas été confirmé",
+      "queue_too_long": "La commande attend trop longtemps",
+      "credentials_help": "Besoin d’aide pour les informations de la mission",
+      "item_not_received": "Article non reçu ou ne fonctionne pas",
+      "cancel_refund": "Je veux annuler ou demander un remboursement",
+      "other": "Autre problème"
+    },
+    "messageLabel": "Décrivez le problème",
+    "messageLabelOptional": "Commentaire (facultatif)",
+    "messagePlaceholder": "Ce qui s’est passé et ce que vous avez déjà essayé",
+    "messageRequired": "Un commentaire est requis pour « Autre problème »",
+    "pickReason": "Choisissez une raison",
+    "attachedNote": "Le numéro de commande, les articles, le statut, l’heure de paiement et l’historique sont joints automatiquement. Les identifiants et mots de passe ne sont jamais transmis.",
+    "submit": "Envoyer la demande",
+    "error": "Impossible d’envoyer la demande — réessayez.",
+    "alreadyOpen": "Cette commande a déjà une demande ouverte.",
+    "tooMany": "Trop de tentatives — attendez une minute.",
+    "requestLabel": "Demande {id}",
+    "status": {
+      "open": "Ouverte",
+      "in_progress": "En cours",
+      "resolved": "Résolue"
+    },
+    "hasReply": "Nouvelle réponse",
+    "replyLabel": "Réponse du support",
+    "waitingReply": "Le support répondra ici, dans la fiche de commande.",
+    "yourMessage": "Votre message",
+    "newRequest": "Nouvelle demande"
   },
   "queue": {
     "unclaimedTitle": "Commandes disponibles",
@@ -358,6 +390,22 @@
       "recentEmpty": "Aucun code livré pour le moment.",
       "revealed": "Révélé",
       "notRevealed": "Non révélé"
+    },
+    "support": {
+      "title": "Demandes d’aide",
+      "filter": {
+        "active": "Ouvertes",
+        "resolved": "Résolues",
+        "all": "Toutes"
+      },
+      "empty": "Aucune demande.",
+      "replyPlaceholder": "Réponse au client — affichée dans sa fiche de commande",
+      "save": "Enregistrer",
+      "saved": "Enregistré",
+      "saveError": "Échec de l’enregistrement",
+      "notifyFailed": "Non livré sur Discord",
+      "replySeen": "Réponse lue",
+      "replyUnseen": "Réponse pas encore lue"
     }
   },
   "auth": {

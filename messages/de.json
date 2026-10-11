@@ -244,7 +244,39 @@
       "a3": "Nur Krypto, abgewickelt über CryptoBot Pay.",
       "q4": "Kann ich eine Rückerstattung bekommen?",
       "a4": "Nicht eingelöste Codes und noch nicht begonnene Dienste sind erstattungsfähig — siehe die Rückerstattungsrichtlinie."
-    }
+    },
+    "button": "Hilfe zu dieser Bestellung",
+    "title": "Hilfe zu Bestellung {id}",
+    "reasonLabel": "Was ist passiert?",
+    "reasons": {
+      "payment_not_confirmed": "Zahlung wurde nicht bestätigt",
+      "queue_too_long": "Bestellung ist zu lange in der Warteschlange",
+      "credentials_help": "Hilfe bei den Angaben für den Auftrag",
+      "item_not_received": "Artikel nicht erhalten oder funktioniert nicht",
+      "cancel_refund": "Ich möchte stornieren oder eine Erstattung",
+      "other": "Anderes Problem"
+    },
+    "messageLabel": "Beschreibe das Problem",
+    "messageLabelOptional": "Kommentar (optional)",
+    "messagePlaceholder": "Was ist passiert und was hast du schon versucht",
+    "messageRequired": "Für „Anderes Problem“ ist ein Kommentar nötig",
+    "pickReason": "Wähle einen Grund",
+    "attachedNote": "Bestellnummer, Artikel, Status, Zahlungszeit und Verlauf werden automatisch angehängt. Logins und Passwörter werden nie weitergegeben.",
+    "submit": "Anfrage senden",
+    "error": "Anfrage konnte nicht gesendet werden — bitte erneut versuchen.",
+    "alreadyOpen": "Zu dieser Bestellung gibt es bereits eine offene Anfrage.",
+    "tooMany": "Zu viele Versuche — warte eine Minute.",
+    "requestLabel": "Anfrage {id}",
+    "status": {
+      "open": "Offen",
+      "in_progress": "In Bearbeitung",
+      "resolved": "Gelöst"
+    },
+    "hasReply": "Neue Antwort",
+    "replyLabel": "Antwort des Supports",
+    "waitingReply": "Der Support antwortet hier, in der Bestellkarte.",
+    "yourMessage": "Deine Nachricht",
+    "newRequest": "Neue Anfrage"
   },
   "queue": {
     "unclaimedTitle": "Offene Aufträge",
@@ -358,6 +390,22 @@
       "recentEmpty": "Noch keine Codes ausgegeben.",
       "revealed": "Angezeigt",
       "notRevealed": "Nicht angezeigt"
+    },
+    "support": {
+      "title": "Support-Anfragen",
+      "filter": {
+        "active": "Offen",
+        "resolved": "Gelöst",
+        "all": "Alle"
+      },
+      "empty": "Keine Anfragen.",
+      "replyPlaceholder": "Antwort an den Kunden — erscheint in der Bestellkarte",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "saveError": "Speichern fehlgeschlagen",
+      "notifyFailed": "Nicht an Discord zugestellt",
+      "replySeen": "Antwort gelesen",
+      "replyUnseen": "Antwort noch nicht gelesen"
     }
   },
   "auth": {

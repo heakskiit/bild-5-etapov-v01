@@ -244,7 +244,39 @@
       "a3": "Crypto only, processed by CryptoBot Pay.",
       "q4": "Can I get a refund?",
       "a4": "Unredeemed codes and unstarted services are refundable — see the refund policy."
-    }
+    },
+    "button": "Need help with this order",
+    "title": "Help with order {id}",
+    "reasonLabel": "What happened?",
+    "reasons": {
+      "payment_not_confirmed": "Payment was not confirmed",
+      "queue_too_long": "Order is in the queue too long",
+      "credentials_help": "Need help with the details for the job",
+      "item_not_received": "Item not received or not working",
+      "cancel_refund": "I want to cancel or request a refund",
+      "other": "Another problem"
+    },
+    "messageLabel": "Describe the problem",
+    "messageLabelOptional": "Comment (optional)",
+    "messagePlaceholder": "What happened and what you have already tried",
+    "messageRequired": "A comment is required for \"Another problem\"",
+    "pickReason": "Choose a reason",
+    "attachedNote": "The order number, items, status, payment time and event history are attached automatically. Logins and passwords are never shared.",
+    "submit": "Send request",
+    "error": "Could not send the request — please try again.",
+    "alreadyOpen": "This order already has an open request.",
+    "tooMany": "Too many attempts — wait a minute.",
+    "requestLabel": "Request {id}",
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "resolved": "Resolved"
+    },
+    "hasReply": "New reply",
+    "replyLabel": "Support reply",
+    "waitingReply": "Support will reply here, in the order card.",
+    "yourMessage": "Your message",
+    "newRequest": "New request"
   },
   "queue": {
     "unclaimedTitle": "Open jobs",
@@ -358,6 +390,22 @@
       "recentEmpty": "No codes fulfilled yet.",
       "revealed": "Revealed",
       "notRevealed": "Not revealed"
+    },
+    "support": {
+      "title": "Support requests",
+      "filter": {
+        "active": "Open",
+        "resolved": "Resolved",
+        "all": "All"
+      },
+      "empty": "No requests.",
+      "replyPlaceholder": "Reply to the customer — shown in their order card",
+      "save": "Save",
+      "saved": "Saved",
+      "saveError": "Could not save",
+      "notifyFailed": "Not delivered to Discord",
+      "replySeen": "Reply read",
+      "replyUnseen": "Reply not read yet"
     }
   },
   "auth": {

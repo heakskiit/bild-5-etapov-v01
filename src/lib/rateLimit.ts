@@ -44,6 +44,9 @@ export const RATE_LIMITS = {
 	// writes an audit row; a booster needs it a handful of times per job.
 	revealCredentials: { limit: 10, windowSeconds: 60 },
 	adminPromo: { limit: 30, windowSeconds: 60 },
+	// BATCH F15: a customer raising support requests; one open per order anyway.
+	supportRequest: { limit: 5, windowSeconds: 60 },
+	adminSupport: { limit: 60, windowSeconds: 60 },
 } as const;
 
 export type RateLimitBucket = keyof typeof RATE_LIMITS;

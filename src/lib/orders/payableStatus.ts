@@ -18,6 +18,18 @@ export const STALE_ORDER_HOURS = 2;
 
 export const PAYABLE_STATUSES = ['awaiting_payment', 'cancelled'] as const;
 
+/**
+ * BATCH F14: may the "Pay" button still offer an invoice for this order?
+ * Only while 0015 would not cancel it yet. Past that the order is abandoned:
+ * reissuing an invoice would revive it after the customer walked away, and
+ * if 0015 is ever behind schedule the button must not paper over it.
+ */
+export function isFreshUnpaid(status: unknown, createdAt: unknown, now: number = Date.now()): boolean {
+  if (status !== 'awaiting_payment' || typeof createdAt !== 'string') return false;
+  const created = Date.parse(createdAt);
+  return Number.isFinite(created) && now - created < STALE_ORDER_HOURS * 3600 * 1000;
+}
+
 export function isPayableStatus(status: unknown): boolean {
   return typeof status === 'string' && (PAYABLE_STATUSES as readonly string[]).includes(status);
 }

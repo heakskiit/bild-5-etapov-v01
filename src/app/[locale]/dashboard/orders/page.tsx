@@ -6,8 +6,11 @@ import { PayAgainButton } from '@/components/dashboard/PayAgainButton';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { buttonClasses } from '@/components/ui/buttonStyles';
 import { pendingWindowStart } from '@/lib/orders/orderLimits';
+import { isFreshUnpaid } from '@/lib/orders/payableStatus';
 import { groupByCart, shortCartId } from '@/lib/orders/groupByCart';
 import type { Dict } from '@/lib/i18n/pick';
+import { serviceClient } from '@/lib/supabase/service';
+import { canRequestHelp, type SupportSummary } from '@/lib/support/requests';
 
 /**
  * Orders table. Two behaviours share one row component:
@@ -55,6 +58,11 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
     .limit(50);
 
   const all = (orders ?? []) as OrderListRow[];
+
+  // BATCH F15: latest support request per order. support_requests is
+  // service-only (0018), so it is read with the service client and pinned
+  // to this user's id -- never anyone else's rows.
+  const support = await loadSupport(profile.id);
   const pendingCutoff = Date.parse(pendingWindowStart());
   const unpaid = (order: OrderListRow) => order.status === 'awaiting_payment';
 
@@ -66,14 +74,14 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
     <div>
       <h1 className="font-display text-3xl text-neon-pink">{t('dashboard.ordersLabel')}</h1>
 
-      {settled.length > 0 && <OrdersTable rows={settled} messages={messages} t={t} />}
+      {settled.length > 0 && <OrdersTable rows={settled} messages={messages} t={t} support={support} />}
 
       {pending.length > 0 && (
         <section className="mt-8 space-y-3">
           <h2 className="font-display text-sm uppercase tracking-widest text-white/60">
             {t('dashboard.pendingLabel')}
           </h2>
-          <OrdersTable rows={pending} messages={messages} t={t} />
+          <OrdersTable rows={pending} messages={messages} t={t} support={support} />
         </section>
       )}
 
@@ -97,15 +105,49 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   );
 }
 
+async function loadSupport(userId: string): Promise<Map<string, SupportSummary>> {
+  const map = new Map<string, SupportSummary>();
+  try {
+    const { data, error } = await serviceClient()
+      .from('support_requests')
+      .select('public_id, reason, message, status, reply, replied_at, reply_seen_at, created_at, orders(public_id)')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    for (const r of (data ?? []) as any[]) {
+      const order = Array.isArray(r.orders) ? r.orders[0] : r.orders;
+      // Newest first: the first row seen for an order is its latest request.
+      if (!order?.public_id || map.has(order.public_id)) continue;
+      map.set(order.public_id, {
+        publicId: r.public_id,
+        reason: r.reason,
+        message: r.message,
+        status: r.status,
+        reply: r.reply,
+        repliedAt: r.replied_at,
+        replySeenAt: r.reply_seen_at,
+        createdAt: r.created_at,
+      });
+    }
+  } catch (err) {
+    // The orders list must still render if this lookup fails.
+    console.error('[orders page] support', err);
+  }
+  return map;
+}
+
 /** One markup definition, rendered once per section. */
 function OrdersTable({
   rows,
   messages,
   t,
+  support,
 }: {
   rows: OrderListRow[];
   messages: Dict;
   t: (key: string, vars?: Record<string, string | number>) => string;
+  support: Map<string, SupportSummary>;
 }) {
   return (
     <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
@@ -124,7 +166,14 @@ function OrdersTable({
               left accent, so they read as one purchase. */}
           {groupByCart(rows).map((unit) =>
             unit.kind === 'single' ? (
-              <OrderRow key={unit.order.public_id} order={unit.order as any} messages={messages} />
+              <OrderRow
+                key={unit.order.public_id}
+                order={unit.order as any}
+                messages={messages}
+                payable={isFreshUnpaid(unit.order.status, unit.order.created_at)}
+                support={support.get(unit.order.public_id) ?? null}
+                helpAllowed={canRequestHelp(unit.order.status, unit.order.created_at)}
+              />
             ) : (
               <CartGroup
                 key={unit.cartId}
@@ -133,11 +182,20 @@ function OrdersTable({
                 totalUsd={unit.totalUsd}
                 t={t}
                 /* BATCH F14: one invoice covers the cart, so one button does too. */
-                payOrderId={unit.orders.every((o) => o.status === 'awaiting_payment') ? unit.orders[0].public_id : null}
+                payOrderId={
+                  unit.orders.every((o) => isFreshUnpaid(o.status, o.created_at)) ? unit.orders[0].public_id : null
+                }
                 messages={messages}
               >
                 {unit.orders.map((order) => (
-                  <OrderRow key={order.public_id} order={order as any} messages={messages} grouped />
+                  <OrderRow
+                    key={order.public_id}
+                    order={order as any}
+                    messages={messages}
+                    grouped
+                    support={support.get(order.public_id) ?? null}
+                    helpAllowed={canRequestHelp(order.status, order.created_at)}
+                  />
                 ))}
               </CartGroup>
             ),

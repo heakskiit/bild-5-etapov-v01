@@ -41,7 +41,7 @@ export function PayAgainButton({
 
       if (!res.ok || !data?.payUrl) {
         tab?.close();
-        setError(data?.error === 'not_payable' ? t('dashboard.payNotPayable') : t('dashboard.payError'));
+        setError(data?.error === 'not_payable' || data?.error === 'expired' ? t('dashboard.payNotPayable') : t('dashboard.payError'));
         return;
       }
 

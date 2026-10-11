@@ -18,6 +18,7 @@ import { requireUser } from '@/lib/supabase/auth';
 import { createInvoice, INVOICE_TTL_SECONDS } from '@/lib/pricing/cryptobot';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { sumMoney } from '@/lib/cart/cartCheckout';
+import { isFreshUnpaid } from '@/lib/orders/payableStatus';
 
 export const runtime = 'nodejs';
 
@@ -38,12 +39,16 @@ export async function POST(request: Request) {
   const db = serviceClient();
   const { data: order } = await db
     .from('orders')
-    .select('id, public_id, user_id, status, cart_id, total_usd, pay_url, invoice_expires_at, selection')
+    .select('id, public_id, user_id, status, cart_id, total_usd, pay_url, invoice_expires_at, selection, created_at')
     .eq('public_id', orderId)
     .maybeSingle();
 
   if (!order || order.user_id !== user.id) {
     return NextResponse.json({ error: 'not_found' }, { status: 404 });
+  }
+  if (order.status === 'awaiting_payment' && !isFreshUnpaid(order.status, order.created_at)) {
+    // Older than the auto-cancel window: the order is abandoned, not pending.
+    return NextResponse.json({ error: 'expired' }, { status: 409 });
   }
   if (order.status !== 'awaiting_payment') {
     // Already paid, already cancelled: either way there is nothing to pay.

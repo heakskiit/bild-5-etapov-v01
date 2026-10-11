@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
 import { describeSelection } from '@/lib/orders/describeSelection';
 import { PayAgainButton } from './PayAgainButton';
+import { SupportRequestPanel } from './SupportRequestPanel';
+import { hasUnseenReply, type SupportSummary } from '@/lib/support/requests';
 
 const CHIP: Record<OrderStatus, string> = {
   awaiting_payment: 'border-white/25 text-white/60',
@@ -22,6 +24,9 @@ export function OrderRow({
   order,
   messages,
   grouped = false,
+  payable = false,
+  support = null,
+  helpAllowed = false,
 }: {
   order: Order & {
     public_id: string;
@@ -34,12 +39,19 @@ export function OrderRow({
   messages: Dict;
   /** BATCH F13: part of a cart card -- indented under the cart header. */
   grouped?: boolean;
+  /** BATCH F14: unpaid and still inside the auto-cancel window. */
+  payable?: boolean;
+  /** BATCH F15: latest support request on this order, if any. */
+  support?: SupportSummary | null;
+  /** BATCH F15: a new request may be raised (see canRequestHelp). */
+  helpAllowed?: boolean;
 }) {
   const t = useMemo(() => (key: string, vars?: Record<string, string | number>) => dig(messages, key, vars), [messages]);
   const [code, setCode] = useState<string | null>(null);
   const [revealBusy, setRevealBusy] = useState(false);
   const [revealError, setRevealError] = useState(false);
   const [open, setOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const isCode = order.selection.product === 'shark_card';
   const discount = Number(order.discount_usd ?? 0);
 
@@ -99,6 +111,7 @@ export function OrderRow({
           )}
         </td>
         <td className="px-4 py-3 text-right">
+          <div className="flex flex-col items-end gap-2">
           {isCode ? (
             <div className="flex flex-col items-end gap-1">
               <Button
@@ -116,7 +129,7 @@ export function OrderRow({
             /* BATCH F14: Telegram did not open, the tab was closed, the phone
                died -- the invoice is still here. For a cart the button lives
                on the group header instead, so it is not repeated per row. */
-            grouped ? null : (
+            grouped || !payable ? null : (
               <PayAgainButton orderId={order.public_id} messages={messages} />
             )
           ) : order.status === 'action_required' ? (
@@ -124,6 +137,30 @@ export function OrderRow({
               {t('common.provideAccess')}
             </Button>
           ) : null}
+          {/* BATCH F15: "Need help with this order". */}
+          {support ? (
+            <button
+              type="button"
+              onClick={() => setHelpOpen((v) => !v)}
+              className="flex items-center gap-1.5 text-[11px] text-neon-blue hover:underline"
+            >
+              {t('support.requestLabel', { id: support.publicId })} · {t(`support.status.${support.status}`)}
+              {hasUnseenReply(support) && (
+                <span className="rounded-full bg-pink-500 px-1.5 py-0.5 text-[10px] font-semibold text-base">
+                  {t('support.hasReply')}
+                </span>
+              )}
+            </button>
+          ) : helpAllowed ? (
+            <button
+              type="button"
+              onClick={() => setHelpOpen((v) => !v)}
+              className="text-[11px] text-white/50 hover:text-neon-blue hover:underline"
+            >
+              {t('support.button')}
+            </button>
+          ) : null}
+          </div>
         </td>
       </tr>
 
@@ -131,6 +168,20 @@ export function OrderRow({
         <tr>
           <td colSpan={5} className="bg-night/60 px-4 py-4">
             <CredentialsForm orderId={order.public_id} onDone={() => setOpen(false)} messages={messages} />
+          </td>
+        </tr>
+      )}
+
+      {helpOpen && (
+        <tr>
+          <td colSpan={5} className="bg-night/60 px-4 py-4">
+            <SupportRequestPanel
+              orderId={order.public_id}
+              request={support}
+              canCreate={helpAllowed}
+              messages={messages}
+              onClose={() => setHelpOpen(false)}
+            />
           </td>
         </tr>
       )}

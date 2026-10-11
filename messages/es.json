@@ -244,7 +244,39 @@
       "a3": "Solo cripto, procesado por CryptoBot Pay.",
       "q4": "¿Puedo obtener un reembolso?",
       "a4": "Los códigos no canjeados y los servicios no iniciados son reembolsables — consulta la política de reembolso."
-    }
+    },
+    "button": "Necesito ayuda con este pedido",
+    "title": "Ayuda con el pedido {id}",
+    "reasonLabel": "¿Qué ha pasado?",
+    "reasons": {
+      "payment_not_confirmed": "El pago no se confirmó",
+      "queue_too_long": "El pedido lleva demasiado en la cola",
+      "credentials_help": "Necesito ayuda con los datos del trabajo",
+      "item_not_received": "No recibí el artículo o no funciona",
+      "cancel_refund": "Quiero cancelar o pedir un reembolso",
+      "other": "Otro problema"
+    },
+    "messageLabel": "Describe el problema",
+    "messageLabelOptional": "Comentario (opcional)",
+    "messagePlaceholder": "Qué pasó y qué has probado ya",
+    "messageRequired": "Para «Otro problema» hace falta un comentario",
+    "pickReason": "Elige un motivo",
+    "attachedNote": "El número de pedido, los artículos, el estado, la hora de pago y el historial se adjuntan automáticamente. Nunca se comparten usuarios ni contraseñas.",
+    "submit": "Enviar solicitud",
+    "error": "No se pudo enviar la solicitud — inténtalo de nuevo.",
+    "alreadyOpen": "Este pedido ya tiene una solicitud abierta.",
+    "tooMany": "Demasiados intentos — espera un minuto.",
+    "requestLabel": "Solicitud {id}",
+    "status": {
+      "open": "Abierta",
+      "in_progress": "En curso",
+      "resolved": "Resuelta"
+    },
+    "hasReply": "Nueva respuesta",
+    "replyLabel": "Respuesta del soporte",
+    "waitingReply": "El soporte responderá aquí, en la ficha del pedido.",
+    "yourMessage": "Tu mensaje",
+    "newRequest": "Nueva solicitud"
   },
   "queue": {
     "unclaimedTitle": "Pedidos disponibles",
@@ -358,6 +390,22 @@
       "recentEmpty": "Aún no se ha entregado ningún código.",
       "revealed": "Revelado",
       "notRevealed": "No revelado"
+    },
+    "support": {
+      "title": "Solicitudes de soporte",
+      "filter": {
+        "active": "Abiertas",
+        "resolved": "Resueltas",
+        "all": "Todas"
+      },
+      "empty": "No hay solicitudes.",
+      "replyPlaceholder": "Respuesta al cliente — se muestra en la ficha del pedido",
+      "save": "Guardar",
+      "saved": "Guardado",
+      "saveError": "No se pudo guardar",
+      "notifyFailed": "No entregado en Discord",
+      "replySeen": "Respuesta leída",
+      "replyUnseen": "Respuesta aún no leída"
     }
   },
   "auth": {
