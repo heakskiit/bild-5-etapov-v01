@@ -6,6 +6,7 @@ import { CredentialsForm } from './CredentialsForm';
 import { Button } from '@/components/ui/Button';
 import { dig, type Dict } from '@/lib/i18n/pick';
 import { describeSelection } from '@/lib/orders/describeSelection';
+import { PayAgainButton } from './PayAgainButton';
 
 const CHIP: Record<OrderStatus, string> = {
   awaiting_payment: 'border-white/25 text-white/60',
@@ -111,6 +112,13 @@ export function OrderRow({
               </Button>
               {revealError && <span className="text-[11px] text-pink-400">{t('common.revealError')}</span>}
             </div>
+          ) : order.status === 'awaiting_payment' ? (
+            /* BATCH F14: Telegram did not open, the tab was closed, the phone
+               died -- the invoice is still here. For a cart the button lives
+               on the group header instead, so it is not repeated per row. */
+            grouped ? null : (
+              <PayAgainButton orderId={order.public_id} messages={messages} />
+            )
           ) : order.status === 'action_required' ? (
             <Button variant="primary" size="sm" onClick={() => setOpen((v) => !v)}>
               {t('common.provideAccess')}

@@ -228,7 +228,10 @@
       "refunded": "Refunded"
     },
     "cartGroup": "Cart ·{id} — {count} items",
-    "cartGroupTotal": "total {total}"
+    "cartGroupTotal": "total {total}",
+    "payAgain": "Pay",
+    "payError": "Could not open payment. Try again.",
+    "payNotPayable": "This order can no longer be paid. Refresh the page."
   },
   "support": {
     "faq": {

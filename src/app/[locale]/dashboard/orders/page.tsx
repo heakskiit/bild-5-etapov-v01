@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getProfile, routeClient } from '@/lib/supabase/auth';
 import { OrderRow } from '@/components/dashboard/OrderRow';
+import { PayAgainButton } from '@/components/dashboard/PayAgainButton';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { buttonClasses } from '@/components/ui/buttonStyles';
 import { pendingWindowStart } from '@/lib/orders/orderLimits';
@@ -125,7 +126,16 @@ function OrdersTable({
             unit.kind === 'single' ? (
               <OrderRow key={unit.order.public_id} order={unit.order as any} messages={messages} />
             ) : (
-              <CartGroup key={unit.cartId} cartId={unit.cartId} count={unit.orders.length} totalUsd={unit.totalUsd} t={t}>
+              <CartGroup
+                key={unit.cartId}
+                cartId={unit.cartId}
+                count={unit.orders.length}
+                totalUsd={unit.totalUsd}
+                t={t}
+                /* BATCH F14: one invoice covers the cart, so one button does too. */
+                payOrderId={unit.orders.every((o) => o.status === 'awaiting_payment') ? unit.orders[0].public_id : null}
+                messages={messages}
+              >
                 {unit.orders.map((order) => (
                   <OrderRow key={order.public_id} order={order as any} messages={messages} grouped />
                 ))}
@@ -143,22 +153,33 @@ function CartGroup({
   count,
   totalUsd,
   t,
+  payOrderId,
+  messages,
   children,
 }: {
   cartId: string;
   count: number;
   totalUsd: number;
   t: (key: string, vars?: Record<string, string | number>) => string;
+  payOrderId?: string | null;
+  messages: Dict;
   children: React.ReactNode;
 }) {
   return (
     <>
       <tr className="border-t border-white/10 bg-neon-pink/5">
         <td colSpan={5} className="border-l-2 border-neon-pink px-4 py-2 text-xs">
-          <span className="font-display uppercase tracking-widest text-pink-400">
-            {t('dashboard.cartGroup', { id: shortCartId(cartId), count })}
-          </span>
-          <span className="ml-3 text-white/60">{t('dashboard.cartGroupTotal', { total: `$${totalUsd.toFixed(2)}` })}</span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span className="font-display uppercase tracking-widest text-pink-400">
+                {t('dashboard.cartGroup', { id: shortCartId(cartId), count })}
+              </span>
+              <span className="ml-3 text-white/60">
+                {t('dashboard.cartGroupTotal', { total: `$${totalUsd.toFixed(2)}` })}
+              </span>
+            </div>
+            {payOrderId && <PayAgainButton orderId={payOrderId} messages={messages} />}
+          </div>
         </td>
       </tr>
       {children}

@@ -228,7 +228,10 @@
       "refunded": "Remboursée"
     },
     "cartGroup": "Panier ·{id} — {count} articles",
-    "cartGroupTotal": "total {total}"
+    "cartGroupTotal": "total {total}",
+    "payAgain": "Payer",
+    "payError": "Impossible d'ouvrir le paiement. Réessayez.",
+    "payNotPayable": "Cette commande ne peut plus être payée. Actualisez la page."
   },
   "support": {
     "faq": {

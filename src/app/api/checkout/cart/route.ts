@@ -20,7 +20,7 @@ import { roundMoney, BOOSTER_PAYOUT_SHARE, PROMO_HOLD_MINUTES } from '@/../confi
 import { cartCheckoutRequestSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
-import { createInvoice } from '@/lib/pricing/cryptobot';
+import { createInvoice, INVOICE_TTL_SECONDS } from '@/lib/pricing/cryptobot';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { canPlaceOrder, dayWindowStart, pendingWindowStart } from '@/lib/orders/orderLimits';
 import { countPurchases, findShortSku, skuDemand, splitDiscount, sumMoney } from '@/lib/cart/cartCheckout';
@@ -176,7 +176,12 @@ export async function POST(request: Request) {
 
     const { error: invoiceLinkError } = await db
       .from('orders')
-      .update({ invoice_id: invoice.invoice_id })
+      // BATCH F14: pay_url lets the orders page reopen this very invoice.
+      .update({
+        invoice_id: invoice.invoice_id,
+        pay_url: invoice.pay_url,
+        invoice_expires_at: new Date(Date.now() + INVOICE_TTL_SECONDS * 1000).toISOString(),
+      })
       .eq('cart_id', cartId);
     if (invoiceLinkError) throw invoiceLinkError;
 

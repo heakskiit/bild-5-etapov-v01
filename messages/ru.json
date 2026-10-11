@@ -228,7 +228,10 @@
       "refunded": "Возврат средств"
     },
     "cartGroup": "Корзина ·{id} — товаров: {count}",
-    "cartGroupTotal": "итого {total}"
+    "cartGroupTotal": "итого {total}",
+    "payAgain": "Оплатить",
+    "payError": "Не удалось открыть оплату. Попробуйте ещё раз.",
+    "payNotPayable": "Этот заказ уже нельзя оплатить. Обновите страницу."
   },
   "support": {
     "faq": {

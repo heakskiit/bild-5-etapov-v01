@@ -17,7 +17,7 @@ import {
 import { checkoutRequestSchema } from '@/lib/validation/order';
 import { serviceClient } from '@/lib/supabase/service';
 import { requireUser } from '@/lib/supabase/auth';
-import { createInvoice } from '@/lib/pricing/cryptobot';
+import { createInvoice, INVOICE_TTL_SECONDS } from '@/lib/pricing/cryptobot';
 import { consumeRateLimit, tooManyRequests } from '@/lib/rateLimit';
 import { canPlaceOrder, dayWindowStart, pendingWindowStart } from '@/lib/orders/orderLimits';
 import { countPurchases } from '@/lib/cart/cartCheckout';
@@ -236,7 +236,16 @@ export async function POST(request: Request) {
       returnUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/${selection.locale ?? 'en'}/dashboard/orders`,
     });
 
-    await db.from('orders').update({ invoice_id: invoice.invoice_id }).eq('id', order.id);
+    // BATCH F14: the link is stored so the orders page can offer it again
+    // if the Telegram tab never opened.
+    await db
+      .from('orders')
+      .update({
+        invoice_id: invoice.invoice_id,
+        pay_url: invoice.pay_url,
+        invoice_expires_at: new Date(Date.now() + INVOICE_TTL_SECONDS * 1000).toISOString(),
+      })
+      .eq('id', order.id);
 
     return NextResponse.json({ payUrl: invoice.pay_url, orderId: order.public_id });
   } catch (err) {

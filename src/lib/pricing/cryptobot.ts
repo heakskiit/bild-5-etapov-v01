@@ -9,6 +9,13 @@ interface InvoiceResponse {
   status: string;
 }
 
+/**
+ * How long a CryptoBot invoice stays payable. BATCH F14 stores the resulting
+ * moment on the order so the "Pay" button knows when to issue a new invoice
+ * instead of reopening a dead one.
+ */
+export const INVOICE_TTL_SECONDS = 3600;
+
 export async function createInvoice(params: {
   amount: number;
   description: string;
@@ -36,7 +43,7 @@ export async function createInvoice(params: {
       paid_btn_name: 'callback',
       paid_btn_url: params.returnUrl,
       allow_comments: false,
-      expires_in: 3600,
+      expires_in: INVOICE_TTL_SECONDS,
     }),
     cache: 'no-store',
   });

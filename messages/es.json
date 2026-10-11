@@ -228,7 +228,10 @@
       "refunded": "Reembolsado"
     },
     "cartGroup": "Carrito ·{id} — {count} artículos",
-    "cartGroupTotal": "total {total}"
+    "cartGroupTotal": "total {total}",
+    "payAgain": "Pagar",
+    "payError": "No se pudo abrir el pago. Inténtalo de nuevo.",
+    "payNotPayable": "Este pedido ya no se puede pagar. Actualiza la página."
   },
   "support": {
     "faq": {

@@ -228,7 +228,10 @@
       "refunded": "Erstattet"
     },
     "cartGroup": "Warenkorb ·{id} — {count} Artikel",
-    "cartGroupTotal": "gesamt {total}"
+    "cartGroupTotal": "gesamt {total}",
+    "payAgain": "Bezahlen",
+    "payError": "Zahlung konnte nicht geöffnet werden. Versuche es erneut.",
+    "payNotPayable": "Diese Bestellung kann nicht mehr bezahlt werden. Seite neu laden."
   },
   "support": {
     "faq": {
