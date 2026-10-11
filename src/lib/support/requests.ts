@@ -26,6 +26,18 @@ export type SupportStatus = (typeof SUPPORT_STATUSES)[number];
 export const SUPPORT_MESSAGE_MAX = 500;
 export const SUPPORT_REPLY_MAX = 2000;
 
+/** BATCH F15c: support answered, the customer is silent this long -> auto-closed (0019). */
+export const SUPPORT_IDLE_HOURS = 48;
+
+export type SupportClosedReason = 'staff' | 'customer' | 'auto_idle';
+
+/** One message of a request's conversation (support_messages). */
+export type SupportMessage = {
+  author: 'customer' | 'staff';
+  body: string;
+  createdAt: string;
+};
+
 /** A cancelled order is help-worthy for a week ("why was it cancelled?"), then it is history. */
 export const CANCELLED_HELP_DAYS = 7;
 
@@ -39,6 +51,10 @@ export type SupportSummary = {
   repliedAt: string | null;
   replySeenAt: string | null;
   createdAt: string;
+  /** BATCH F15c: whose turn it is, and why it was closed. */
+  lastCustomerAt: string | null;
+  lastStaffAt: string | null;
+  closedReason: SupportClosedReason | null;
 };
 
 export const createSupportSchema = z
@@ -63,6 +79,16 @@ export const adminSupportUpdateSchema = z
   })
   .strict();
 
+/** BATCH F15c: the customer writes into an open request, or closes it as solved. */
+export const customerMessageSchema = z
+  .object({
+    requestId: z.string().trim().min(1).max(40),
+    body: z.string().trim().min(1).max(SUPPORT_MESSAGE_MAX).optional(),
+    resolve: z.boolean().optional(),
+  })
+  .strict()
+  .refine((value) => Boolean(value.body) || value.resolve === true, { message: 'empty' });
+
 /** May the customer raise a new request on this order right now? */
 export function canRequestHelp(status: unknown, createdAt: unknown, now: number = Date.now()): boolean {
   if (typeof status !== 'string') return false;
@@ -75,4 +101,20 @@ export function canRequestHelp(status: unknown, createdAt: unknown, now: number 
 /** Drives the "Has reply" badge: an answer exists that the customer has not opened. */
 export function hasUnseenReply(request: Pick<SupportSummary, 'reply' | 'replySeenAt'> | null | undefined): boolean {
   return Boolean(request?.reply) && !request?.replySeenAt;
+}
+
+type Turn = Pick<SupportSummary, 'status' | 'lastStaffAt' | 'lastCustomerAt' | 'createdAt'>;
+
+/** Support wrote last and the request is still open: the customer's turn (the 48 h clock runs). */
+export function awaitingCustomer(request: Turn | null | undefined): boolean {
+  if (!request || request.status === 'resolved' || !request.lastStaffAt) return false;
+  const staff = Date.parse(request.lastStaffAt);
+  const customer = Date.parse(request.lastCustomerAt ?? request.createdAt);
+  return Number.isFinite(staff) && (!Number.isFinite(customer) || staff > customer);
+}
+
+/** When the request will be auto-closed if the customer stays silent; null if the clock is not running. */
+export function autoCloseAt(request: Turn | null | undefined): string | null {
+  if (!awaitingCustomer(request)) return null;
+  return new Date(Date.parse(request!.lastStaffAt!) + SUPPORT_IDLE_HOURS * 3600 * 1000).toISOString();
 }

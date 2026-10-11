@@ -276,7 +276,20 @@
     "replyLabel": "Antwort des Supports",
     "waitingReply": "Der Support antwortet hier, in der Bestellkarte.",
     "yourMessage": "Deine Nachricht",
-    "newRequest": "Neue Anfrage"
+    "newRequest": "Neue Anfrage",
+    "send": "Senden",
+    "replyPlaceholder": "An den Support schreiben…",
+    "markResolved": "Gelöst",
+    "awaitingYou": "Der Support hat geantwortet. Ohne Antwort bis {time} wird die Anfrage automatisch geschlossen.",
+    "closedAuto": "Die Anfrage wurde automatisch geschlossen: 48 Stunden keine Antwort.",
+    "closedCustomer": "Du hast die Anfrage als gelöst markiert.",
+    "closedStaff": "Der Support hat die Anfrage geschlossen.",
+    "closedNote": "Diese Anfrage ist bereits geschlossen — erstelle eine neue.",
+    "you": "Du",
+    "staff": "Support",
+    "loading": "Lädt…",
+    "threadError": "Unterhaltung konnte nicht geladen werden.",
+    "noMessages": "Noch keine Nachrichten."
   },
   "queue": {
     "unclaimedTitle": "Offene Aufträge",
@@ -399,13 +412,22 @@
         "all": "Alle"
       },
       "empty": "Keine Anfragen.",
-      "replyPlaceholder": "Antwort an den Kunden — erscheint in der Bestellkarte",
+      "replyPlaceholder": "Neue Antwort an den Kunden — erscheint in der Bestellkarte",
       "save": "Speichern",
       "saved": "Gespeichert",
       "saveError": "Speichern fehlgeschlagen",
       "notifyFailed": "Nicht an Discord zugestellt",
       "replySeen": "Antwort gelesen",
-      "replyUnseen": "Antwort noch nicht gelesen"
+      "replyUnseen": "Antwort noch nicht gelesen",
+      "sendReply": "Antwort senden",
+      "awaitingStaff": "Wartet auf Support",
+      "awaitingCustomer": "Wartet auf Kunden — schließt {time}",
+      "customer": "Kunde",
+      "closed": {
+        "staff": "Vom Support geschlossen",
+        "customer": "Vom Kunden geschlossen",
+        "auto_idle": "Automatisch geschlossen (48 h)"
+      }
     }
   },
   "auth": {

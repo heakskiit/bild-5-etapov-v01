@@ -142,7 +142,7 @@ export function OrderRow({
             <button
               type="button"
               onClick={() => setHelpOpen((v) => !v)}
-              className="flex items-center gap-1.5 text-[11px] text-neon-blue hover:underline"
+              className="flex items-center gap-1.5 rounded-md border border-neon-blue/40 px-2.5 py-1 text-xs text-neon-blue transition hover:border-neon-blue hover:bg-neon-blue/10"
             >
               {t('support.requestLabel', { id: support.publicId })} · {t(`support.status.${support.status}`)}
               {hasUnseenReply(support) && (
@@ -155,7 +155,7 @@ export function OrderRow({
             <button
               type="button"
               onClick={() => setHelpOpen((v) => !v)}
-              className="text-[11px] text-white/50 hover:text-neon-blue hover:underline"
+              className="rounded-md border border-neon-blue/40 px-2.5 py-1 text-xs text-neon-blue transition hover:border-neon-blue hover:bg-neon-blue/10"
             >
               {t('support.button')}
             </button>

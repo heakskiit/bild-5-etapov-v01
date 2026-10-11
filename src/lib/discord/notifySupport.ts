@@ -48,7 +48,7 @@ export function summarizeSelection(selection: Record<string, unknown> | null): s
   if (!selection) return '—';
   const parts = Object.entries(selection)
     .filter(([key, value]) => !HIDDEN_SELECTION_KEYS.has(key) && value !== null && value !== undefined && value !== '')
-    .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`);
+    .map(([key, value]) => `${key}: ${readable(value)}`);
   return clip(parts.join('\n') || '—', 1000);
 }
 
@@ -94,6 +94,7 @@ export function buildSupportMessage(notice: SupportNotice) {
             ),
           },
           { name: 'Last events', value: clip(events, 1000) },
+          { name: 'Reply', value: `[Open in Admin → Support](${notice.adminUrl})` },
         ],
       },
     ],
@@ -112,10 +113,57 @@ export async function notifySupport(notice: SupportNotice): Promise<void> {
   if (!res.ok) throw new Error(`Discord support webhook failed: ${res.status} ${await res.text()}`);
 }
 
+/** Arrays and nested objects as plain text, not raw JSON. */
+function readable(value: unknown): string {
+  if (Array.isArray(value)) return value.length ? value.map(readable).join(', ') : '—';
+  if (value && typeof value === 'object') {
+    const parts = Object.entries(value as Record<string, unknown>)
+      .filter(([, v]) => v !== null && v !== undefined && v !== '')
+      .map(([k, v]) => `${k} = ${readable(v)}`);
+    return parts.length ? parts.join(' · ') : '—';
+  }
+  return String(value);
+}
+
 function utc(iso: string): string {
   return `${iso.slice(0, 16).replace('T', ' ')} UTC`;
 }
 
 function clip(text: string, max: number): string {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+}
+
+/** BATCH F15c: the customer wrote again into an open request. */
+export async function notifySupportFollowUp(args: {
+  requestId: string;
+  orderPublicId: string;
+  body: string | null;
+  resolved: boolean;
+  adminUrl: string;
+}): Promise<void> {
+  const url = process.env.DISCORD_SUPPORT_WEBHOOK_URL;
+  if (!url) throw new Error('DISCORD_SUPPORT_WEBHOOK_URL is not set');
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      username: 'Support Desk',
+      embeds: [
+        {
+          title: `${args.requestId} \u00b7 ${args.orderPublicId}`,
+          url: args.adminUrl,
+          color: args.resolved ? 0x34d399 : SUPPORT_RED,
+          description: [
+            args.body ? `\ud83d\udcac **Customer:** ${clip(args.body, 1500)}` : null,
+            args.resolved ? '\u2705 Customer marked the request as solved.' : null,
+            `[Open in Admin \u2192 Support](${args.adminUrl})`,
+          ]
+            .filter(Boolean)
+            .join('\n\n'),
+        },
+      ],
+    }),
+  });
+  if (!res.ok) throw new Error(`Discord support webhook failed: ${res.status} ${await res.text()}`);
 }

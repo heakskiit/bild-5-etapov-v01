@@ -53,8 +53,14 @@ export async function POST(request: Request) {
 
     const { data: created, error: insertError } = await db
       .from('support_requests')
-      .insert({ order_id: order.id, user_id: user.id, reason, message: message || null })
-      .select('id, public_id, reason, message, status, reply, replied_at, reply_seen_at, created_at')
+      .insert({
+        order_id: order.id,
+        user_id: user.id,
+        reason,
+        message: message || null,
+        last_customer_at: new Date().toISOString(),
+      })
+      .select('id, public_id, reason, message, status, reply, replied_at, reply_seen_at, created_at, last_customer_at, last_staff_at, closed_reason')
       .single();
 
     if (insertError) {
@@ -74,6 +80,11 @@ export async function POST(request: Request) {
         .limit(EVENTS_ATTACHED),
       db.from('profiles').select('email, discord_id').eq('id', user.id).maybeSingle(),
     ]);
+
+    // BATCH F15c: the first comment opens the conversation thread.
+    if (message) {
+      await db.from('support_messages').insert({ request_id: created.id, author: 'customer', body: message });
+    }
 
     // Logged on the order too, so the timeline shows when help was asked.
     await db.from('order_events').insert({
@@ -107,6 +118,9 @@ export async function POST(request: Request) {
         repliedAt: created.replied_at,
         replySeenAt: created.reply_seen_at,
         createdAt: created.created_at,
+        lastCustomerAt: created.last_customer_at,
+        lastStaffAt: created.last_staff_at,
+        closedReason: created.closed_reason,
       },
     });
   } catch (err) {

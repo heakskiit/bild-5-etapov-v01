@@ -276,7 +276,20 @@
     "replyLabel": "Support reply",
     "waitingReply": "Support will reply here, in the order card.",
     "yourMessage": "Your message",
-    "newRequest": "New request"
+    "newRequest": "New request",
+    "send": "Send",
+    "replyPlaceholder": "Write to support…",
+    "markResolved": "Solved",
+    "awaitingYou": "Support has replied. If you do not write back by {time}, the request will close automatically.",
+    "closedAuto": "The request was closed automatically: no reply for 48 hours.",
+    "closedCustomer": "You marked the request as solved.",
+    "closedStaff": "Support closed the request.",
+    "closedNote": "This request is already closed — open a new one.",
+    "you": "You",
+    "staff": "Support",
+    "loading": "Loading…",
+    "threadError": "Could not load the conversation.",
+    "noMessages": "No messages yet."
   },
   "queue": {
     "unclaimedTitle": "Open jobs",
@@ -399,13 +412,22 @@
         "all": "All"
       },
       "empty": "No requests.",
-      "replyPlaceholder": "Reply to the customer — shown in their order card",
+      "replyPlaceholder": "New reply to the customer — shown in their order card",
       "save": "Save",
       "saved": "Saved",
       "saveError": "Could not save",
       "notifyFailed": "Not delivered to Discord",
       "replySeen": "Reply read",
-      "replyUnseen": "Reply not read yet"
+      "replyUnseen": "Reply not read yet",
+      "sendReply": "Send reply",
+      "awaitingStaff": "Waiting for support",
+      "awaitingCustomer": "Waiting for customer — auto-close {time}",
+      "customer": "Customer",
+      "closed": {
+        "staff": "Closed by support",
+        "customer": "Closed by customer",
+        "auto_idle": "Closed automatically (48 h)"
+      }
     }
   },
   "auth": {

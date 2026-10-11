@@ -4,7 +4,7 @@ import { requireRole, getVerifiedProfile } from '@/lib/supabase/auth';
 import { serviceClient } from '@/lib/supabase/service';
 import { getTranslations, getMessages } from '@/lib/i18n/getTranslations';
 import { SupportAdminRow, type AdminSupportRow } from '@/components/dashboard/SupportAdminRow';
-import type { SupportStatus } from '@/lib/support/requests';
+import type { SupportClosedReason, SupportMessage, SupportStatus } from '@/lib/support/requests';
 
 /**
  * admin -> /dashboard/admin/support (BATCH F15 / FEAT-SUP-027).
@@ -38,7 +38,7 @@ export default async function SupportAdminPage({
 	let query = serviceClient()
 		.from('support_requests')
 		.select(
-			'public_id, reason, message, status, reply, reply_seen_at, notify_failed, created_at, orders(public_id, status, contact_handle), profiles(email, discord_id)',
+			'id, public_id, reason, status, reply, reply_seen_at, notify_failed, created_at, last_customer_at, last_staff_at, closed_reason, orders(public_id, status, contact_handle), profiles(email, discord_id)',
 		)
 		.order('created_at', { ascending: false })
 		.limit(100);
@@ -48,6 +48,24 @@ export default async function SupportAdminPage({
 	const { data, error } = await query;
 	if (error) console.error('[admin/support page]', error);
 
+	// BATCH F15c: the conversations of the listed requests, one query.
+	const threads = new Map<string, SupportMessage[]>();
+	const ids = (data ?? []).map((r: any) => r.id as string);
+	if (ids.length) {
+		const { data: msgs, error: msgError } = await serviceClient()
+			.from('support_messages')
+			.select('request_id, author, body, created_at')
+			.in('request_id', ids)
+			.order('created_at', { ascending: true })
+			.limit(2000);
+		if (msgError) console.error('[admin/support page] messages', msgError);
+		for (const m of msgs ?? []) {
+			const list = threads.get(m.request_id) ?? [];
+			list.push({ author: m.author, body: m.body, createdAt: m.created_at });
+			threads.set(m.request_id, list);
+		}
+	}
+
 	const one = <T,>(value: T | T[] | null | undefined): T | null => (Array.isArray(value) ? (value[0] ?? null) : (value ?? null));
 
 	const rows: AdminSupportRow[] = (data ?? []).map((r: any) => {
@@ -56,10 +74,13 @@ export default async function SupportAdminPage({
 		return {
 			publicId: r.public_id,
 			reason: r.reason,
-			message: r.message,
 			status: r.status as SupportStatus,
-			reply: r.reply,
+			hasReply: Boolean(r.reply),
 			replySeenAt: r.reply_seen_at,
+			lastCustomerAt: r.last_customer_at,
+			lastStaffAt: r.last_staff_at,
+			closedReason: (r.closed_reason ?? null) as SupportClosedReason | null,
+			thread: threads.get(r.id) ?? [],
 			notifyFailed: Boolean(r.notify_failed),
 			createdAt: r.created_at,
 			orderPublicId: order?.public_id ?? '—',

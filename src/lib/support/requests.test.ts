@@ -53,3 +53,31 @@ describe('hasUnseenReply', () => {
 		expect(hasUnseenReply(null)).toBe(false);
 	});
 });
+
+describe('customerMessageSchema', () => {
+	it('needs a body or resolve', async () => {
+		const { customerMessageSchema } = await import('./requests');
+		expect(customerMessageSchema.safeParse({ requestId: 'SR-1', body: 'thanks' }).success).toBe(true);
+		expect(customerMessageSchema.safeParse({ requestId: 'SR-1', resolve: true }).success).toBe(true);
+		expect(customerMessageSchema.safeParse({ requestId: 'SR-1', body: '  ' }).success).toBe(false);
+		expect(customerMessageSchema.safeParse({ requestId: 'SR-1' }).success).toBe(false);
+	});
+});
+
+describe('awaitingCustomer / autoCloseAt', () => {
+	const base = { status: 'open' as const, createdAt: '2026-10-10T10:00:00Z', lastCustomerAt: '2026-10-10T10:00:00Z' };
+
+	it('runs the clock only after support answered last', async () => {
+		const { awaitingCustomer, autoCloseAt } = await import('./requests');
+		expect(awaitingCustomer({ ...base, lastStaffAt: null })).toBe(false);
+		expect(awaitingCustomer({ ...base, lastStaffAt: '2026-10-10T12:00:00Z' })).toBe(true);
+		expect(autoCloseAt({ ...base, lastStaffAt: '2026-10-10T12:00:00Z' })).toBe('2026-10-12T12:00:00.000Z');
+	});
+
+	it('stops when the customer wrote again or the request is resolved', async () => {
+		const { awaitingCustomer, autoCloseAt } = await import('./requests');
+		expect(awaitingCustomer({ ...base, lastStaffAt: '2026-10-10T12:00:00Z', lastCustomerAt: '2026-10-10T13:00:00Z' })).toBe(false);
+		expect(awaitingCustomer({ ...base, status: 'resolved', lastStaffAt: '2026-10-10T12:00:00Z' })).toBe(false);
+		expect(autoCloseAt(null)).toBe(null);
+	});
+});

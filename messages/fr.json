@@ -276,7 +276,20 @@
     "replyLabel": "Réponse du support",
     "waitingReply": "Le support répondra ici, dans la fiche de commande.",
     "yourMessage": "Votre message",
-    "newRequest": "Nouvelle demande"
+    "newRequest": "Nouvelle demande",
+    "send": "Envoyer",
+    "replyPlaceholder": "Écrire au support…",
+    "markResolved": "Résolu",
+    "awaitingYou": "Le support a répondu. Sans réponse avant {time}, la demande sera fermée automatiquement.",
+    "closedAuto": "La demande a été fermée automatiquement : aucune réponse pendant 48 heures.",
+    "closedCustomer": "Vous avez marqué la demande comme résolue.",
+    "closedStaff": "Le support a fermé la demande.",
+    "closedNote": "Cette demande est déjà fermée — ouvrez-en une nouvelle.",
+    "you": "Vous",
+    "staff": "Support",
+    "loading": "Chargement…",
+    "threadError": "Impossible de charger la conversation.",
+    "noMessages": "Pas encore de messages."
   },
   "queue": {
     "unclaimedTitle": "Commandes disponibles",
@@ -399,13 +412,22 @@
         "all": "Toutes"
       },
       "empty": "Aucune demande.",
-      "replyPlaceholder": "Réponse au client — affichée dans sa fiche de commande",
+      "replyPlaceholder": "Nouvelle réponse au client — affichée dans sa fiche de commande",
       "save": "Enregistrer",
       "saved": "Enregistré",
       "saveError": "Échec de l’enregistrement",
       "notifyFailed": "Non livré sur Discord",
       "replySeen": "Réponse lue",
-      "replyUnseen": "Réponse pas encore lue"
+      "replyUnseen": "Réponse pas encore lue",
+      "sendReply": "Envoyer la réponse",
+      "awaitingStaff": "En attente du support",
+      "awaitingCustomer": "En attente du client — fermeture {time}",
+      "customer": "Client",
+      "closed": {
+        "staff": "Fermée par le support",
+        "customer": "Fermée par le client",
+        "auto_idle": "Fermée automatiquement (48 h)"
+      }
     }
   },
   "auth": {

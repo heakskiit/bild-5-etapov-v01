@@ -63,6 +63,9 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   // service-only (0018), so it is read with the service client and pinned
   // to this user's id -- never anyone else's rows.
   const support = await loadSupport(profile.id);
+  // BATCH F15b: an admin answers requests in Admin -> Support; a help
+  // button on their own test orders would only open tickets to themselves.
+  const staff = profile.role === 'admin';
   const pendingCutoff = Date.parse(pendingWindowStart());
   const unpaid = (order: OrderListRow) => order.status === 'awaiting_payment';
 
@@ -74,14 +77,14 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
     <div>
       <h1 className="font-display text-3xl text-neon-pink">{t('dashboard.ordersLabel')}</h1>
 
-      {settled.length > 0 && <OrdersTable rows={settled} messages={messages} t={t} support={support} />}
+      {settled.length > 0 && <OrdersTable rows={settled} messages={messages} t={t} support={support} staff={staff} />}
 
       {pending.length > 0 && (
         <section className="mt-8 space-y-3">
           <h2 className="font-display text-sm uppercase tracking-widest text-white/60">
             {t('dashboard.pendingLabel')}
           </h2>
-          <OrdersTable rows={pending} messages={messages} t={t} support={support} />
+          <OrdersTable rows={pending} messages={messages} t={t} support={support} staff={staff} />
         </section>
       )}
 
@@ -110,7 +113,9 @@ async function loadSupport(userId: string): Promise<Map<string, SupportSummary>>
   try {
     const { data, error } = await serviceClient()
       .from('support_requests')
-      .select('public_id, reason, message, status, reply, replied_at, reply_seen_at, created_at, orders(public_id)')
+      .select(
+        'public_id, reason, message, status, reply, replied_at, reply_seen_at, created_at, last_customer_at, last_staff_at, closed_reason, orders(public_id)',
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(100);
@@ -128,6 +133,9 @@ async function loadSupport(userId: string): Promise<Map<string, SupportSummary>>
         repliedAt: r.replied_at,
         replySeenAt: r.reply_seen_at,
         createdAt: r.created_at,
+        lastCustomerAt: r.last_customer_at,
+        lastStaffAt: r.last_staff_at,
+        closedReason: r.closed_reason,
       });
     }
   } catch (err) {
@@ -143,11 +151,13 @@ function OrdersTable({
   messages,
   t,
   support,
+  staff,
 }: {
   rows: OrderListRow[];
   messages: Dict;
   t: (key: string, vars?: Record<string, string | number>) => string;
   support: Map<string, SupportSummary>;
+  staff: boolean;
 }) {
   return (
     <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
@@ -172,7 +182,7 @@ function OrdersTable({
                 messages={messages}
                 payable={isFreshUnpaid(unit.order.status, unit.order.created_at)}
                 support={support.get(unit.order.public_id) ?? null}
-                helpAllowed={canRequestHelp(unit.order.status, unit.order.created_at)}
+                helpAllowed={!staff && canRequestHelp(unit.order.status, unit.order.created_at)}
               />
             ) : (
               <CartGroup
@@ -194,7 +204,7 @@ function OrdersTable({
                     messages={messages}
                     grouped
                     support={support.get(order.public_id) ?? null}
-                    helpAllowed={canRequestHelp(order.status, order.created_at)}
+                    helpAllowed={!staff && canRequestHelp(order.status, order.created_at)}
                   />
                 ))}
               </CartGroup>
