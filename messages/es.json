@@ -231,7 +231,16 @@
     "cartGroupTotal": "total {total}",
     "payAgain": "Pagar",
     "payError": "No se pudo abrir el pago. Inténtalo de nuevo.",
-    "payNotPayable": "Este pedido ya no se puede pagar. Actualiza la página."
+    "payNotPayable": "Este pedido ya no se puede pagar. Actualiza la página.",
+    "confirm": {
+      "button": "Recibido, todo bien",
+      "buttonCart": "Recibido, todo bien",
+      "problem": "No recibido / hay un problema",
+      "confirmed": "Recepción confirmada",
+      "thanks": "¡Gracias! Nos ayudaría mucho tu reseña:",
+      "error": "No se pudo confirmar — inténtalo de nuevo",
+      "notReady": "Primero abre el código"
+    }
   },
   "support": {
     "faq": {
@@ -435,7 +444,10 @@
         "customer": "Cerrada por el cliente",
         "auto_idle": "Cerrada automáticamente (48 h)"
       }
-    }
+    },
+    "filterUnconfirmed": "Sin confirmar > 3 días",
+    "confirmed": "Confirmado por el cliente",
+    "notConfirmed": "No confirmado por el cliente"
   },
   "auth": {
     "title": "Iniciar sesión",

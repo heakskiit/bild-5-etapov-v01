@@ -231,7 +231,16 @@
     "cartGroupTotal": "total {total}",
     "payAgain": "Pay",
     "payError": "Could not open payment. Try again.",
-    "payNotPayable": "This order can no longer be paid. Refresh the page."
+    "payNotPayable": "This order can no longer be paid. Refresh the page.",
+    "confirm": {
+      "button": "Received, all good",
+      "buttonCart": "Received, all good",
+      "problem": "Not received / problem",
+      "confirmed": "Receipt confirmed",
+      "thanks": "Thank you! A review would mean a lot:",
+      "error": "Could not confirm — please try again",
+      "notReady": "Open the code first"
+    }
   },
   "support": {
     "faq": {
@@ -435,7 +444,10 @@
         "customer": "Closed by customer",
         "auto_idle": "Closed automatically (48 h)"
       }
-    }
+    },
+    "filterUnconfirmed": "Unconfirmed > 3 days",
+    "confirmed": "Confirmed by customer",
+    "notConfirmed": "Not confirmed by customer"
   },
   "auth": {
     "title": "Sign in",

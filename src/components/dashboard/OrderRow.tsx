@@ -8,6 +8,8 @@ import { dig, type Dict } from '@/lib/i18n/pick';
 import { describeSelection } from '@/lib/orders/describeSelection';
 import { PayAgainButton } from './PayAgainButton';
 import { SupportRequestPanel } from './SupportRequestPanel';
+import { ConfirmReceipt } from './ConfirmReceipt';
+import { canConfirmReceipt } from '@/lib/orders/confirmReceipt';
 import { hasUnseenReply, type SupportSummary } from '@/lib/support/requests';
 
 const CHIP: Record<OrderStatus, string> = {
@@ -27,6 +29,8 @@ export function OrderRow({
   payable = false,
   support = null,
   helpAllowed = false,
+  confirmedAt = null,
+  revealedAt = null,
 }: {
   order: Order & {
     public_id: string;
@@ -45,6 +49,10 @@ export function OrderRow({
   support?: SupportSummary | null;
   /** BATCH F15: a new request may be raised (see canRequestHelp). */
   helpAllowed?: boolean;
+  /** BATCH F18: when the customer confirmed receipt, if ever. */
+  confirmedAt?: string | null;
+  /** BATCH F18: when the digital code was first opened, if ever. */
+  revealedAt?: string | null;
 }) {
   const t = useMemo(() => (key: string, vars?: Record<string, string | number>) => dig(messages, key, vars), [messages]);
   const [code, setCode] = useState<string | null>(null);
@@ -52,8 +60,20 @@ export function OrderRow({
   const [revealError, setRevealError] = useState(false);
   const [open, setOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [problem, setProblem] = useState(false);
   const isCode = order.selection.product === 'shark_card';
   const discount = Number(order.discount_usd ?? 0);
+  const [revealedNow, setRevealedNow] = useState(false);
+  // BATCH F18: inside a cart the single button lives on the group header.
+  const showConfirm =
+    !grouped &&
+    (Boolean(confirmedAt) ||
+      canConfirmReceipt({ status: order.status, isCode, revealedAt: revealedAt ?? (revealedNow ? 'now' : null) }));
+  const canProblem = Boolean(support) || helpAllowed;
+  const openProblem = () => {
+    setProblem(!support);
+    setHelpOpen(true);
+  };
 
   const reveal = async () => {
     setRevealBusy(true);
@@ -70,6 +90,8 @@ export function OrderRow({
         return;
       }
       setCode(data.code);
+      // The server has stamped revealed_at; let the confirm button appear now.
+      setRevealedNow(true);
     } catch {
       setRevealError(true);
     } finally {
@@ -137,6 +159,14 @@ export function OrderRow({
               {t('common.provideAccess')}
             </Button>
           ) : null}
+          {showConfirm && (
+            <ConfirmReceipt
+              orderId={order.public_id}
+              messages={messages}
+              confirmedAt={confirmedAt}
+              onProblem={canProblem ? openProblem : undefined}
+            />
+          )}
           {/* BATCH F15: "Need help with this order". */}
           {support ? (
             <button
@@ -154,7 +184,10 @@ export function OrderRow({
           ) : helpAllowed ? (
             <button
               type="button"
-              onClick={() => setHelpOpen((v) => !v)}
+              onClick={() => {
+                setProblem(false);
+                setHelpOpen((v) => !v);
+              }}
               className="rounded-md border border-neon-blue/40 px-2.5 py-1 text-xs text-neon-blue transition hover:border-neon-blue hover:bg-neon-blue/10"
             >
               {t('support.button')}
@@ -181,6 +214,7 @@ export function OrderRow({
               canCreate={helpAllowed}
               messages={messages}
               onClose={() => setHelpOpen(false)}
+              initialReason={problem ? 'item_not_received' : null}
             />
           </td>
         </tr>

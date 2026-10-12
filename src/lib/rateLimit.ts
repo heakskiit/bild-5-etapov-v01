@@ -47,6 +47,8 @@ export const RATE_LIMITS = {
 	// BATCH F15: a customer raising support requests; one open per order anyway.
 	supportRequest: { limit: 5, windowSeconds: 60 },
 	adminSupport: { limit: 60, windowSeconds: 60 },
+	// BATCH F18: "I received it". Idempotent, so this only stops hammering.
+	confirmReceipt: { limit: 10, windowSeconds: 60 },
 } as const;
 
 export type RateLimitBucket = keyof typeof RATE_LIMITS;

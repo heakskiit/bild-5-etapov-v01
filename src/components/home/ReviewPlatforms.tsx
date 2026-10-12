@@ -1,4 +1,5 @@
 import { getTranslations } from '@/lib/i18n/getTranslations';
+import { REVIEW_PLATFORMS } from '@/lib/reviews/platforms';
 
 /**
  * Home §4.1 section 6 (BATCH F10): "where to read our reviews" banners.
@@ -10,37 +11,7 @@ import { getTranslations } from '@/lib/i18n/getTranslations';
  * `logo`: drop the official logo into /public/images/reviews/ and set the
  * path here; until then a wordmark in the brand colour is shown.
  */
-type Platform = {
-	id: string;
-	name: string;
-	href: string | null;
-	logo: string | null;
-	accent: string;
-};
-
-const PLATFORMS: readonly Platform[] = [
-	{
-		id: 'playerauctions',
-		name: 'PlayerAuctions',
-		href: 'https://www.playerauctions.com/store/tommymodz/feedback/',
-		logo: null,
-		accent: 'text-[#ff8a00]',
-	},
-	{
-		id: 'eldorado',
-		name: 'Eldorado.gg',
-		href: 'https://www.eldorado.gg/users/Tommymodz/reviews',
-		logo: null,
-		accent: 'text-[#ffc83d]',
-	},
-	{
-		id: 'trustpilot',
-		name: 'Trustpilot',
-		href: null,
-		logo: null,
-		accent: 'text-[#00b67a]',
-	},
-];
+const PLATFORMS = REVIEW_PLATFORMS;
 
 export async function ReviewPlatforms() {
 	const t = await getTranslations();

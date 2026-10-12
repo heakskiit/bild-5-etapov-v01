@@ -4,8 +4,9 @@ import { requireRole, routeClient } from '@/lib/supabase/auth';
 import { getTranslations } from '@/lib/i18n/getTranslations';
 import { dayWindowStart } from '@/lib/orders/orderLimits';
 import type { OrderSelection, OrderStatus } from '@/types/order';
+import { confirmOverdueBefore } from '@/lib/orders/confirmReceipt';
 
-type AdminFilterStatus = 'paid24' | 'all' | 'paid' | 'awaiting_payment' | 'cancelled' | 'completed';
+type AdminFilterStatus = 'paid24' | 'all' | 'paid' | 'awaiting_payment' | 'cancelled' | 'completed' | 'unconfirmed';
 
 type AdminSearchParams = {
 	status?: string | string[];
@@ -24,6 +25,7 @@ type AdminOrderRow = {
 	paid_at: string | null;
 	contact_handle: string | null;
 	assigned_modder_id: string | null;
+	customer_confirmed_at?: string | null;
 };
 
 type ProfileLookup = {
@@ -40,6 +42,8 @@ const FILTERS: Array<{ value: AdminFilterStatus; labelKey: string }> = [
 	{ value: 'awaiting_payment', labelKey: 'admin.filterAwaiting' },
 	{ value: 'cancelled', labelKey: 'admin.filterCancelled' },
 	{ value: 'completed', labelKey: 'admin.filterCompleted' },
+	// BATCH F18: finished but the customer has said nothing for N days.
+	{ value: 'unconfirmed', labelKey: 'admin.filterUnconfirmed' },
 ];
 
 /**
@@ -189,6 +193,11 @@ export default async function AdminPage({
 												<td className="px-4 py-3 text-ink">${Number(order.total_usd).toFixed(2)}</td>
 												<td className="px-4 py-3">
 													<span className={statusChipClass(order.status)}>{t(`dashboard.status.${order.status}`)}</span>
+													{order.status === 'completed' && (
+														<p className={`mt-1 text-[11px] ${order.customer_confirmed_at ? 'text-emerald-300' : 'text-white/40'}`}>
+															{order.customer_confirmed_at ? `\u2713 ${t('admin.confirmed')}` : t('admin.notConfirmed')}
+														</p>
+													)}
 												</td>
 												<td className="px-4 py-3 text-xs text-white/60">{formatDate(order.paid_at, locale)}</td>
 												<td className="px-4 py-3 text-xs text-white/60">{formatDate(order.created_at, locale)}</td>
@@ -252,7 +261,7 @@ function normalizeFilters(searchParams: AdminSearchParams) {
 }
 
 function isAdminFilterStatus(value: string | undefined): value is AdminFilterStatus {
-	return value === 'paid24' || value === 'all' || value === 'paid' || value === 'awaiting_payment' || value === 'cancelled' || value === 'completed';
+	return value === 'paid24' || value === 'all' || value === 'paid' || value === 'awaiting_payment' || value === 'cancelled' || value === 'completed' || value === 'unconfirmed';
 }
 
 function hasActiveFilters(filters: { status: AdminFilterStatus; q: string; page: number }) {
@@ -281,7 +290,7 @@ async function loadAdminOrders(
 ) {
 	let query = supabase
 		.from('orders')
-		.select('id, public_id, user_id, status, selection, total_usd, created_at, paid_at, contact_handle, assigned_modder_id, delivery_multiplier', { count: 'exact' })
+		.select('id, public_id, user_id, status, selection, total_usd, created_at, paid_at, contact_handle, assigned_modder_id, delivery_multiplier, customer_confirmed_at', { count: 'exact' })
 		.order('created_at', { ascending: false });
 
 	if (filters.status === 'paid24') {
@@ -296,6 +305,8 @@ async function loadAdminOrders(
 		query = query.in('status', ['cancelled', 'refunded']);
 	} else if (filters.status === 'completed') {
 		query = query.eq('status', 'completed');
+	} else if (filters.status === 'unconfirmed') {
+		query = query.eq('status', 'completed').is('customer_confirmed_at', null).lt('completed_at', confirmOverdueBefore());
 	}
 
 	if (filters.q) {

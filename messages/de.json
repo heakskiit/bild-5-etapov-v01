@@ -231,7 +231,16 @@
     "cartGroupTotal": "gesamt {total}",
     "payAgain": "Bezahlen",
     "payError": "Zahlung konnte nicht geöffnet werden. Versuche es erneut.",
-    "payNotPayable": "Diese Bestellung kann nicht mehr bezahlt werden. Seite neu laden."
+    "payNotPayable": "Diese Bestellung kann nicht mehr bezahlt werden. Seite neu laden.",
+    "confirm": {
+      "button": "Erhalten, alles in Ordnung",
+      "buttonCart": "Erhalten, alles in Ordnung",
+      "problem": "Nicht erhalten / Problem",
+      "confirmed": "Erhalt bestätigt",
+      "thanks": "Danke! Über eine Bewertung freuen wir uns:",
+      "error": "Bestätigung fehlgeschlagen — bitte erneut versuchen",
+      "notReady": "Zuerst den Code öffnen"
+    }
   },
   "support": {
     "faq": {
@@ -435,7 +444,10 @@
         "customer": "Vom Kunden geschlossen",
         "auto_idle": "Automatisch geschlossen (48 h)"
       }
-    }
+    },
+    "filterUnconfirmed": "Unbestätigt > 3 Tage",
+    "confirmed": "Vom Kunden bestätigt",
+    "notConfirmed": "Vom Kunden nicht bestätigt"
   },
   "auth": {
     "title": "Anmelden",

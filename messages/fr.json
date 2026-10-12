@@ -231,7 +231,16 @@
     "cartGroupTotal": "total {total}",
     "payAgain": "Payer",
     "payError": "Impossible d'ouvrir le paiement. Réessayez.",
-    "payNotPayable": "Cette commande ne peut plus être payée. Actualisez la page."
+    "payNotPayable": "Cette commande ne peut plus être payée. Actualisez la page.",
+    "confirm": {
+      "button": "Reçu, tout est en ordre",
+      "buttonCart": "Reçu, tout est en ordre",
+      "problem": "Pas reçu / un problème",
+      "confirmed": "Réception confirmée",
+      "thanks": "Merci ! Un avis nous aiderait beaucoup :",
+      "error": "Échec de la confirmation — réessayez",
+      "notReady": "Ouvrez d’abord le code"
+    }
   },
   "support": {
     "faq": {
@@ -435,7 +444,10 @@
         "customer": "Fermée par le client",
         "auto_idle": "Fermée automatiquement (48 h)"
       }
-    }
+    },
+    "filterUnconfirmed": "Non confirmées > 3 jours",
+    "confirmed": "Confirmé par le client",
+    "notConfirmed": "Non confirmé par le client"
   },
   "auth": {
     "title": "Connexion",

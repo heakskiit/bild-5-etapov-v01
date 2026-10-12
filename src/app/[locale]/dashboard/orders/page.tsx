@@ -11,6 +11,8 @@ import { groupByCart, shortCartId } from '@/lib/orders/groupByCart';
 import type { Dict } from '@/lib/i18n/pick';
 import { serviceClient } from '@/lib/supabase/service';
 import { canRequestHelp, type SupportSummary } from '@/lib/support/requests';
+import { ConfirmReceipt } from '@/components/dashboard/ConfirmReceipt';
+import { canConfirmReceipt, revealedAtOf } from '@/lib/orders/confirmReceipt';
 
 /**
  * Orders table. Two behaviours share one row component:
@@ -34,7 +36,20 @@ type OrderListRow = {
   created_at: string;
   cart_id?: string | null;
   total_usd?: string | number | null;
+  selection?: { product?: string } | null;
+  customer_confirmed_at?: string | null;
+  digital_codes?: unknown;
 };
+
+/** BATCH F18: may this order be confirmed as received right now? */
+function confirmable(order: OrderListRow): boolean {
+  return canConfirmReceipt({
+    status: order.status,
+    isCode: order.selection?.product === 'shark_card',
+    revealedAt: revealedAtOf(order.digital_codes),
+    confirmedAt: order.customer_confirmed_at ?? null,
+  });
+}
 
 export default async function OrdersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -53,7 +68,7 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   // ever revoked UPDATE on orders, never column-level SELECT.
   const { data: orders } = await supabase
     .from('orders')
-    .select('public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, cart_id, created_at')
+    .select('public_id, status, selection, total_usd, discount_usd, promo_code, delivery_multiplier, cart_id, created_at, customer_confirmed_at, digital_codes(revealed_at)')
     .order('created_at', { ascending: false })
     .limit(50);
 
@@ -183,6 +198,8 @@ function OrdersTable({
                 payable={isFreshUnpaid(unit.order.status, unit.order.created_at)}
                 support={support.get(unit.order.public_id) ?? null}
                 helpAllowed={!staff && canRequestHelp(unit.order.status, unit.order.created_at)}
+                confirmedAt={unit.order.customer_confirmed_at ?? null}
+                revealedAt={revealedAtOf(unit.order.digital_codes)}
               />
             ) : (
               <CartGroup
@@ -196,6 +213,9 @@ function OrdersTable({
                   unit.orders.every((o) => isFreshUnpaid(o.status, o.created_at)) ? unit.orders[0].public_id : null
                 }
                 messages={messages}
+                /* BATCH F18: one "received" button for the finished part of the cart. */
+                confirmOrderId={unit.orders.find(confirmable)?.public_id ?? null}
+                allConfirmed={unit.orders.every((o) => Boolean(o.customer_confirmed_at))}
               >
                 {unit.orders.map((order) => (
                   <OrderRow
@@ -205,6 +225,8 @@ function OrdersTable({
                     grouped
                     support={support.get(order.public_id) ?? null}
                     helpAllowed={!staff && canRequestHelp(order.status, order.created_at)}
+                    confirmedAt={order.customer_confirmed_at ?? null}
+                    revealedAt={revealedAtOf(order.digital_codes)}
                   />
                 ))}
               </CartGroup>
@@ -223,6 +245,8 @@ function CartGroup({
   t,
   payOrderId,
   messages,
+  confirmOrderId = null,
+  allConfirmed = false,
   children,
 }: {
   cartId: string;
@@ -231,6 +255,8 @@ function CartGroup({
   t: (key: string, vars?: Record<string, string | number>) => string;
   payOrderId?: string | null;
   messages: Dict;
+  confirmOrderId?: string | null;
+  allConfirmed?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -247,6 +273,11 @@ function CartGroup({
               </span>
             </div>
             {payOrderId && <PayAgainButton orderId={payOrderId} messages={messages} />}
+            {confirmOrderId ? (
+              <ConfirmReceipt orderId={confirmOrderId} messages={messages} cart />
+            ) : allConfirmed ? (
+              <ConfirmReceipt orderId={cartId} messages={messages} confirmedAt="done" cart />
+            ) : null}
           </div>
         </td>
       </tr>

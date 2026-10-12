@@ -31,18 +31,21 @@ export function SupportRequestPanel({
   canCreate,
   messages,
   onClose,
+  initialReason = null,
 }: {
   orderId: string;
   request: SupportSummary | null;
   canCreate: boolean;
   messages: Dict;
   onClose: () => void;
+  /** BATCH F18: "Not received" opens the form with this reason picked. */
+  initialReason?: SupportReason | null;
 }) {
   const t = useMemo(() => (key: string, vars?: Record<string, string | number>) => dig(messages, key, vars), [messages]);
   const router = useRouter();
   const [current, setCurrent] = useState<SupportSummary | null>(request);
   const [composing, setComposing] = useState(!request && canCreate);
-  const [reason, setReason] = useState<SupportReason | null>(null);
+  const [reason, setReason] = useState<SupportReason | null>(initialReason);
   const [message, setMessage] = useState('');
   const [thread, setThread] = useState<SupportMessage[] | null>(null);
   const [threadError, setThreadError] = useState(false);
