@@ -172,3 +172,94 @@
     background-color: rgba(var(--night-rgb), 0.9);
   }
 }
+
+/* ==================================================================== */
+/* BATCH F19: Premium cabinet. Scoped to `.nd-cabinet` (dashboard        */
+/* layout), so the storefront keeps its current look. Plain CSS after    */
+/* the Tailwind layers on purpose: descendant selectors win over the     */
+/* utilities already on the markup, so no page needed rewriting.         */
+/* ==================================================================== */
+:root {
+  --nd-bg: #090816;
+  --nd-pink: #FF278A;
+  --nd-cyan: #00E5FF;
+  --nd-text: #F5F4FC;
+  --nd-text-2: #B9B8C9;
+  --nd-line: rgba(185, 184, 201, 0.16);
+  --nd-line-soft: rgba(185, 184, 201, 0.08);
+}
+
+/* One page-title size across cabinet + admin (was pink 30px everywhere). */
+.nd-cabinet h1:not(.text-2xl) {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--nd-text);
+}
+@media (min-width: 1024px) {
+  .nd-cabinet h1:not(.text-2xl) { font-size: 2rem; }
+}
+.nd-cabinet h1.text-2xl { color: var(--nd-text); }
+
+/* Darker glass so text never sits on the bright artwork. */
+.nd-cabinet .glass-panel {
+  background: linear-gradient(180deg, rgba(22, 20, 44, 0.84), rgba(11, 10, 24, 0.88));
+  border-color: var(--nd-line);
+}
+.nd-cabinet .glass-panel-sm {
+  background-color: rgba(14, 13, 30, 0.88);
+  border-color: var(--nd-line);
+}
+
+/* Stat cards (dashboard overview). */
+.nd-stat {
+  position: relative;
+  display: flex;
+  min-height: 118px;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 16px;
+  border: 1px solid var(--nd-line);
+  background: linear-gradient(145deg, rgba(26, 23, 52, 0.86), rgba(10, 9, 22, 0.9));
+  padding: 18px 20px;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
+}
+.nd-stat:hover {
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 24px -10px rgba(0, 229, 255, 0.45);
+}
+
+/* Tables: dark, readable surface; quiet header; hairline row dividers. */
+.nd-table-wrap {
+  border-radius: 16px;
+  border: 1px solid var(--nd-line);
+  background: rgba(10, 9, 22, 0.88);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.nd-cabinet table thead {
+  background-color: rgba(255, 255, 255, 0.03);
+  color: #8E8DA6;
+}
+.nd-cabinet table thead th {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+.nd-cabinet table tbody tr {
+  border-color: var(--nd-line-soft);
+}
+.nd-cabinet table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.025);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .nd-stat,
+  .nd-table-wrap {
+    background: rgba(9, 8, 22, 0.96);
+  }
+}

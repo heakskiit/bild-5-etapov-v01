@@ -89,7 +89,7 @@ export function LocaleSwitcher({ current }: { current: string }) {
 						openAndFocusCurrent();
 					}
 				}}
-				className="flex items-center gap-2 rounded-lg border border-white/15 bg-night px-2.5 py-1.5 text-sm text-white/80 transition-colors hover:border-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-500 focus-visible:outline-offset-2"
+				className="flex h-11 shrink-0 items-center gap-2 rounded-full border border-[#B9B8C9]/20 bg-[#090816]/70 px-3.5 text-sm font-medium text-[#F5F4FC]/90 transition-colors hover:border-[#B9B8C9]/40 hover:bg-white/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-500 focus-visible:outline-offset-2"
 			>
 				<CurrentFlag className="h-3.5 w-5 shrink-0 rounded-[2px]" />
 				<span className="uppercase tabular-nums">{currentLocale}</span>
@@ -104,7 +104,7 @@ export function LocaleSwitcher({ current }: { current: string }) {
 			</button>
 
 			{open && (
-				<ul role="listbox" aria-label="Language" className="glass-panel-sm absolute right-0 z-30 mt-2 w-44 overflow-hidden py-1">
+				<ul role="listbox" aria-label="Language" className="absolute right-0 z-30 mt-2 w-44 overflow-hidden rounded-2xl border border-[#B9B8C9]/20 bg-[#0d0c1d]/95 py-1 shadow-[0_12px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl">
 					{LOCALES.map((locale, index) => {
 						const Flag = FLAGS[locale];
 						const selected = locale === currentLocale;

@@ -175,7 +175,7 @@ function OrdersTable({
   staff: boolean;
 }) {
   return (
-    <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
+    <div className="nd-table-wrap mt-6 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-surface/80 text-left text-xs uppercase tracking-widest text-white/50">
           <tr>

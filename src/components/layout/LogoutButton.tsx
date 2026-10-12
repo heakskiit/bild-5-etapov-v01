@@ -36,7 +36,7 @@ export function LogoutButton({
 			disabled={busy}
 			className={
 				className ??
-				'inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white/70 transition-colors hover:text-white disabled:opacity-50'
+				'inline-flex h-11 items-center gap-2 rounded-full border border-[#B9B8C9]/20 bg-white/[0.03] px-5 text-sm font-medium text-[#F5F4FC]/85 transition-colors hover:border-[#B9B8C9]/40 hover:bg-white/[0.06] hover:text-white disabled:opacity-50'
 			}
 		>
 			{label}

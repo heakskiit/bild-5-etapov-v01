@@ -31,7 +31,9 @@ export default async function DashboardLayout({
 	}
 
 	return (
-		<div className="space-y-6">
+		// BATCH F19: `nd-cabinet` scopes the premium surfaces in globals.css
+		// to the cabinet and admin pages only.
+		<div className="nd-cabinet space-y-6">
 			<DashboardNav tabs={tabs} />
 			{children}
 		</div>

@@ -35,18 +35,19 @@ export default async function DashboardPage({
   ).length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <h1 className="font-display text-3xl text-neon-pink">{t('nav.dashboard')}</h1>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label={t('dashboard.ordersLabel')} value={String(list.length)} />
-        <Stat label={t('dashboard.activeLabel')} value={String(active)} />
-        <Stat label={t('dashboard.totalSpentLabel')} value={`$${spent.toFixed(2)}`} />
-        <Stat label={t('dashboard.pendingLabel')} value={String(pending)} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <Stat label={t('dashboard.ordersLabel')} value={String(list.length)} icon={<IconOrders />} />
+        <Stat label={t('dashboard.activeLabel')} value={String(active)} icon={<IconBolt />} />
+        <Stat label={t('dashboard.totalSpentLabel')} value={`$${spent.toFixed(2)}`} icon={<IconWallet />} />
+        <Stat label={t('dashboard.pendingLabel')} value={String(pending)} icon={<IconClock />} />
       </div>
 
-      <div className="glass-panel p-5">
-        <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-white/60">
+      {/* BATCH F19: one compact row instead of a tall panel. */}
+      <div className="glass-panel flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
+        <h2 className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#B9B8C9]">
           {t('dashboard.languageLabel')}
         </h2>
         <LocaleSwitcher current={locale} />
@@ -55,9 +56,52 @@ export default async function DashboardPage({
   );
 }
 
-const Stat = ({ label, value }: { label: string; value: string }) => (
-  <div className="glass-panel p-5 shadow-neon-inset">
-    <div className="text-xs uppercase tracking-widest text-white/50">{label}</div>
-    <div className="mt-1 font-display text-2xl text-neon-blue">{value}</div>
+/** BATCH F19: equal-height stat card; styling lives in `.nd-stat` (globals.css). */
+const Stat = ({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) => (
+  <div className="nd-stat">
+    <div className="flex items-start justify-between gap-3">
+      <span className="text-[11px] font-medium uppercase leading-snug tracking-[0.14em] text-[#B9B8C9]">{label}</span>
+      <span className="shrink-0 text-[#00E5FF]/75">{icon}</span>
+    </div>
+    <div className="mt-4 font-display text-2xl leading-none tabular-nums text-[#00E5FF] sm:text-[28px]">{value}</div>
   </div>
+);
+
+const iconProps = {
+  className: 'h-5 w-5',
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
+};
+
+const IconOrders = () => (
+  <svg {...iconProps}>
+    <rect x="5" y="4" width="14" height="17" rx="2" />
+    <path d="M9 4h6v3H9zM9 11h6M9 15h4" />
+  </svg>
+);
+
+const IconBolt = () => (
+  <svg {...iconProps}>
+    <path d="M13 3 5 13.5h6L10 21l8-10.5h-6z" />
+  </svg>
+);
+
+const IconWallet = () => (
+  <svg {...iconProps}>
+    <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3" />
+    <rect x="4" y="8" width="16" height="11" rx="2" />
+    <path d="M16 13.5h2" />
+  </svg>
+);
+
+const IconClock = () => (
+  <svg {...iconProps}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
 );
