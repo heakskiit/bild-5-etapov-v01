@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { LogoutButton } from './LogoutButton';
 
 export interface NavLink {
@@ -38,6 +39,20 @@ export function HeaderNav({
 }) {
 	const pathname = usePathname();
 	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		if (!open) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') setOpen(false);
+		};
+		document.addEventListener('keydown', onKeyDown);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			document.removeEventListener('keydown', onKeyDown);
+		};
+	}, [open]);
 
 	const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
 
@@ -100,8 +115,9 @@ export function HeaderNav({
 				<BurgerIcon />
 			</button>
 
-			{open && (
-				<div className="fixed inset-0 z-[60] flex flex-col bg-[#090816] p-6 lg:hidden">
+			{/* Portal escapes the header's backdrop-filter containing block. */}
+			{open && createPortal(
+				<div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto overscroll-contain bg-[#090816] p-6 lg:hidden">
 					<button
 						type="button"
 						onClick={() => setOpen(false)}
@@ -134,7 +150,8 @@ export function HeaderNav({
 							/>
 						)}
 					</div>
-				</div>
+				</div>,
+				document.body,
 			)}
 		</>
 	);
