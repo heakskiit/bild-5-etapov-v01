@@ -63,7 +63,7 @@ export function AuthForm({ locale, messages }: { locale: string; messages: Dict 
 					onChange={(e) => setEmail(e.target.value)}
 					className={INPUT}
 				/>
-				<Button type="submit" variant="primary" loading={state === 'sending'} className="w-full">
+				<Button type="submit" variant="primary" loading={state === 'sending'} loadingText={t('common.processing')} className="w-full">
 					{t('auth.sendLink')}
 				</Button>
 				{state === 'error' && <p className="text-xs text-pink-400">{t('auth.error')}</p>}
@@ -75,7 +75,7 @@ export function AuthForm({ locale, messages }: { locale: string; messages: Dict 
 				<span className="h-px flex-1 bg-white/10" />
 			</div>
 
-			<Button variant="secondary" onClick={signInWithDiscord} loading={oauthBusy} className="w-full">
+			<Button variant="secondary" onClick={signInWithDiscord} loading={oauthBusy} loadingText={t('common.processing')} className="w-full">
 				{t('auth.discordButton')}
 			</Button>
 		</div>

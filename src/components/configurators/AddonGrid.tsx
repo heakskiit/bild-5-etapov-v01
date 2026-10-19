@@ -20,10 +20,10 @@ import { OptionCard } from '@/components/ui/OptionCard';
 // §3.2: "Иконка вопроса с тултипом у неочевидных опций: «K/D ratio cleanup»,
 // «Extra-slow stealth pacing»" — those two, named directly in the doc, map
 // to these ids. The other eight addon names are already self-explanatory.
-const HINTS: Record<string, string> = {
-	pc_lvl_kd_reset: 'Обнуляет счётчик убийств/смертей в статистике аккаунта.',
-	con_lvl_slow: 'Действия на аккаунте выполняются медленнее обычного, чтобы снизить риск флагов от античита.',
-	pc_lvl_stealth: 'Действия на аккаунте выполняются медленнее обычного, чтобы снизить риск флагов от античита.',
+const HINT_KEYS: Record<string, string> = {
+	pc_lvl_kd_reset: 'addons.hints.kdReset',
+	con_lvl_slow: 'addons.hints.slow',
+	pc_lvl_stealth: 'addons.hints.slow',
 };
 
 function priceLabel(option: AddonOption): string {
@@ -48,6 +48,15 @@ export function AddonGrid({
 	const toggle = (id: string) =>
 		onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
 
+	// A hint only renders when its key really resolves: `t` echoes the key back
+	// when a translation is missing (and when no `t` was passed at all).
+	const hintFor = (id: string): string | undefined => {
+		const key = HINT_KEYS[id];
+		if (!key) return undefined;
+		const text = t(key);
+		return text === key ? undefined : text;
+	};
+
 	return (
 		<fieldset>
 			<legend className="mb-2 block font-display text-xs uppercase tracking-widest text-white/60">
@@ -62,7 +71,7 @@ export function AddonGrid({
 						checked={selected.includes(option.id)}
 						onChange={() => toggle(option.id)}
 						priceLabel={priceLabel(option)}
-						hint={HINTS[option.id]}
+						hint={hintFor(option.id)}
 					/>
 				))}
 			</div>

@@ -85,7 +85,7 @@ export function ConfirmReceipt({
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <Button variant="primary" size="sm" onClick={confirm} loading={busy}>
+      <Button variant="primary" size="sm" onClick={confirm} loading={busy} loadingText={t('common.processing')}>
         {cart ? t('dashboard.confirm.buttonCart') : t('dashboard.confirm.button')}
       </Button>
       {onProblem && (

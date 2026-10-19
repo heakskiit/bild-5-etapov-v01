@@ -20,7 +20,17 @@ import { startingPrice } from '@/lib/pricing/startingPrice';
 
 const SCROLL_THRESHOLD_PX = 480; // roughly the hero's min-h-[560px] minus the header/disclaimer bars above it
 
-export function MobileStickyCta({ locale }: { locale: string }) {
+export function MobileStickyCta({
+	locale,
+	fromLabel,
+	ctaLabel,
+}: {
+	locale: string;
+	/** "from" above the starting price. Translated by the page. */
+	fromLabel: string;
+	/** Button text. Translated by the page. */
+	ctaLabel: string;
+}) {
 	const [visible, setVisible] = useState(false);
 	const price = startingPrice('shark_card');
 
@@ -41,11 +51,11 @@ export function MobileStickyCta({ locale }: { locale: string }) {
 		>
 			<div className="flex items-center justify-between gap-4">
 				<div>
-					<p className="text-[11px] uppercase tracking-widest text-ink-muted">от</p>
+					<p className="text-[11px] uppercase tracking-widest text-ink-muted">{fromLabel}</p>
 					<p className="font-display text-lg tabular-nums text-ink">${price.toFixed(2)}</p>
 				</div>
 				<Link href={`/${locale}/gta-5`} className={buttonClasses('primary', 'md')} tabIndex={visible ? 0 : -1}>
-					Открыть магазин
+					{ctaLabel}
 				</Link>
 			</div>
 		</div>

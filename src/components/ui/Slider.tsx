@@ -20,6 +20,8 @@
 
 import { useId, useMemo, useState, type KeyboardEvent } from 'react';
 
+import { describeTier, type Translate } from '@/lib/pricing/tierHint';
+
 export interface SliderTier {
 	/** Inclusive upper bound of this tier, same units as `value`. */
 	upTo: number;
@@ -41,6 +43,8 @@ export interface SliderProps {
 	tiers?: SliderTier[];
 	/** Custom formatting for the value/presets/ticks. Defaults to a locale-formatted number + suffix. */
 	formatValue?: (v: number) => string;
+	/** Translator for the tier line under the track (`configurator.tier*` keys). Without it the line is left out rather than shown in the wrong language. */
+	t?: Translate;
 }
 
 function clamp(v: number, min: number, max: number) {
@@ -58,6 +62,7 @@ export function Slider({
 	presets,
 	tiers,
 	formatValue,
+	t,
 }: SliderProps) {
 	const inputId = useId();
 	const [focused, setFocused] = useState(false);
@@ -189,8 +194,8 @@ export function Slider({
 				</div>
 			</div>
 
-			{tiers && tiers.length > 0 && (
-				<p className="mb-3 mt-2 text-xs text-ink-muted">{describeTier(safeValue, tiers, format)}</p>
+			{t && tiers && tiers.length > 0 && (
+				<p className="mb-3 mt-2 text-xs text-ink-muted">{describeTier(safeValue, tiers, format, t)}</p>
 			)}
 
 			{/* §3.3: "Пресеты-чипы под треком" */}
@@ -214,29 +219,4 @@ export function Slider({
 			</div>
 		</div>
 	);
-}
-
-function formatRate(rate: number): string {
-	return `$${rate < 0.01 ? rate.toFixed(3) : rate.toFixed(2)}`;
-}
-
-/**
- * §3.3: "Метки тиров прямо на треке ... чтобы прогрессивная скидка была
- * видна, а не заявлена текстом: «до 500M — $0.09 за 1M», «от 501M — $0.07 за
- * 1M»." The ticks (above) show *where* the breaks are; this names the rate
- * that's active right now and, if there's a cheaper tier ahead, where it starts.
- */
-function describeTier(value: number, tiers: SliderTier[], format: (v: number) => string): string {
-	let previousBound = 0;
-	for (let i = 0; i < tiers.length; i++) {
-		const tier = tiers[i];
-		if (value <= tier.upTo) {
-			const next = tiers[i + 1];
-			if (!next) return `${formatRate(tier.pricePerUnit)} за единицу — минимальная ставка`;
-			return `${formatRate(tier.pricePerUnit)} за единицу · с ${format(tier.upTo + 1)} ставка упадёт до ${formatRate(next.pricePerUnit)}`;
-		}
-		previousBound = tier.upTo;
-	}
-	const last = tiers[tiers.length - 1];
-	return `${formatRate(last.pricePerUnit)} за единицу — минимальная ставка`;
 }

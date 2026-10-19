@@ -58,7 +58,7 @@ export function PayAgainButton({
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <Button variant="primary" size={size} onClick={pay} loading={busy}>
+      <Button variant="primary" size={size} onClick={pay} loading={busy} loadingText={t('common.processing')}>
         {t('dashboard.payAgain')}
       </Button>
       {error && <span className="text-[11px] text-pink-400">{error}</span>}

@@ -154,7 +154,7 @@ export function SupportAdminRow({ row, messages }: { row: AdminSupportRow; messa
           </span>
         )}
         {note && <span className={`text-[11px] ${note.ok ? 'text-emerald-300' : 'text-pink-400'}`}>{note.text}</span>}
-        <Button variant="primary" size="sm" onClick={save} loading={busy} disabled={!dirty}>
+        <Button variant="primary" size="sm" onClick={save} loading={busy} loadingText={t('common.processing')} disabled={!dirty}>
           {reply.trim() ? t('admin.support.sendReply') : t('admin.support.save')}
         </Button>
       </div>

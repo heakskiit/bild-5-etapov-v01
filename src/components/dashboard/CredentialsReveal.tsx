@@ -76,7 +76,7 @@ export function CredentialsReveal({
 					</Button>
 				</>
 			) : (
-				<Button variant="secondary" size="sm" onClick={reveal} loading={busy}>
+				<Button variant="secondary" size="sm" onClick={reveal} loading={busy} loadingText={t('common.processing')}>
 					{t('jobs.credentials.show')}
 				</Button>
 			)}

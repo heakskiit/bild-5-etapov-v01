@@ -10,6 +10,7 @@
     "buyFor": "Für {price} kaufen",
     "creatingInvoice": "Rechnung wird erstellt…",
     "encrypting": "Wird verschlüsselt…",
+    "processing": "Verarbeitung…",
     "sendSecurely": "Sicher senden",
     "saveError": "Speichern fehlgeschlagen — bitte wende dich an den Support auf Discord.",
     "showCode": "Code anzeigen",
@@ -125,6 +126,8 @@
     "platform": "Plattform",
     "targetLevel": "Ziel-Level",
     "amount": "Betrag",
+    "tierLowest": "{rate} pro Einheit — niedrigster Preis",
+    "tierDrop": "{rate} pro Einheit · ab {from} sinkt der Preis auf {next}",
     "gameVersion": "Spielversion",
     "launcher": "Launcher",
     "extras": "Zusatzoptionen",
@@ -142,6 +145,10 @@
     "credentialsHint": "Übermittle deine Zugangsdaten ausschließlich hier und erst nach der Zahlung. Sie werden verschlüsselt und nach Abschluss automatisch gelöscht."
   },
   "addons": {
+    "hints": {
+      "kdReset": "Setzt den Kills/Tode-Zähler in den Statistiken Ihres Accounts zurück.",
+      "slow": "Aktionen auf dem Account werden langsamer als üblich ausgeführt, um das Risiko von Anti-Cheat-Markierungen zu verringern."
+    },
     "console": {
       "casinoWork": "Casino-Heist-Arbeit",
       "cayoRuns": "Cayo-Perico-Läufe",

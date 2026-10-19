@@ -251,6 +251,7 @@ export function CheckoutModal({
 						size="md"
 						onClick={onSubmit}
 						loading={busy}
+						loadingText={t('common.processing')}
 						disabled={!canSubmit}
 						disabledReason={!isContactValid(contact) ? t('checkout.contactLabel') : t('checkout.fillAllFields')}
 						className="flex-1"

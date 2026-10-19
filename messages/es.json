@@ -10,6 +10,7 @@
     "buyFor": "Comprar por {price}",
     "creatingInvoice": "Creando la factura…",
     "encrypting": "Cifrando…",
+    "processing": "Procesando…",
     "sendSecurely": "Enviar de forma segura",
     "saveError": "No se pudo guardar — contacta con soporte en Discord.",
     "showCode": "Mostrar código",
@@ -125,6 +126,8 @@
     "platform": "Plataforma",
     "targetLevel": "Nivel objetivo",
     "amount": "Cantidad",
+    "tierLowest": "{rate} por unidad — tarifa mínima",
+    "tierDrop": "{rate} por unidad · desde {from} la tarifa baja a {next}",
     "gameVersion": "Versión del juego",
     "launcher": "Launcher",
     "extras": "Opciones adicionales",
@@ -142,6 +145,10 @@
     "credentialsHint": "Envía tus credenciales solo aquí y solo después del pago. Se cifran y se borran automáticamente al completar el pedido."
   },
   "addons": {
+    "hints": {
+      "kdReset": "Restablece el contador de bajas/muertes en las estadísticas de la cuenta.",
+      "slow": "Las acciones en la cuenta se realizan más despacio de lo habitual para reducir el riesgo de alertas del sistema antitrampas."
+    },
     "console": {
       "casinoWork": "Trabajo del golpe al casino",
       "cayoRuns": "Incursiones a Cayo Perico",

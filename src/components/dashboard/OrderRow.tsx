@@ -142,6 +142,7 @@ export function OrderRow({
                 onClick={reveal}
                 disabled={order.status !== 'completed'}
                 loading={revealBusy}
+                loadingText={t('common.processing')}
               >
                 {code ?? t('common.showCode')}
               </Button>

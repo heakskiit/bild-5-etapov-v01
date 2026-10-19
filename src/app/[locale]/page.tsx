@@ -5,6 +5,7 @@ import { Safety } from '@/components/home/Safety';
 import { ReviewPlatforms } from '@/components/home/ReviewPlatforms';
 import { CtaStrip } from '@/components/home/CtaStrip';
 import { MobileStickyCta } from '@/components/home/MobileStickyCta';
+import { getTranslations } from '@/lib/i18n/getTranslations';
 
 /**
  * §4.1 skeleton, minus section 6 (Reviews): "рендерится ТОЛЬКО при наличии
@@ -19,6 +20,7 @@ import { MobileStickyCta } from '@/components/home/MobileStickyCta';
  */
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
 	const { locale } = await params;
+	const t = await getTranslations();
 
 	return (
 		<>
@@ -30,7 +32,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 				<ReviewPlatforms />
 				<CtaStrip locale={locale} />
 			</div>
-			<MobileStickyCta locale={locale} />
+			<MobileStickyCta locale={locale} fromLabel={t('home.popular.priceFrom')} ctaLabel={t('home.cta.primary')} />
 		</>
 	);
 }

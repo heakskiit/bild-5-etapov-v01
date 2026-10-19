@@ -33,7 +33,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: Variant;
 	size?: Size;
 	loading?: boolean;
-	/** Shown next to the spinner while `loading` is true. */
+	/**
+	 * Shown next to the spinner while `loading` is true. Pass a translated
+	 * string (`t('common.processing')`): there is deliberately no built-in
+	 * default, so this component never carries a language of its own.
+	 */
 	loadingText?: string;
 	/**
 	 * Why the button is disabled, e.g. "Выберите платформу" (§2.2: "Disabled
@@ -51,7 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 		variant = 'primary',
 		size = 'md',
 		loading = false,
-		loadingText = 'Обработка…',
+		loadingText,
 		disabledReason,
 		disabled,
 		className = '',

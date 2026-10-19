@@ -171,6 +171,7 @@ export function BoostConfigurator({
 						value={selection.level!}
 						onChange={(level) => patch({ level })}
 						tiers={LEVELING_PC.tiers}
+						t={t}
 					/>
 				) : (
 					<ChipGroup
@@ -200,6 +201,7 @@ export function BoostConfigurator({
 						value={selection.amountMillions!}
 						onChange={(amountMillions) => patch({ amountMillions })}
 						tiers={MONEY_PC.tiers}
+						t={t}
 					/>
 				) : (
 					<ChipGroup

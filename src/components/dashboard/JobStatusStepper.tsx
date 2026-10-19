@@ -66,7 +66,7 @@ export function JobStatusStepper({
 			{options.length > 0 && (
 				<div className="flex flex-wrap gap-2">
 					{options.map((next) => (
-						<Button key={next} variant="secondary" size="sm" onClick={() => advance(next)} loading={busy === next}>
+						<Button key={next} variant="secondary" size="sm" onClick={() => advance(next)} loading={busy === next} loadingText={t('common.processing')}>
 							{t(`jobs.moveTo.${next}`)}
 						</Button>
 					))}

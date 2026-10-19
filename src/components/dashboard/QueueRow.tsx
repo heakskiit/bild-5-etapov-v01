@@ -78,7 +78,7 @@ export function QueueRow({
 
 			{claimable ? (
 				<div className="flex flex-col items-end gap-1">
-					<Button variant="primary" size="sm" onClick={claim} loading={busy}>
+					<Button variant="primary" size="sm" onClick={claim} loading={busy} loadingText={t('common.processing')}>
 						{t('queue.claim')}
 					</Button>
 					{error && <span className="text-[11px] text-pink-400">{t('queue.claimError')}</span>}

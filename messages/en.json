@@ -10,6 +10,7 @@
     "buyFor": "Buy for {price}",
     "creatingInvoice": "Creating invoice…",
     "encrypting": "Encrypting…",
+    "processing": "Processing…",
     "sendSecurely": "Send securely",
     "saveError": "Could not save — please contact support on Discord.",
     "showCode": "Show Code",
@@ -137,6 +138,8 @@
     "platform": "Platform",
     "targetLevel": "Target level",
     "amount": "Amount",
+    "tierLowest": "{rate} per unit — lowest rate",
+    "tierDrop": "{rate} per unit · from {from} the rate drops to {next}",
     "gameVersion": "Game version",
     "launcher": "Launcher",
     "extras": "Extra options",
@@ -146,6 +149,10 @@
     "deliverySuperExpress": "Super Express (+60%)"
   },
   "addons": {
+    "hints": {
+      "kdReset": "Resets the kills/deaths counter in the account stats.",
+      "slow": "Actions on the account are performed slower than usual to reduce the risk of anti-cheat flags."
+    },
     "pc": {
       "together": "Together — cheaper (play alongside us)",
       "unlockAll": "Unlock all unlockables",

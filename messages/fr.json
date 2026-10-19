@@ -10,6 +10,7 @@
     "buyFor": "Acheter pour {price}",
     "creatingInvoice": "Création de la facture…",
     "encrypting": "Chiffrement…",
+    "processing": "Traitement…",
     "sendSecurely": "Envoyer en toute sécurité",
     "saveError": "Échec de l'enregistrement — merci de contacter le support sur Discord.",
     "showCode": "Afficher le code",
@@ -125,6 +126,8 @@
     "platform": "Plateforme",
     "targetLevel": "Niveau visé",
     "amount": "Montant",
+    "tierLowest": "{rate} par unité — tarif le plus bas",
+    "tierDrop": "{rate} par unité · à partir de {from}, le tarif passe à {next}",
     "gameVersion": "Version du jeu",
     "launcher": "Launcher",
     "extras": "Options supplémentaires",
@@ -142,6 +145,10 @@
     "credentialsHint": "Transmettez vos identifiants uniquement ici, après le paiement. Ils sont chiffrés puis effacés automatiquement à la fin de la commande."
   },
   "addons": {
+    "hints": {
+      "kdReset": "Remet à zéro le compteur d’éliminations/morts dans les statistiques du compte.",
+      "slow": "Les actions sur le compte sont effectuées plus lentement que d’habitude afin de réduire le risque de signalement par l’anti-triche."
+    },
     "console": {
       "casinoWork": "Travail du braquage du casino",
       "cayoRuns": "Runs Cayo Perico",

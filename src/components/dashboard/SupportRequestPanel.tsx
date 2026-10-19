@@ -202,6 +202,7 @@ export function SupportRequestPanel({
             size="sm"
             onClick={submit}
             loading={busy}
+            loadingText={t('common.processing')}
             disabled={!reason || needsMessage}
             disabledReason={!reason ? t('support.pickReason') : needsMessage ? t('support.messageRequired') : undefined}
           >
@@ -274,7 +275,7 @@ export function SupportRequestPanel({
             <Button variant="ghost" size="sm" onClick={onClose}>
               {t('common.close')}
             </Button>
-            <Button variant="primary" size="sm" onClick={() => send(false)} loading={busy} disabled={!draft.trim()}>
+            <Button variant="primary" size="sm" onClick={() => send(false)} loading={busy} loadingText={t('common.processing')} disabled={!draft.trim()}>
               {t('support.send')}
             </Button>
           </div>
