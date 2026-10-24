@@ -31,6 +31,9 @@
     "close": "Close",
     "cancel": "Cancel"
   },
+  "format": {
+    "numberLocale": "en-US"
+  },
   "nav": {
     "home": "Home",
     "store": "Store",

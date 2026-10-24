@@ -20,6 +20,7 @@
 
 import { useId, useMemo, useState, type KeyboardEvent } from 'react';
 
+import { formatCount } from '@/lib/i18n/formatNumber';
 import { describeTier, type Translate } from '@/lib/pricing/tierHint';
 
 export interface SliderTier {
@@ -45,6 +46,8 @@ export interface SliderProps {
 	formatValue?: (v: number) => string;
 	/** Translator for the tier line under the track (`configurator.tier*` keys). Without it the line is left out rather than shown in the wrong language. */
 	t?: Translate;
+	/** BCP-47 tag for grouping digits (`t('format.numberLocale')`). Defaults to English, never to the visitor's browser setting. */
+	numberLocale?: string;
 }
 
 function clamp(v: number, min: number, max: number) {
@@ -63,11 +66,12 @@ export function Slider({
 	tiers,
 	formatValue,
 	t,
+	numberLocale,
 }: SliderProps) {
 	const inputId = useId();
 	const [focused, setFocused] = useState(false);
 
-	const format = formatValue ?? ((v: number) => `${v.toLocaleString('ru-RU')}${suffix}`);
+	const format = formatValue ?? ((v: number) => `${formatCount(v, numberLocale)}${suffix}`);
 	const safeValue = clamp(value, min, max);
 	const percent = ((safeValue - min) / (max - min)) * 100;
 

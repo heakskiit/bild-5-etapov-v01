@@ -31,6 +31,9 @@
     "close": "Закрыть",
     "cancel": "Отмена"
   },
+  "format": {
+    "numberLocale": "ru-RU"
+  },
   "nav": {
     "home": "Главная",
     "store": "Магазин",

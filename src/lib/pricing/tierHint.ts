@@ -19,8 +19,17 @@ export interface TierStep {
 /** Same shape as the `t` the configurators build with `dig()`. */
 export type Translate = (key: string, vars?: Vars) => string;
 
+/**
+ * A rate exactly as configured: cents at minimum, more decimals when the price
+ * really has them, so 0.055 reads "$0.055" and not "$0.06". Rounding to cents
+ * used to make five of the ten tiers show a rate the customer is not charged.
+ */
 export function formatRate(rate: number): string {
-	return `$${rate < 0.01 ? rate.toFixed(3) : rate.toFixed(2)}`;
+	// toFixed(8) with the zeros trimmed gives the price's own decimals and drops
+	// floating-point noise (0.1 + 0.2 is not "0.30000000000000004").
+	const exact = rate.toFixed(8).replace(/0+$/, '');
+	const decimals = Math.max(2, (exact.split('.')[1] ?? '').length);
+	return `$${rate.toFixed(decimals)}`;
 }
 
 /**

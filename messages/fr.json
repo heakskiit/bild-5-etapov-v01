@@ -31,6 +31,9 @@
     "close": "Fermer",
     "cancel": "Annuler"
   },
+  "format": {
+    "numberLocale": "fr-FR"
+  },
   "nav": {
     "home": "Accueil",
     "store": "Boutique",

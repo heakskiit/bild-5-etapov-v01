@@ -1,7 +1,7 @@
 /**
  * I18N GUARDS (F20).
  *
- * Four ways copy has slipped past the dictionaries so far, each now a test:
+ * Five ways copy has slipped past the dictionaries so far, each now a test:
  *
  *   1. Russian typed straight into a component. The mobile sticky bar, the
  *      add-on hints, the slider's tier line and the button spinner all did
@@ -14,6 +14,9 @@
  *      missing from all five files at once.
  *   4. A translation that drops or renames a `{placeholder}` the English
  *      string declares.
+ *   5. A locale tag typed into a number or date formatter. The slider hard-coded
+ *      `ru-RU`, so every language saw Russian digit grouping; Slider.tsx is JSX,
+ *      which vitest cannot import, so this scan is the only thing that notices.
  *
  * Source files are parsed with the TypeScript compiler API instead of being
  * grepped, so comments (this codebase quotes its design doc in Russian all over
@@ -87,6 +90,7 @@ function sourceFiles(dir: string): string[] {
 interface Scan {
 	files: number;
 	cyrillic: string[];
+	locales: string[];
 	keys: { where: string; key: string }[];
 }
 
@@ -98,6 +102,7 @@ function scanSources(): Scan {
 
 	const files = sourceFiles(SRC_DIR);
 	const cyrillic: string[] = [];
+	const locales: string[] = [];
 	const keys: Scan['keys'] = [];
 
 	for (const file of files) {
@@ -133,12 +138,24 @@ function scanSources(): Scan {
 				}
 			}
 
+			if (ts.isCallExpression(node) || ts.isNewExpression(node)) {
+				const callee = node.expression;
+				const first = node.arguments?.[0];
+				const formats =
+					ts.isPropertyAccessExpression(callee) &&
+					(/^toLocale(Date|Time)?String$/.test(callee.name.text) ||
+						(ts.isIdentifier(callee.expression) && callee.expression.text === 'Intl'));
+				if (formats && first && (ts.isStringLiteral(first) || ts.isNoSubstitutionTemplateLiteral(first))) {
+					locales.push(`${at(node)}  ${node.getText(source).slice(0, 80)}`);
+				}
+			}
+
 			ts.forEachChild(node, visit);
 		};
 		visit(source);
 	}
 
-	scanned = { files: files.length, cyrillic, keys };
+	scanned = { files: files.length, cyrillic, locales, keys };
 	return scanned;
 }
 
@@ -152,6 +169,10 @@ describe('i18n guards', () => {
 
 	it('has no Russian text typed into a component', () => {
 		expect(scanSources().cyrillic).toEqual([]);
+	});
+
+	it('has no locale tag typed into a number or date formatter', () => {
+		expect(scanSources().locales).toEqual([]);
 	});
 
 	it('keeps Cyrillic out of every dictionary except ru.json', () => {

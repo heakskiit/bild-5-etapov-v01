@@ -62,11 +62,6 @@ describe('describeTier', () => {
 		expect(describeTier(9000, TIERS, millions, translator('en'))).toBe('$0.05 per unit — lowest rate');
 	});
 
-	it('prints a rate under one cent with three decimals', () => {
-		expect(formatRate(0.09)).toBe('$0.09');
-		expect(formatRate(0.007)).toBe('$0.007');
-	});
-
 	it('keeps the Russian wording exactly as it was before it moved into the dictionary', () => {
 		const t = translator('ru');
 
@@ -104,6 +99,28 @@ describe('describeTier', () => {
 					expect(line.length, `${locale} @ ${value}`).toBeGreaterThan(10);
 				}
 			}
+		}
+	});
+});
+
+describe('formatRate', () => {
+	it('shows a rate exactly as configured, with as many decimals as the price really has', () => {
+		expect(formatRate(0.09)).toBe('$0.09');
+		expect(formatRate(0.055)).toBe('$0.055');
+		expect(formatRate(0.018)).toBe('$0.018');
+		expect(formatRate(0.007)).toBe('$0.007');
+		expect(formatRate(0.0075)).toBe('$0.0075');
+	});
+
+	it('keeps at least cents for a round rate and ignores floating-point noise', () => {
+		expect(formatRate(0.1)).toBe('$0.10');
+		expect(formatRate(5)).toBe('$5.00');
+		expect(formatRate(0.1 + 0.2)).toBe('$0.30');
+	});
+
+	it('never shows a rate the customer is not charged: every real tier prints back to its configured value', () => {
+		for (const tier of [...LEVELING_PC.tiers, ...MONEY_PC.tiers]) {
+			expect(Number(formatRate(tier.pricePerUnit).slice(1)), String(tier.pricePerUnit)).toBe(tier.pricePerUnit);
 		}
 	});
 });

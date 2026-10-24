@@ -31,6 +31,9 @@
     "close": "Cerrar",
     "cancel": "Cancelar"
   },
+  "format": {
+    "numberLocale": "es-ES"
+  },
   "nav": {
     "home": "Inicio",
     "store": "Tienda",

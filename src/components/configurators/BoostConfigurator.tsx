@@ -172,6 +172,7 @@ export function BoostConfigurator({
 						onChange={(level) => patch({ level })}
 						tiers={LEVELING_PC.tiers}
 						t={t}
+						numberLocale={t('format.numberLocale')}
 					/>
 				) : (
 					<ChipGroup
@@ -202,6 +203,7 @@ export function BoostConfigurator({
 						onChange={(amountMillions) => patch({ amountMillions })}
 						tiers={MONEY_PC.tiers}
 						t={t}
+						numberLocale={t('format.numberLocale')}
 					/>
 				) : (
 					<ChipGroup
