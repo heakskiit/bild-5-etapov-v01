@@ -9,6 +9,7 @@
 import type { Order } from '@/types/order';
 import { deliveredMillions } from '@/lib/pricing/promoBonus';
 import { shortCartId } from '@/lib/orders/groupByCart';
+import { formatAddons } from '@/lib/discord/addonLabels';
 
 const NEON_PINK = 0xff2a85;
 
@@ -86,7 +87,7 @@ function buildEmbed(order: DispatchOrder) {
             },
           ]
         : []),
-      { name: 'Add-ons', value: (s.addonIds ?? []).join(', ') || '—', inline: false },
+      { name: 'Add-ons', value: formatAddons(s.addonIds), inline: false },
       { name: 'Customer contact', value: order.contact_handle ?? 'see dashboard', inline: false },
     ],
     footer: { text: 'First to claim in thread takes the job · free-for-all' },
